@@ -3,7 +3,7 @@
 
 int main() {
     NcursesView view;
-
-    std::cout << "Hello, World!" << std::endl;
+    view.getActionAlpha();
+    //std::cout << "Hello, World!" << std::endl;
     return 0;
 }

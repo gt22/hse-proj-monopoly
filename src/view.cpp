@@ -11,3 +11,15 @@ NcursesView::~NcursesView() {
     endwin();
 }
 
+void NcursesView::getActionAlpha() {
+    while (true) {
+        int enteredChar = getch();
+
+        switch (enteredChar) {
+            case 'x':
+                return;
+                break;
+
+        }
+    }
+}

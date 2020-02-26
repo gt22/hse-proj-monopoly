@@ -38,7 +38,7 @@ class NcursesView : public MonopolyView {
 public:
     NcursesView();
     ~NcursesView();
-    
+    void getActionAlpha();
     //void drawField() override;
     //void printStatus() override;
     //Input::InputAction getAction() override;
