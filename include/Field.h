@@ -1,11 +1,13 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef FIELD_H
+#define FIELD_H
 
-#include "Player.h"
-#include <array>
+#include "MonopolyFwd.h"
+#include <string>
 
 class FieldTile {
 public:
+    FieldTile(Board& board, int position, std::string name);
+    Board& board;
     int position;
     std::string name;
     virtual void onPlayerPass(Token);
@@ -22,27 +24,22 @@ public:
     void onPlayerEntry(Token) override;
 };
 
+class Start : public FieldTile {
+public:
+    void onPlayerEntry(Token) override;
+    void onPlayerPass(Token) override;
+};
+
 class Prison : public FieldTile {
 public:
     void onPlayerEntry(Token) override;
-};
 
-class Start : public FieldTile {
-public:
-    void onPlayerPass(Token) override;
 };
 
 class Chance : public FieldTile {
 public:
-    void onPlayerPass(Token) override;
+    void onPlayerEntry(Token) override;
 };
 
-class Game {
-public:
-    static constexpr int FIELD_SIZE = 40;
-    std::array <FieldTile *, FIELD_SIZE>  field;
 
-    void runGame();
-};
-
-#endif //GAME_H
+#endif //FIELD_H

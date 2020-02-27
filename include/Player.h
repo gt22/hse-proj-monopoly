@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "MonopolyFwd.h"
 #include <cstddef>
 #include <string>
 
@@ -12,17 +13,25 @@ enum class Token : std::size_t {
 
 //TODO: возможно не надо
 struct PlayerData {
+    PlayerData(std::string name, Token token);
     std::string name;
-    std::size_t position;
     Token token;
-    int daysLeftInPrison; //TODO: придумать нормальное имя
+    std::size_t position = 0;
+    int money = 0;
+    int doubleDice = 0;
+    int daysLeftInPrison = 0; //TODO: придумать нормальное имя
+    bool cardToLeftPrison = false;
+    bool skip = false;
+
+    bool checkDouble(bool newThrow);
 };
 
 class Player {
 public:
-    PlayerData data;
+    Player(Token token);
     virtual ~Player();
 
+    Token token;
 };
 
 class NetworkPlayer : public Player {
