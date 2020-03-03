@@ -11,7 +11,14 @@ enum class Token : std::size_t {
     TYPE3
 };
 
-//TODO: возможно не надо
+struct PlayerRequest {
+    std::string message;
+};
+
+struct PlayerReply {
+    bool answer;
+};
+
 struct PlayerData {
     PlayerData(std::string name, Token token);
     std::string name;
@@ -29,21 +36,30 @@ struct PlayerData {
 class Player {
 public:
     Player(Token token);
-    virtual ~Player();
+    virtual ~Player() = default;
+    virtual PlayerReply sendRequest(PlayerRequest request) = 0;
+    virtual void sync(const PlayerData& playerData) = 0;
 
-    Token token;
+    const Token token;
 };
 
-class NetworkPlayer : public Player {
 
+class NetworkPlayer final : public Player {
+public:
+    PlayerReply sendRequest(PlayerRequest request) override;
+    void sync(const PlayerData& playerData) override;
 };
 
-class BotPlayer : public Player {
-
+class BotPlayer final : public Player {
+public:
+    PlayerReply sendRequest(PlayerRequest request) override;
+    void sync(const PlayerData& playerData) override;
 };
 
-class LocalPlayer : public Player {
-
+class LocalPlayer final : public Player {
+public:
+    PlayerReply sendRequest(PlayerRequest request) override;
+    void sync(const PlayerData& playerData) override;
 };
 
 #endif //PLAYER_H

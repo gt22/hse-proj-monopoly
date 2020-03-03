@@ -5,6 +5,10 @@
 
 class Board;
 
+class Game;
+
+class Manager;
+
 class FieldTile;
 class OwnableTile;
 class Start;
