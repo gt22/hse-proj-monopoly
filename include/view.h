@@ -1,5 +1,8 @@
 #ifndef _VIEW_H
 #define _VIEW_H
+
+#include <string>
+
 namespace Input {
     enum class InputType {A, B, EMPTY};
     struct ActionA {
@@ -26,6 +29,12 @@ namespace Input {
 
 }
 
+class MenuView {
+public:
+    int getPlayersNumber();
+    std::string addPlayer();
+};
+
 class MonopolyView {
 public:
    // virtual ~MonopolyView();
@@ -38,7 +47,9 @@ class NcursesView : public MonopolyView {
 public:
     NcursesView();
     ~NcursesView();
-    void getActionAlpha();
+    bool getActionAlpha();
+    void printGrid();
+    void runGame();
     //void drawField() override;
     //void printStatus() override;
     //Input::InputAction getAction() override;
