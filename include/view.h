@@ -53,5 +53,10 @@ public:
     //void drawField() override;
     //void printStatus() override;
     //Input::InputAction getAction() override;
+    const int FIELD_SIZE_X = 196;
+    const int FIELD_SIZE_Y = 44;
+    const int TILE_SIZE_X = 14;
+    const int TILE_SIZE_Y = 4;
+
 };
 #endif

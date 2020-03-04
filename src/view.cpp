@@ -13,28 +13,28 @@ NcursesView::~NcursesView() {
 
 void NcursesView::printGrid() {
     /*bottom and top lines*/
-    for (int line = 0; line <= 40; line += 40) {
-        for (int y = 0; y <= 4; y+=4)
-            for (int x = 0; x <= 14 * 10; x++) {
+    for (int line = 0; line <= FIELD_SIZE_Y - TILE_SIZE_Y; line += (FIELD_SIZE_Y - TILE_SIZE_Y)) {
+        for (int y = 0; y <= TILE_SIZE_Y; y+=TILE_SIZE_Y)
+            for (int x = 0; x <= FIELD_SIZE_X; x++) {
                 move(line + y, x);
                 printw("-");
             }
-        for (int x = 30; x <= 120; x+=10)
-            for (int y = 0; y <=4; y++) {
+        for (int x = 3 * TILE_SIZE_X; x <= FIELD_SIZE_X - 2 * TILE_SIZE_X; x+=TILE_SIZE_X)
+            for (int y = 0; y <= TILE_SIZE_Y; y++) {
                 move(y + line, x);
                 printw("|");
             }
     }
-    /*right and left lines*/
-    for (int line = 0; line <= 120; line +=120) {
-        for (int x = 0; x <= 20; x += 20)
-            for (int y = 0; y <= 11 * 4; y++) {
+    /* right and left lines*/
+    for (int line = 0; line <= FIELD_SIZE_X - 2 * TILE_SIZE_X; line +=(FIELD_SIZE_X - 2 * TILE_SIZE_X)) {
+        for (int x = 0; x <= 2 * TILE_SIZE_X; x += (2 * TILE_SIZE_X))
+            for (int y = 0; y <= FIELD_SIZE_Y; y++) {
                 move(y, line + x);
                 printw("|");
             }
 
-        for (int y = 8; y <= 40; y+=4)
-            for (int x = 0; x <= 20; x++) {
+        for (int y = 2 * TILE_SIZE_Y; y <= (FIELD_SIZE_Y - TILE_SIZE_Y); y+=TILE_SIZE_Y)
+            for (int x = 0; x <= 2 * TILE_SIZE_X; x++) {
                 move(y, line + x);
                 printw("-");
             }
