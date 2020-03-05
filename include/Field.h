@@ -7,6 +7,7 @@
 class FieldTile {
 public:
     FieldTile(Board& board, int position, std::string name);
+    virtual ~FieldTile() = default;
     Board& board;
     int position;
     std::string name;

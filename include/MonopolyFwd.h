@@ -22,4 +22,7 @@ class NetworkPlayer;
 class BotPlayer;
 class LocalPlayer;
 
+class Card;
+class CardPool;
+
 #endif //MONOPOLYFWD_H

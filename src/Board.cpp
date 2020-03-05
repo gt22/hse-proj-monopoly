@@ -1,6 +1,6 @@
 #include <Board.h>
 
-Board::Board(const std::vector<std::pair<std::string, Token> > & playersList) {
+Board::Board(const std::vector<std::pair<std::string, Token> > & playersList, Game& game) : game(game) {
     players.reserve(playersList.size());
     /*for (auto &[name, token] : playersList) {
         players.emplace_back(name, token);
@@ -20,6 +20,7 @@ PlayerData& Board::getPlayer(Token token) {
         }
     }
     //TODO: что вернуть если не нашли.
+    throw 1;
 }
 
 int Board::getNumberOfPlayers() {

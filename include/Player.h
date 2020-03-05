@@ -4,6 +4,8 @@
 #include "MonopolyFwd.h"
 #include <cstddef>
 #include <string>
+#include <memory>
+#include <vector>
 
 enum class Token : std::size_t {
     DOG,
@@ -27,10 +29,8 @@ struct PlayerData {
     int money = 0;
     int doubleDice = 0;
     int daysLeftInPrison = 0; //TODO: придумать нормальное имя
-    bool cardToLeftPrison = false;
     bool skip = false;
-
-    bool checkDouble(bool newThrow);
+    std::vector<std::unique_ptr<Card>> cards;
 };
 
 class Player {
@@ -42,7 +42,6 @@ public:
 
     const Token token;
 };
-
 
 class NetworkPlayer final : public Player {
 public:
@@ -60,6 +59,9 @@ class LocalPlayer final : public Player {
 public:
     PlayerReply sendRequest(PlayerRequest request) override;
     void sync(const PlayerData& playerData) override;
+
+private:
+    //что-то, чтобы обращаться к view
 };
 
 #endif //PLAYER_H
