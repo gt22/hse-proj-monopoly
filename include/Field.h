@@ -15,29 +15,29 @@ public:
     virtual void onPlayerEntry(Token);
 };
 
-class OwnableTile : public FieldTile {
+class OwnableTile final : public FieldTile {
 public:
     int cost;
     int numberOfHouses;
     int costPerHouse;
-    Token owner;//TODO: как обозначить отсутствие владельца
+    Token owner; //TODO: как обозначить отсутствие владельца
 
     void onPlayerEntry(Token) override;
 };
 
-class Start : public FieldTile {
+class Start final : public FieldTile {
 public:
     void onPlayerEntry(Token) override;
     void onPlayerPass(Token) override;
 };
 
-class Prison : public FieldTile {
+class Prison final : public FieldTile {
 public:
     void onPlayerEntry(Token) override;
 
 };
 
-class Chance : public FieldTile {
+class Chance final : public FieldTile {
 public:
     void onPlayerEntry(Token) override;
 };

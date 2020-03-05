@@ -3,11 +3,11 @@
 
 #include <cstddef>
 
+struct PlayerData;
 class Board;
 
-class Game;
-
-class Manager;
+class Card;
+class CardPool;
 
 class FieldTile;
 class OwnableTile;
@@ -15,14 +15,16 @@ class Start;
 class Prison;
 class Chance;
 
+class Game;
+
+class Manager;
+
 enum class Token : size_t;
-struct PlayerData;
+struct PlayerRequest;
+struct PlayerReply;
 class Player;
 class NetworkPlayer;
 class BotPlayer;
 class LocalPlayer;
-
-class Card;
-class CardPool;
 
 #endif //MONOPOLYFWD_H

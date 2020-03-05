@@ -1,4 +1,6 @@
-#include <Board.h>
+#include "Board.h"
+
+PlayerData::PlayerData(std::string name, Token token) : name(std::move(name)), token(token) {}
 
 Board::Board(const std::vector<std::pair<std::string, Token> > & playersList, Game& game) : game(game) {
     players.reserve(playersList.size());
@@ -23,6 +25,3 @@ PlayerData& Board::getPlayer(Token token) {
     throw 1;
 }
 
-int Board::getNumberOfPlayers() {
-    return (int)players.size();
-}

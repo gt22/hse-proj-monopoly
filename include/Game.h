@@ -1,17 +1,15 @@
 #ifndef GAME_H
 #define GAME_H
 
-//#include "View.h"
 #include "MonopolyFwd.h"
 #include "Board.h"
-#include "Player.h"
-
+#include "PlayerRequests.h"
 #include <memory>
 #include <vector>
 
 class Game {
 public:
-    Game(const std::vector<std::pair<std::string, Token> > & players, std::shared_ptr<Manager> manager);
+    Game(const std::vector<std::pair<std::string, Token>>& players, std::shared_ptr<Manager> manager);
     void runGame();
     PlayerReply sendRequest(Token token, PlayerRequest request);
 

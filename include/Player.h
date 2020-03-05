@@ -2,9 +2,8 @@
 #define PLAYER_H
 
 #include "MonopolyFwd.h"
-#include <cstddef>
+#include "PlayerRequests.h"
 #include <string>
-#include <memory>
 #include <vector>
 
 enum class Token : std::size_t {
@@ -13,32 +12,12 @@ enum class Token : std::size_t {
     TYPE3
 };
 
-struct PlayerRequest {
-    std::string message;
-};
-
-struct PlayerReply {
-    bool answer;
-};
-
-struct PlayerData {
-    PlayerData(std::string name, Token token);
-    std::string name;
-    Token token;
-    std::size_t position = 0;
-    int money = 0;
-    int doubleDice = 0;
-    int daysLeftInPrison = 0; //TODO: придумать нормальное имя
-    bool skip = false;
-    std::vector<std::unique_ptr<Card>> cards;
-};
-
 class Player {
 public:
     Player(Token token);
     virtual ~Player() = default;
     virtual PlayerReply sendRequest(PlayerRequest request) = 0;
-    virtual void sync(const PlayerData& playerData) = 0;
+    virtual void sync(const Board& playerData) = 0;
 
     const Token token;
 };
@@ -46,19 +25,19 @@ public:
 class NetworkPlayer final : public Player {
 public:
     PlayerReply sendRequest(PlayerRequest request) override;
-    void sync(const PlayerData& playerData) override;
+    void sync(const Board& playerData) override;
 };
 
 class BotPlayer final : public Player {
 public:
     PlayerReply sendRequest(PlayerRequest request) override;
-    void sync(const PlayerData& playerData) override;
+    void sync(const Board& playerData) override;
 };
 
 class LocalPlayer final : public Player {
 public:
     PlayerReply sendRequest(PlayerRequest request) override;
-    void sync(const PlayerData& playerData) override;
+    void sync(const Board& playerData) override;
 
 private:
     //что-то, чтобы обращаться к view
