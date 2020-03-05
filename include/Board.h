@@ -2,20 +2,30 @@
 #define BOARD_H
 
 #include "MonopolyFwd.h"
-#include "Player.h"
 #include "Cards.h"
 #include <array>
 #include <vector>
 
+struct PlayerData {
+    PlayerData(std::string name, Token token);
+    std::string name;
+    Token token;
+    std::size_t position = 0;
+    int money = 0;
+    int doubleDice = 0;
+    int daysLeftInPrison = 0; //TODO: придумать нормальное имя
+    std::vector<std::unique_ptr<Card>> cards;
+};
+
 class Board {
 public:
-    Board(const std::vector<std::pair<std::string, Token> > & players, Game& game);
+    Board(const std::vector<std::pair<std::string, Token>>& players, Game& game);
     static constexpr int FIELD_SIZE = 40;
-    std::array <FieldTile *, FIELD_SIZE>  field;
+    std::array<FieldTile *, FIELD_SIZE>  field;
     CardPool deck;
 
     PlayerData& getPlayer(Token);
-    int getNumberOfPlayers();
+    const std::vector<PlayerData>& getPlayers();
     PlayerReply sendRequest(Token token, PlayerRequest request);
 
 private:
