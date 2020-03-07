@@ -1,18 +1,13 @@
 #include "Board.h"
 
-PlayerData::PlayerData(std::string name, Token token) : name(std::move(name)), token(token) {}
+PlayerData::PlayerData(std::string_view name, Token token) : name(name), token(token) {}
 
-Board::Board(const std::vector<std::pair<std::string, Token> > & playersList, Game& game) : game(game) {
+Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersList, Game& game) : field(), deck(), game(game) {
     players.reserve(playersList.size());
-    /*for (auto &[name, token] : playersList) {
-        players.emplace_back(name, token);
-    }*/
-    for (size_t i = 0; i < playersList.size(); i++) {
-        std::string name = playersList[i].first;
-        Token token = playersList[i].second;
+    for (auto [name, token] : playersList) {
         players.emplace_back(name, token);
     }
-
+    //TODO: Fill field with tiles
 }
 
 PlayerData& Board::getPlayer(Token token) {

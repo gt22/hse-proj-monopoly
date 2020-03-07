@@ -9,14 +9,14 @@
 
 class Game {
 public:
-    Game(const std::vector<std::pair<std::string, Token>>& players, std::shared_ptr<Manager> manager);
+    Game(const std::vector<std::pair<std::string_view, Token>>& players, Manager&);
     void runGame();
     PlayerReply sendRequest(Token token, PlayerRequest request);
 
 private:
     //std::unique_ptr<View> view;
     Board board;
-    std::shared_ptr<Manager> manager;
+    Manager& manager;
 };
 
 #endif //GAME_H

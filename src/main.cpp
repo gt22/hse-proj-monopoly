@@ -8,6 +8,5 @@
 
 int main() {
     Manager manager;
-
     return 0;
 }
