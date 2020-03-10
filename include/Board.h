@@ -7,6 +7,8 @@
 #include <array>
 #include <vector>
 
+static constexpr int PRISON_POZ = 29;
+
 struct PlayerData {
     PlayerData(std::string name, Token token);
     std::string name;
@@ -15,7 +17,11 @@ struct PlayerData {
     int money = 0;
     int doubleDice = 0;
     int daysLeftInPrison = 0; //TODO: придумать нормальное имя
+    bool prisoner = false;
     std::vector<std::unique_ptr<Card>> cards;
+
+    void newPosition(std::size_t throwSum);
+    void toPrison();
 };
 
 class Board {
@@ -26,8 +32,10 @@ public:
     CardPool deck;
 
     PlayerData& getPlayer(Token);
+    Token getPlayerToken(std::size_t index);
     const std::vector<PlayerData>& getPlayers();
     PlayerReply sendRequest(Token token, PlayerRequest request);
+    std::size_t getPlayersNumber();
 
 private:
     std::vector<PlayerData> players;

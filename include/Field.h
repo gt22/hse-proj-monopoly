@@ -4,6 +4,8 @@
 #include "MonopolyFwd.h"
 #include <string>
 
+static constexpr int PRISON_FINE = 50;
+
 class FieldTile {
 public:
     FieldTile(Board& board, int position, std::string name);
@@ -34,7 +36,6 @@ public:
 class Prison final : public FieldTile {
 public:
     void onPlayerEntry(Token) override;
-
 };
 
 class Chance final : public FieldTile {

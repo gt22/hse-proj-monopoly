@@ -4,6 +4,7 @@
 #include <string>
 
 struct PlayerRequest {
+    PlayerRequest(std::string message) : message(message) {};
     std::string message;
 };
 

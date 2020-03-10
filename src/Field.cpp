@@ -22,11 +22,14 @@ void Start::onPlayerPass(Token token) {
     player.money += 200;
 }
 
-bool throwDouble() {
-    return true;
-}
-
 void Prison::onPlayerEntry(Token token) {
-    static_cast<void>(token);
+    if (!board.getPlayer(token).prisoner) {
+        return;
+    }
+    if (board.sendRequest(token, PlayerRequest("Would you like to pay 50000 to left prison?")).answer) {
+        board.getPlayer(token).money -= PRISON_FINE;
+    }
+    //ask to pay fine 50
+    //ask to use special card
     return;
 }
