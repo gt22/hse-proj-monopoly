@@ -1,8 +1,10 @@
 #include "Game.h"
 #include "time.h"
+#include <utility>
+#include "Manager.h"
 
-Game::Game(const std::vector<std::pair<std::string, Token>>& players, std::shared_ptr<Manager> manager) :
-            board(players, *this), manager(manager){
+Game::Game(const std::vector<std::pair<std::string_view, Token>> &players, Manager& manager)
+    : board(players, *this), manager(manager) {
 
 }
 

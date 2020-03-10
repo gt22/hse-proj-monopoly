@@ -14,12 +14,13 @@ enum class Token : std::size_t {
 
 class Player {
 public:
-    Player(Token token);
+    explicit Player(Token token);
     virtual ~Player() = default;
     virtual PlayerReply sendRequest(PlayerRequest request) = 0;
     virtual void sync(const Board& playerData) = 0;
 
     const Token token;
+    const std::string name;
 };
 
 class NetworkPlayer final : public Player {
