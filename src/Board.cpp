@@ -45,6 +45,27 @@ Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersLis
     field[9]->color = COL2;
 
     field[10] = new Prison(*this, 10, "Prison");
+
+    field[11] = new Street(*this, 11, "Polyanka street");
+    field[11]->cost = 140;
+    field[11]->costPerHouse = 100;
+    field[11]->color = COL3;
+
+    field[12] = new Utility(*this, 12, "Electric station");
+    field[12]->cost = 150;
+
+    field[13] = new Street(*this, 13, "Sretenka");
+    field[13]->cost = 140;
+    field[13]->costPerHouse = 100;
+    field[13]->color = COL3;
+
+    field[14] = new Street(*this, 14, "Rostov embankment");
+    field[14]->cost = 140;
+    field[14]->costPerHouse = 100;
+    field[14]->color = COL3;
+
+    field[15] = new Railway(*this, 15, "Kursk railway");
+    field[15]->cost = 200;
 }
 
 PlayerData& Board::getPlayer(Token token) {

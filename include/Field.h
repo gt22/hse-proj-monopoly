@@ -50,6 +50,11 @@ class Street final : OwnableTile {
     void onPlayerEntry(Token token) override;
 };
 
+class Utility final : OwnableTile {
+
+    void onPlayerEntry(Token token) override;
+};
+
 class Start final : public FieldTile {
 public:
     void onPlayerPass(Token token) override;

@@ -17,6 +17,7 @@ class Chance;
 class IncomeTax;
 class Railway;
 class Street;
+class Utility;
 enum class Color : std::size_t;
 
 class Game;
