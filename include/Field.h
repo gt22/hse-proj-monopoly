@@ -6,6 +6,17 @@
 
 static constexpr int PRISON_FINE = 50;
 
+enum class Color : std::size_t {
+    COL1,
+    COL2,
+    COL3,
+    COL4,
+    COL5,
+    COL6,
+    COL7,
+    COL8
+};
+
 class FieldTile {
 public:
     FieldTile(Board& board, int position, std::string name);
@@ -21,6 +32,7 @@ class OwnableTile : public FieldTile {
 public:
     int cost;
     int costOfParking;
+    Color color;
     Token owner; //TODO: как обозначить отсутствие владельца
 
     void onPlayerEntry(Token token) override;

@@ -13,12 +13,14 @@ Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersLis
     field[1] = new Street(*this, 1, "Zhitnaya street");
     field[1]->cost = 60;
     field[1]->costPerHouse = 50;
+    field[1]->color = COL1;
 
     field[2] = new Chance(*this, 2, "Public treasury");
 
     field[3] = new Street(*this, 3, "Nagatinskaya street");
     field[3]->cost = 60;
     field[3]->costPerHouse = 50;
+    field[3]->color = COL1;
 
     field[4] = new IncomeTax(*this, 4, "Income tax");
 
@@ -28,16 +30,19 @@ Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersLis
     field[6] = new Street(*this, 6, "Varshavskoe highway");
     field[6]->cost = 100;
     field[6]->costPerHouse = 50;
+    field[6]->color = COL2;
 
     field[7] = new Chance(*this, 7, "Chance");
 
     field[8] = new Street(*this, 8, "Ogareva street");
     field[8]->cost = 100;
     field[8]->costPerHouse = 50;
+    field[8]->color = COL2;
 
     field[9] = new Street(*this, 9, "the 1st Park street");
     field[9]->cost = 100;
     field[9]->costPerHouse = 50;
+    field[9]->color = COL2;
 
     field[10] = new Prison(*this, 10, "Prison");
 }
