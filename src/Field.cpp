@@ -28,3 +28,12 @@ void Prison::onPlayerEntry(Token token) {
 void Chance::onPlayerEntry(Token token) {
     board.getPlayer(token).cards.push_back(board.deck.takeCard());
 }
+
+void IncomeTax::onPlayerEntry(Token token) {
+    PlayerData& player = board.getPlayer(token);
+    if (player.money >= 200) {
+        player.money -= 200;
+        return;
+    }
+    player.toPrison();
+}

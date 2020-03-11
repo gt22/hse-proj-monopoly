@@ -8,7 +8,7 @@
 #include <array>
 #include <vector>
 
-static constexpr int PRISON_POZ = 29;
+static constexpr int PRISON_POZ = 10;
 
 struct PlayerData {
     PlayerData(std::string_view name, Token token);

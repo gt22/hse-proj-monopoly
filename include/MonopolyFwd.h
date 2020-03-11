@@ -14,6 +14,9 @@ class OwnableTile;
 class Start;
 class Prison;
 class Chance;
+class IncomeTax;
+class Railway;
+class Street;
 
 class Game;
 

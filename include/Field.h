@@ -17,12 +17,23 @@ public:
     virtual void onPlayerEntry(Token token);
 };
 
-class OwnableTile final : public FieldTile {
+class OwnableTile : public FieldTile {
 public:
     int cost;
+    int costOfParking;
+    Token owner; //TODO: как обозначить отсутствие владельца
+
+    void onPlayerEntry(Token token) override;
+};
+
+class Railway final : OwnableTile {
+
+    void onPlayerEntry(Token token) override;
+};
+
+class Street final : OwnableTile {
     int numberOfHouses;
     int costPerHouse;
-    Token owner; //TODO: как обозначить отсутствие владельца
 
     void onPlayerEntry(Token token) override;
 };
@@ -38,6 +49,11 @@ public:
 };
 
 class Chance final : public FieldTile {
+public:
+    void onPlayerEntry(Token token) override;
+};
+
+class IncomeTax final : public FieldTile {
 public:
     void onPlayerEntry(Token token) override;
 };
