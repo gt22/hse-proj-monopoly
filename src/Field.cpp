@@ -25,6 +25,11 @@ void Prison::onPlayerEntry(Token token) {
     return;
 }
 
+void GoToPrison::onPlayerEntry(Token token) {
+    PlayerData& player = board.getPlayer(token);
+    player.toPrison();
+}
+
 void Chance::onPlayerEntry(Token token) {
     board.getPlayer(token).cards.push_back(board.deck.takeCard());
 }
@@ -36,4 +41,18 @@ void IncomeTax::onPlayerEntry(Token token) {
         return;
     }
     player.toPrison();
+}
+
+void FreeParking::onPlayerPass(Token token) { return; }
+
+void Railway::onPlayerEntry(Token token) {
+    if (owner == token) {
+        return;
+    }
+    if (owner == Token::FREE_FIELD) {
+        //TODO: покупка поля/торги
+        return;
+    }
+    PlayerData& player = board.getPlayer(token);
+    //TODO: найти какой процент должен заплатить
 }

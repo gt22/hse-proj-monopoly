@@ -65,6 +65,11 @@ public:
     void onPlayerEntry(Token token) override;
 };
 
+class GoToPrison final : public FieldTile {
+public:
+    void onPlayerEntry(Token token) override;
+};
+
 class Chance final : public FieldTile {
 public:
     void onPlayerEntry(Token token) override;
@@ -75,5 +80,9 @@ public:
     void onPlayerEntry(Token token) override;
 };
 
+class FreeParking final : public FieldTile {
+public:
+    void onPlayerPass(Token token) override;
+};
 
 #endif //FIELD_H
