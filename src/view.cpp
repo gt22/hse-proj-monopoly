@@ -16,7 +16,6 @@ void MenuView::MenuInteraction() {
     getmaxyx(stdscr, menuSizeY, menuSizeX);
     char list[NUMBER_OF_BUTTONS][15] = { "Add player", "Start game", "Exit" };
 
-    NcursesView view;
     char item[15];
     int ch, i;
     menuSizeX--, menuSizeY--;
