@@ -36,8 +36,8 @@ void Chance::onPlayerEntry(Token token) {
 
 void IncomeTax::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
-    if (player.money >= 200) {
-        player.money -= 200;
+    if (player.money >= tax) {
+        player.money -= tax;
         return;
     }
     player.toPrison();

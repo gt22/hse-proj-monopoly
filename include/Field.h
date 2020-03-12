@@ -78,6 +78,9 @@ public:
 class IncomeTax final : public FieldTile {
 public:
     void onPlayerEntry(Token token) override;
+
+private:
+    int tax;
 };
 
 class FreeParking final : public FieldTile {

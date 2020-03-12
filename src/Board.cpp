@@ -23,6 +23,7 @@ Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersLis
     field[3]->color = COL1;
 
     field[4] = new IncomeTax(*this, 4, "Income tax");
+    field[4]->tax = 200;
 
     field[5] = new Railway(*this, 5, "Riga railway");
     field[5]->cost = 200;
@@ -72,7 +73,7 @@ Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersLis
     field[16]->costPerHouse = 100;
     field[16]->color = COL4;
 
-    field[17] = new IncomeTax(*this, 17, "Income tax");
+    field[17] = new Chance(*this, 17, "Public treasury");
 
     field[18] = new Street(*this, 18, "Vavilov street");
     field[18]->cost = 180;
@@ -125,6 +126,41 @@ Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersLis
     field[29]->color = COL6;
 
     field[30] = new GoToPrison(*this, 30, "Go to prison");
+
+    field[31] = new Street(*this, 31, "Shchusev street");
+    field[31]->cost = 300;
+    field[31]->costPerHouse = 200;
+    field[31]->color = COL7;
+
+    field[32] = new Street(*this, 32, "Gogolevsky boulevard");
+    field[32]->cost = 300;
+    field[32]->costPerHouse = 200;
+    field[32]->color = COL7;
+
+    field[33] = new Chance(*this, 33, "Public treasury");
+
+    field[34] = new Street(*this, 34, "Kutuzovsky prospect");
+    field[34]->cost = 320;
+    field[34]->costPerHouse = 200;
+    field[34]->color = COL7;
+
+    field[35] = new Railway(*this, 35, "Leningrad railway");
+    field[35]->cost = 200;
+
+    field[36] = new Chance(*this, 36, "Chance");
+
+    field[37] = new Street(*this, 37, "Malaya Bronnaya");
+    field[37]->cost = 350;
+    field[37]->costPerHouse = 200;
+    field[37]->color = COL8;
+
+    field[38] = new IncomeTax(*this, 38, "Income tax");
+    field[38]->tax = 100;
+
+    field[39] = new Street(*this, 39, "Arbat street");
+    field[39]->cost = 400;
+    field[39]->costPerHouse = 200;
+    field[39]->color = COL8;
 }
 
 PlayerData& Board::getPlayer(Token token) {
