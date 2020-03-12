@@ -2,9 +2,12 @@
 #include "view.h"
 
 int main() {
+    
+    MenuView menu;
+    menu.MenuInteraction();
     NcursesView view;
     view.runGame();
-    //std::cout << "Hello, World!" << std::endl;
+        //std::cout << "Hello, World!" << std::endl;
     return 0;
 }
 

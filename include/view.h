@@ -2,37 +2,20 @@
 #define _VIEW_H
 
 #include <string>
-
-namespace Input {
-    enum class InputType {A, B, EMPTY};
-    struct ActionA {
-
-    };
-
-    struct ActionB {
-
-    };
-    struct ActionEmpty {
-
-    };
-    /* ... */
-    union InputData {
-        ActionA a;
-        ActionB b;
-        ActionEmpty empty;
-    };
-
-    struct InputAction {
-        InputType type;
-        InputData data;
-    };
-
-}
+#include <curses.h>
 
 class MenuView {
 public:
+    MenuView();
+    ~MenuView();
+    void MenuInteraction();
     int getPlayersNumber();
     std::string addPlayer();
+private:
+    int menuSizeX = 0;
+    int menuSizeY = 0;
+    static const int NUMBER_OF_BUTTONS = 3;
+    WINDOW *w;
 };
 
 class MonopolyView {
@@ -62,6 +45,5 @@ private:
     int FIELD_SIZE_Y;
     int TILE_SIZE_X;
     int TILE_SIZE_Y;
-
 };
 #endif
