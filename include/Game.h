@@ -7,6 +7,7 @@
 #include <string_view>
 #include <memory>
 #include <vector>
+#include "Random.h"
 
 class Game {
 public:
@@ -16,6 +17,7 @@ public:
 
 private:
     //std::unique_ptr<View> view;
+    RandomSource rng;
     Board board;
     Manager& manager;
 };

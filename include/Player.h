@@ -6,12 +6,7 @@
 #include <string>
 #include <vector>
 
-enum class Token : std::size_t {
-    DOG,
-    TYPE2,
-    TYPE3,
-    FREE_FIELD
-};
+
 
 class Player {
 public:

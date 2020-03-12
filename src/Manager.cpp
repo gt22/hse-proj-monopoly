@@ -3,8 +3,6 @@
 #include <string_view>
 #include <cassert>
 
-Manager::~Manager() = default;
-
 void Manager::addPlayer(std::unique_ptr<Player> player) {
     players.push_back(std::move(player));
 }

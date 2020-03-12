@@ -8,10 +8,14 @@
 #include <array>
 #include <vector>
 
-static constexpr int PRISON_POZ = 10;
+static constexpr int PRISON_POS = 10;
 
 struct PlayerData {
     PlayerData(std::string_view name, Token token);
+    PlayerData(const PlayerData&) = delete;
+    void operator=(PlayerData) = delete;
+    PlayerData(PlayerData&&) noexcept = default;
+    PlayerData& operator=(PlayerData&&) noexcept = default;
     std::string_view name;
     Token token;
     std::size_t position = 0;

@@ -26,12 +26,21 @@ class Game;
 
 class Manager;
 
-enum class Token : size_t;
-struct PlayerRequest;
-struct PlayerReply;
+enum class Token : std::size_t {
+    DOG,
+    TYPE2,
+    TYPE3,
+    FREE_FIELD
+};
+
 class Player;
 class NetworkPlayer;
 class BotPlayer;
 class LocalPlayer;
+
+struct PlayerRequest;
+struct PlayerReply;
+
+class RandomSource;
 
 #endif //MONOPOLYFWD_H

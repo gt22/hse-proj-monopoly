@@ -30,53 +30,64 @@ public:
 
 class OwnableTile : public FieldTile {
 public:
+    OwnableTile(Board& board, int position, std::string name,
+            int cost, Color color);
     int cost;
-    int costOfParking;
+    int costOfParking = 0;
     Color color;
-    Token owner; //TODO: как обозначить отсутствие владельца
+    Token owner = Token::FREE_FIELD; //TODO: как обозначить отсутствие владельца
+};
 
+class Railway final : public OwnableTile {
+public:
+    Railway(Board& board, int position, std::string name,
+            int cost, Color color);
     void onPlayerEntry(Token token) override;
 };
 
-class Railway final : OwnableTile {
-
-    void onPlayerEntry(Token token) override;
-};
-
-class Street final : OwnableTile {
-    int numberOfHouses;
+class Street final : public OwnableTile {
+public:
+    Street(Board& board, int position, std::string name,
+           int cost, Color color, int costPerHouse);
+    int numberOfHouses = 0;
     int costPerHouse;
-
-    void onPlayerEntry(Token token) override;
 };
 
-class Utility final : OwnableTile {
-
-    void onPlayerEntry(Token token) override;
+class Utility final : public OwnableTile {
+public:
+    Utility(Board& board, int position, std::string name,
+            int cost, Color color);
 };
 
 class Start final : public FieldTile {
 public:
+    Start(Board& board, int position, std::string name);
     void onPlayerPass(Token token) override;
 };
 
 class Prison final : public FieldTile {
 public:
+    Prison(Board& board, int position, std::string name);
     void onPlayerEntry(Token token) override;
 };
 
+//Considered harmful
 class GoToPrison final : public FieldTile {
 public:
+    GoToPrison(Board& board, int position, std::string name);
     void onPlayerEntry(Token token) override;
 };
 
 class Chance final : public FieldTile {
 public:
+    Chance(Board& board, int position, std::string name);
     void onPlayerEntry(Token token) override;
 };
 
 class IncomeTax final : public FieldTile {
 public:
+    IncomeTax(Board& board, int position, std::string name,
+            int tax);
     void onPlayerEntry(Token token) override;
 
 private:
@@ -85,6 +96,7 @@ private:
 
 class FreeParking final : public FieldTile {
 public:
+    FreeParking(Board& board, int position, std::string name);
     void onPlayerPass(Token token) override;
 };
 

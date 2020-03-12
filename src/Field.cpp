@@ -1,4 +1,6 @@
 #include "Field.h"
+
+#include <utility>
 #include "Board.h"
 
 FieldTile::FieldTile(Board& board, int position, std::string name) :
@@ -13,6 +15,9 @@ void Start::onPlayerPass(Token token) {
     player.money += 200;
 }
 
+Start::Start(Board &board, int position, std::string name)
+ : FieldTile(board, position, std::move(name)) {}
+
 void Prison::onPlayerEntry(Token token) {
     if (!board.getPlayer(token).prisoner) {
         return;
@@ -25,14 +30,23 @@ void Prison::onPlayerEntry(Token token) {
     return;
 }
 
+Prison::Prison(Board &board, int position, std::string name)
+ : FieldTile(board, position, std::move(name)) {}
+
 void GoToPrison::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
     player.toPrison();
 }
 
+GoToPrison::GoToPrison(Board &board, int position, std::string name)
+ : FieldTile(board, position, std::move(name)) {}
+
 void Chance::onPlayerEntry(Token token) {
     board.getPlayer(token).cards.push_back(board.deck.takeCard());
 }
+
+Chance::Chance(Board &board, int position, std::string name)
+ : FieldTile(board, position, std::move(name)) {}
 
 void IncomeTax::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
@@ -43,7 +57,13 @@ void IncomeTax::onPlayerEntry(Token token) {
     player.toPrison();
 }
 
-void FreeParking::onPlayerPass(Token token) { return; }
+IncomeTax::IncomeTax(Board &board, int position, std::string name, int tax)
+ : FieldTile(board, position, std::move(name)), tax(tax) {}
+
+void FreeParking::onPlayerPass(Token token) { static_cast<void>(token); }
+
+FreeParking::FreeParking(Board &board, int position, std::string name)
+ : FieldTile(board, position, std::move(name)) {}
 
 void Railway::onPlayerEntry(Token token) {
     if (owner == token) {
@@ -54,5 +74,20 @@ void Railway::onPlayerEntry(Token token) {
         return;
     }
     PlayerData& player = board.getPlayer(token);
+    static_cast<void>(player);
     //TODO: найти какой процент должен заплатить
 }
+
+OwnableTile::OwnableTile(Board &board, int position, std::string name, int cost, Color color)
+ : FieldTile(board, position, std::move(name)), cost(cost), color(color) {}
+
+Railway::Railway(Board &board, int position, std::string name, int cost, Color color)
+ : OwnableTile(board, position, std::move(name), cost, color) {}
+
+Street::Street(Board &board, int position, std::string name, int cost, Color color, int costPerHouse)
+ : OwnableTile(board, position, std::move(name), cost, color), costPerHouse(costPerHouse) {}
+
+Utility::Utility(Board &board, int position, std::string name, int cost, Color color)
+ : OwnableTile(board, position, std::move(name), cost, color) {}
+
+

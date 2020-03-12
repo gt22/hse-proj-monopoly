@@ -1,5 +1,5 @@
 #include "Game.h"
-#include "time.h"
+#include "Field.h"
 #include <utility>
 #include "Manager.h"
 
@@ -9,21 +9,20 @@ Game::Game(const std::vector<std::pair<std::string_view, Token>> &players, Manag
 }
 
 PlayerReply Game::sendRequest(Token token, PlayerRequest request) {
-    return manager->Manager::sendRequest(token, request);
+    return manager.sendRequest(token, std::move(request));
 }
 
 void Game::runGame() {
-    srand(time(0));
     std::size_t curPlayerNum = 0;
     while (true) {
-        PlayerData curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
+        PlayerData& curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
         if (curPlayer.prisoner) {
             board.field[curPlayer.position]->onPlayerEntry(curPlayer.token);
             //double => make turn(without throwing dice)
             //special card
             continue;
         }
-        int firstTrow = rand() % 6 + 1, secondTrow = rand() % 6 + 1;
+        int firstTrow = rng.nextInt(1, 6), secondTrow = rng.nextInt(1, 6);
         bool extraTurn = false;
         if (firstTrow == secondTrow) {
             curPlayer.doubleDice++;
