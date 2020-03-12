@@ -4,6 +4,7 @@
 #include "MonopolyFwd.h"
 #include "PlayerRequests.h"
 #include <string>
+#include <ncurses.h>
 
 class AbstractView {
 public:
@@ -16,8 +17,14 @@ protected:
 class MenuView final : public AbstractView {
 public:
     explicit MenuView(Manager& manager);
+    ~MenuView() override;
+    void menuInteraction();
     int getPlayersNumber();
     std::string addPlayer();
+private:
+    int menuSizeX = 0;
+    int menuSizeY = 0;
+    static const int NUMBER_OF_BUTTONS = 3;
 };
 
 class MonopolyView : public AbstractView {
