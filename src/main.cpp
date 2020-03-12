@@ -1,9 +1,11 @@
+#include "MonopolyFwd.h"
+#include "Manager.h"
+#include "Board.h"
+
 #include <iostream>
-#include "view.h"
+#include "View.h"
 
 int main() {
-    NcursesView view;
-    view.runGame();
     //std::cout << "Hello, World!" << std::endl;
     return 0;
 }
