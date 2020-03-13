@@ -6,9 +6,7 @@
 #include "View.h"
 
 int main() {
-
+    Manager manager;
     return 0;
 }
 
-// Из игроков нужна position, token
-// Массив указателей Board.Field

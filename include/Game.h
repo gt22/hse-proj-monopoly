@@ -4,19 +4,22 @@
 #include "MonopolyFwd.h"
 #include "Board.h"
 #include "PlayerRequests.h"
+#include <string_view>
 #include <memory>
 #include <vector>
+#include "Random.h"
 
 class Game {
 public:
-    Game(const std::vector<std::pair<std::string, Token>>& players, std::shared_ptr<Manager> manager);
+    Game(const std::vector<std::pair<std::string_view, Token>>& players, Manager&);
     void runGame();
     PlayerReply sendRequest(Token token, PlayerRequest request);
 
 private:
     //std::unique_ptr<View> view;
+    RandomSource rng;
     Board board;
-    std::shared_ptr<Manager> manager;
+    Manager& manager;
 };
 
 #endif //GAME_H

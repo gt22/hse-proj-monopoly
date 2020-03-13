@@ -7,11 +7,7 @@
 #include <vector>
 #include <variant>
 
-enum class Token : std::size_t {
-    DOG,
-    TYPE2,
-    TYPE3
-};
+
 
 class Player {
 public:
@@ -21,6 +17,7 @@ public:
     virtual void sync(const Board& board) = 0;
 
     const Token token;
+    const std::string name;
 };
 
 class NetworkPlayer final : public Player {

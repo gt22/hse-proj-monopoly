@@ -2,7 +2,6 @@
 #define MONOPOLYFWD_H
 
 #include <cstddef>
-#include <memory>
 
 struct PlayerData;
 class Board;
@@ -14,24 +13,34 @@ class FieldTile;
 class OwnableTile;
 class Start;
 class Prison;
+class GoToPrison;
 class Chance;
+class IncomeTax;
+class Railway;
+class Street;
+class Utility;
+class FreeParking;
+enum class Color : std::size_t;
 
 class Game;
 
 class Manager;
 
-enum class Token : size_t;
-struct PlayerRequest;
-struct PlayerReply;
+enum class Token : std::size_t {
+    DOG,
+    TYPE2,
+    TYPE3,
+    FREE_FIELD
+};
+
 class Player;
 class NetworkPlayer;
 class BotPlayer;
 class LocalPlayer;
 
-class AbstractView;
-class MenuView;
-class MonopolyView;
-class NcursesView;
-using ViewHolder = std::shared_ptr<AbstractView>;
+struct PlayerRequest;
+struct PlayerReply;
+
+class RandomSource;
 
 #endif //MONOPOLYFWD_H
