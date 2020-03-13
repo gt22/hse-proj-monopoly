@@ -50,11 +50,21 @@ Chance::Chance(Board &board, int position, std::string name)
 
 void IncomeTax::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
+    //check property
+    if (player.money < tax) {
+        // aks other players if they want to buy smth(???)
+    }
+    while (player.money < tax) {
+        if (!board.sendRequest(token, PlayerRequest("You don't have enough money.\n Would you like to mortgage real estate?")).answer) {
+            break;
+        }
+        //what do you want to mortgage?
+    }
     if (player.money >= tax) {
         player.money -= tax;
         return;
     }
-    player.toPrison();
+    //lose
 }
 
 IncomeTax::IncomeTax(Board &board, int position, std::string name, int tax)
@@ -69,13 +79,26 @@ void Railway::onPlayerEntry(Token token) {
     if (owner == token) {
         return;
     }
+    PlayerData& player = board.getPlayer(token);
     if (owner == Token::FREE_FIELD) {
-        //TODO: покупка поля/торги
+        if (board.sendRequest(token, PlayerRequest("Would you like to buy" + this->name + "?")).answer) {
+            if (player.money >= cost) {
+                player.money -= cost;
+                (*this).owner = player.token;
+                return;
+            }
+            //sendMessage "You don't have enough money"
+        }
+        //TODO: покупка торги
         return;
     }
-    PlayerData& player = board.getPlayer(token);
+    PlayerData& fieldOwner = board.getPlayer(owner);
+    int tax = 25;
+    for (int i = 1; i <= fieldOwner.numberOfRailways; i++) {
+        tax *= 2;
+    }
     static_cast<void>(player);
-    //TODO: найти какой процент должен заплатить
+    //TODO: проверить, что может заплатить
 }
 
 OwnableTile::OwnableTile(Board &board, int position, std::string name, int cost, Color color)
@@ -89,5 +112,3 @@ Street::Street(Board &board, int position, std::string name, int cost, Color col
 
 Utility::Utility(Board &board, int position, std::string name, int cost, Color color)
  : OwnableTile(board, position, std::move(name), cost, color) {}
-
-

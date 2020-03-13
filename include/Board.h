@@ -19,9 +19,10 @@ struct PlayerData {
     std::string_view name;
     Token token;
     std::size_t position = 0;
-    int money = 0;
+    int money = 1500;
     int doubleDice = 0;
     int daysLeftInPrison = 0; //TODO: придумать нормальное имя
+    int numberOfRailways = 0;
     bool prisoner = false;
     std::vector<std::unique_ptr<Card>> cards;
 
