@@ -24,6 +24,7 @@ struct PlayerData {
     int daysLeftInPrison = 0; //TODO: придумать нормальное имя
     int numberOfRailways = 0;
     bool prisoner = false;
+    bool alive = true;
     std::vector<std::unique_ptr<Card>> cards;
 
     void newPosition(std::size_t throwSum);

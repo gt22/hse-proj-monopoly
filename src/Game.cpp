@@ -16,6 +16,10 @@ void Game::runGame() {
     std::size_t curPlayerNum = 0;
     while (true) {
         PlayerData& curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
+        if (!curPlayer.alive) {
+            curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
+            continue;
+        }
         if (curPlayer.prisoner) {
             board.field[curPlayer.position]->onPlayerEntry(curPlayer.token);
             //double => make turn(without throwing dice)
