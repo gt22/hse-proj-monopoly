@@ -22,9 +22,11 @@ public:
     int getPlayersNumber();
     void addPlayerMenu();
 private:
+    WINDOW* menuWindow;
     int menuSizeX = 0;
     int menuSizeY = 0;
     static const int NUMBER_OF_BUTTONS = 3;
+    static const int NUMBER_OF_TOKENS = 6;
 };
 
 class MonopolyView : public AbstractView {

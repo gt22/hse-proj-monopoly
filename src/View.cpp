@@ -1,6 +1,8 @@
 #include <ncurses.h>
 #include <string>
+#include "Player.h"
 #include "View.h"
+#include "Manager.h"
 
 AbstractView::AbstractView(Manager& manager) : manager(manager) {}
 
@@ -8,14 +10,132 @@ MenuView::MenuView(Manager &manager) : AbstractView(manager) {
     initscr();
     noecho();
     keypad(stdscr, TRUE);
+    curs_set(0);
 }
 
 MenuView::~MenuView() {
     endwin();
 }
 
-void addPlayerMenu() {
+void MenuView::addPlayerMenu() {
+    /* Read name */
+    int y = 2 * menuSizeY / 6 + 1;
+    int x = 4 * menuSizeX / 6;
 
+
+    nocbreak();
+    echo();
+
+    std::string name;
+    mvwprintw(menuWindow, y, x, "NAME: ");
+    wrefresh(menuWindow);
+    int ch = wgetch(menuWindow);
+
+    while (ch != '\n') {
+        name.push_back(ch);
+        ch = wgetch(menuWindow);
+    }
+    noecho();
+    cbreak();
+    wrefresh(menuWindow);
+
+
+
+    /* Choose token */
+    int tokenY = y + 2, tokenX = x;
+    std::string buttonsList[NUMBER_OF_TOKENS]= {"DOG", "HAT", "BOOT", "CAT", "CAR", "SHIP" };
+    char button[5];
+    int i, yi = tokenY;
+    for(i = 0; i < NUMBER_OF_TOKENS; i++) {
+        if (i == 0)
+            wattron(menuWindow, A_STANDOUT);
+        else
+            wattroff(menuWindow, A_STANDOUT);
+        sprintf(button, "%s",  buttonsList[i].c_str());
+        mvwprintw(menuWindow, yi + 1, tokenX, "%s", button);
+        yi++;
+    }
+
+    wrefresh(menuWindow);
+
+    i = 0, yi = tokenY;
+    std::string token;
+    bool flag = false;
+
+    while(true) {
+        ch = wgetch(menuWindow);
+        sprintf(button, "%s", buttonsList[i].c_str());
+        mvwprintw(menuWindow, yi + 1, tokenX, "%s", button);
+        switch (ch) {
+            case KEY_UP:
+                i--;
+                if (i < 0) {
+                    i = NUMBER_OF_TOKENS - 1;
+                    yi = tokenY + NUMBER_OF_TOKENS - 1;
+                } else {
+                    yi--;
+                }
+                break;
+            case KEY_DOWN:
+                i++;
+                if (i > NUMBER_OF_TOKENS - 1) {
+                    i = 0;
+                    yi = tokenY;
+                } else {
+                    yi++;
+                }
+                break;
+            case '\n':
+                if (i == 0) {
+                  //  manager.addPlayer(std::make_unique<LocalPlayer>(Token::DOG, manager.view));
+                } else if (i == 1) {
+                  //  manager.addPlayer(std::make_unique<LocalPlayer>(Token::HAT, manager.view));
+                } else if (i == 2) {
+                    //  manager.addPlayer(std::make_unique<LocalPlayer>(Token::BOOT, manager.view));
+                } else if (i == 3) {
+                    //  manager.addPlayer(std::make_unique<LocalPlayer>(Token::CAT, manager.view));
+                } else if (i == 4) {
+                    //  manager.addPlayer(std::make_unique<LocalPlayer>(Token::CAR, manager.view));
+                } else if (i == 5) {
+                    //  manager.addPlayer(std::make_unique<LocalPlayer>(Token::SHIP, manager.view));
+                }
+                break;
+        }
+        wattron(menuWindow, A_STANDOUT);
+
+        sprintf(button, "%s",  buttonsList[i].c_str());
+        mvwprintw(menuWindow, yi + 1, x, "%s", button);
+        wattroff(menuWindow, A_STANDOUT);
+        if (flag)
+            break;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+  /*  for (int yi = 0; yi < menuSizeY; yi++)
+        for (int xi = 0; xi < menuSizeX; xi++)
+            mvwprintw(playerWindow, yi, xi, " ");
+    wclear(playerWindow);
+    wrefresh(playerWindow);
+*/
+
+    for (yi = y; yi < menuSizeY; yi++)
+        for (int xi = x; xi < menuSizeX; xi++)
+            mvwprintw(menuWindow, yi, xi, " ");
 }
 
 void MenuView::menuInteraction() {
@@ -25,7 +145,7 @@ void MenuView::menuInteraction() {
     int i;
     menuSizeX--, menuSizeY--;
 
-    WINDOW* menuWindow = newwin(menuSizeY, menuSizeX, 1, 1);
+    menuWindow = newwin(menuSizeY, menuSizeX, 1, 1);
    // box(menuWindow, 0, 0);
     int y = 2 * menuSizeY / 6;
     int x = 2 * menuSizeX / 6;
@@ -44,7 +164,6 @@ void MenuView::menuInteraction() {
 
     i = 0, yi = y;
     keypad(menuWindow, TRUE);
-    curs_set(0);
     bool flag = false;
     while(true) {
         int ch = wgetch(menuWindow);
@@ -71,10 +190,9 @@ void MenuView::menuInteraction() {
                 break;
             case '\n':
                 if (i == 0) {
-                   // WINDOW* playerWindow = newwin(menuSizeY / 2, menuSizeX / 2, menuSizeY / 2, menuSizeX / 2);
-                   // keypad(playerWindow, TRUE);
                    // manager.addPlayer();
-                  // addPlayerMenu();
+                    addPlayerMenu();
+
                 } else if (i == 1) {
                     // view.runGame();
                 } else {
@@ -82,6 +200,7 @@ void MenuView::menuInteraction() {
                 }
                 break;
         }
+        wrefresh(menuWindow);
         wattron(menuWindow, A_STANDOUT);
 
         sprintf(button, "%s",  buttonsList[i]);
@@ -101,6 +220,7 @@ NcursesView::NcursesView(Manager& manager) : MonopolyView(manager) {
     initscr();
     noecho();
     keypad(stdscr, TRUE);
+    curs_set(0);
 }
 
 
@@ -143,7 +263,6 @@ void NcursesView::printGrid() {
                 move(line + y, x);
                 addch(ACS_HLINE);
             }
-        
     }
     
     /*cells of right and left */ 
@@ -192,7 +311,6 @@ void NcursesView::printGrid() {
             move(y, x);
             addch(ACS_PLUS);
         }
-    move(fieldSizeY, fieldSizeX);
     refresh();
 }
 

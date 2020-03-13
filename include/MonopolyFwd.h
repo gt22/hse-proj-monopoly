@@ -30,8 +30,11 @@ class Manager;
 
 enum class Token : std::size_t {
     DOG,
-    TYPE2,
-    TYPE3,
+    HAT,
+    BOOT,
+    CAT,
+    CAR,
+    SHIP,
     FREE_FIELD
 };
 
