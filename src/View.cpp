@@ -40,7 +40,7 @@ void MenuView::addPlayerMenu() {
 
     /* Choose token */
     int tokenY = y + 2, tokenX = x;
-    std::string buttonsList[NUMBER_OF_TOKENS]= {"DOG", "HAT", "BOOT", "CAT", "CAR", "SHIP" };
+    std::string buttonsList[NUMBER_OF_TOKENS]= { "DOG", "HAT", "BOOT", "CAT", "CAR", "SHIP" };
     char button[5];
     int i, yi = tokenY;
     for(i = 0; i < NUMBER_OF_TOKENS; i++) {
@@ -115,7 +115,7 @@ void MenuView::addPlayerMenu() {
 
 void MenuView::menuInteraction() {
     getmaxyx(stdscr, menuSizeY, menuSizeX);
-    char buttonsList[NUMBER_OF_BUTTONS][15] = { "Add player", "Start game", "Exit" };
+    std::string buttonsList[NUMBER_OF_BUTTONS] = { "Add player", "Start game", "Exit" };
     char button[15];
     int i;
     menuSizeX--, menuSizeY--;
@@ -130,7 +130,7 @@ void MenuView::menuInteraction() {
             wattron(menuWindow, A_STANDOUT);
         else
             wattroff(menuWindow, A_STANDOUT);
-        sprintf(button, "%s",  buttonsList[i]);
+        sprintf(button, "%s",  buttonsList[i].c_str());
         mvwprintw(menuWindow, yi + 1, x, "%s", button);
         yi++;
     }
@@ -142,7 +142,7 @@ void MenuView::menuInteraction() {
     bool flag = false;
     while(true) {
         int ch = wgetch(menuWindow);
-        sprintf(button, "%s",  buttonsList[i]);
+        sprintf(button, "%s",  buttonsList[i].c_str());
         mvwprintw(menuWindow, yi + 1, x, "%s", button);
         switch (ch) {
             case KEY_UP:
@@ -178,7 +178,7 @@ void MenuView::menuInteraction() {
         wrefresh(menuWindow);
         wattron(menuWindow, A_STANDOUT);
 
-        sprintf(button, "%s",  buttonsList[i]);
+        sprintf(button, "%s",  buttonsList[i].c_str());
         mvwprintw(menuWindow, yi + 1, x, "%s", button);
         wattroff(menuWindow, A_STANDOUT);
 
@@ -197,7 +197,6 @@ NcursesView::NcursesView(Manager& manager) : MonopolyView(manager) {
     keypad(stdscr, TRUE);
     curs_set(0);
 }
-
 
 NcursesView::~NcursesView() {
     endwin();
@@ -320,5 +319,3 @@ PlayerReply NcursesView::processRequest(Player& player, PlayerRequest req) {
 void NcursesView::redraw(const Board& board) {
     static_cast<void>(board);
 }
-
-

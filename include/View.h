@@ -61,6 +61,5 @@ private:
     int fieldSizeY = 0;
     int tileSizeX = 0;
     int tileSizeY = 0;
-
 };
 #endif
