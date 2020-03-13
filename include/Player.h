@@ -9,8 +9,6 @@
 #include <variant>
 #include <memory>
 
-
-
 class Player {
 public:
     explicit Player(Token token);

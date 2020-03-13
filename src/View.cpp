@@ -22,7 +22,6 @@ void MenuView::addPlayerMenu() {
     int y = 2 * menuSizeY / 6 + 1;
     int x = 4 * menuSizeX / 6;
 
-
     nocbreak();
     echo();
 
@@ -38,8 +37,6 @@ void MenuView::addPlayerMenu() {
     noecho();
     cbreak();
     wrefresh(menuWindow);
-
-
 
     /* Choose token */
     int tokenY = y + 2, tokenX = x;
@@ -99,6 +96,7 @@ void MenuView::addPlayerMenu() {
                 } else if (i == 5) {
                     //  manager.addPlayer(std::make_unique<LocalPlayer>(Token::SHIP, manager.view));
                 }
+                flag = true;
                 break;
         }
         wattron(menuWindow, A_STANDOUT);
@@ -108,30 +106,7 @@ void MenuView::addPlayerMenu() {
         wattroff(menuWindow, A_STANDOUT);
         if (flag)
             break;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
-
-  /*  for (int yi = 0; yi < menuSizeY; yi++)
-        for (int xi = 0; xi < menuSizeX; xi++)
-            mvwprintw(playerWindow, yi, xi, " ");
-    wclear(playerWindow);
-    wrefresh(playerWindow);
-*/
 
     for (yi = y; yi < menuSizeY; yi++)
         for (int xi = x; xi < menuSizeX; xi++)
