@@ -14,38 +14,42 @@ MenuView::~MenuView() {
     endwin();
 }
 
+void addPlayerMenu() {
+
+}
+
 void MenuView::menuInteraction() {
     getmaxyx(stdscr, menuSizeY, menuSizeX);
-    char list[NUMBER_OF_BUTTONS][15] = { "Add player", "Start game", "Exit" };
-
-    char item[15];
-    int ch, i;
+    char buttonsList[NUMBER_OF_BUTTONS][15] = { "Add player", "Start game", "Exit" };
+    char button[15];
+    int i;
     menuSizeX--, menuSizeY--;
-    WINDOW* w = newwin( menuSizeY, menuSizeX, 1, 1 );
-    box(w, 0, 0);
-    int y = menuSizeY / 2;
-    int x = menuSizeX / 2;
+
+    WINDOW* menuWindow = newwin(menuSizeY, menuSizeX, 1, 1);
+   // box(menuWindow, 0, 0);
+    int y = 2 * menuSizeY / 6;
+    int x = 2 * menuSizeX / 6;
     int yi = y;
     for(i = 0; i < NUMBER_OF_BUTTONS; i++) {
         if (i == 0)
-            wattron(w, A_STANDOUT);
+            wattron(menuWindow, A_STANDOUT);
         else
-            wattroff(w, A_STANDOUT);
-        sprintf(item, "%s",  list[i]);
-        mvwprintw(w, yi + 1, x, "%s", item);
+            wattroff(menuWindow, A_STANDOUT);
+        sprintf(button, "%s",  buttonsList[i]);
+        mvwprintw(menuWindow, yi + 1, x, "%s", button);
         yi++;
     }
 
-    wrefresh(w);
+    wrefresh(menuWindow);
 
     i = 0, yi = y;
-    keypad(w, TRUE);
+    keypad(menuWindow, TRUE);
     curs_set(0);
     bool flag = false;
     while(true) {
-        ch = wgetch(w);
-        sprintf(item, "%s",  list[i]);
-        mvwprintw(w, yi + 1, x, "%s", item);
+        int ch = wgetch(menuWindow);
+        sprintf(button, "%s",  buttonsList[i]);
+        mvwprintw(menuWindow, yi + 1, x, "%s", button);
         switch (ch) {
             case KEY_UP:
                 i--;
@@ -67,7 +71,10 @@ void MenuView::menuInteraction() {
                 break;
             case '\n':
                 if (i == 0) {
-                    // addPlayer();
+                   // WINDOW* playerWindow = newwin(menuSizeY / 2, menuSizeX / 2, menuSizeY / 2, menuSizeX / 2);
+                   // keypad(playerWindow, TRUE);
+                   // manager.addPlayer();
+                   addPlayerMenu();
                 } else if (i == 1) {
                     // view.runGame();
                 } else {
@@ -75,17 +82,17 @@ void MenuView::menuInteraction() {
                 }
                 break;
         }
-        wattron( w, A_STANDOUT );
+        wattron(menuWindow, A_STANDOUT);
 
-        sprintf(item, "%s",  list[i]);
-        mvwprintw( w, yi + 1, x, "%s", item);
-        wattroff(w, A_STANDOUT);
+        sprintf(button, "%s",  buttonsList[i]);
+        mvwprintw(menuWindow, yi + 1, x, "%s", button);
+        wattroff(menuWindow, A_STANDOUT);
 
         if (flag)
             break;
     }
 
-    delwin(w);
+    delwin(menuWindow);
 }
 
 MonopolyView::MonopolyView(Manager &manager) : AbstractView(manager) {}

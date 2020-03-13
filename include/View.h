@@ -20,7 +20,7 @@ public:
     ~MenuView() override;
     void menuInteraction();
     int getPlayersNumber();
-    std::string addPlayer();
+    void addPlayerMenu();
 private:
     int menuSizeX = 0;
     int menuSizeY = 0;
