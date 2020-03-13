@@ -19,10 +19,10 @@ MenuView::~MenuView() {
 
 void MenuView::addPlayerMenu() {
     /* Read name */
-    int y = 2 * menuSizeY / 6 + 1;
+    int y = 2 * menuSizeY / 6 - 2;
     int x = 4 * menuSizeX / 6;
 
-    nocbreak();
+ /*   nocbreak();
     echo();
 
     std::string name;
@@ -36,10 +36,12 @@ void MenuView::addPlayerMenu() {
     }
     noecho();
     cbreak();
-    wrefresh(menuWindow);
+    wrefresh(menuWindow); */
 
     /* Choose token */
-    int tokenY = y + 2, tokenX = x;
+    int tokenY = y, tokenX = x;
+    mvwprintw(menuWindow, y, x, "CHOOSE YOUR FIGHTER:");
+    tokenY++;
     std::string buttonsList[NUMBER_OF_TOKENS]= { "DOG", "HAT", "BOOT", "CAT", "CAR", "SHIP" };
     char button[5];
     int i, yi = tokenY;
@@ -60,7 +62,7 @@ void MenuView::addPlayerMenu() {
     bool flag = false;
 
     while(true) {
-        ch = wgetch(menuWindow);
+        int ch = wgetch(menuWindow);
         sprintf(button, "%s", buttonsList[i].c_str());
         mvwprintw(menuWindow, yi + 1, tokenX, "%s", button);
         switch (ch) {
