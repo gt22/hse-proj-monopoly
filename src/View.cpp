@@ -74,7 +74,7 @@ void MenuView::menuInteraction() {
                    // WINDOW* playerWindow = newwin(menuSizeY / 2, menuSizeX / 2, menuSizeY / 2, menuSizeX / 2);
                    // keypad(playerWindow, TRUE);
                    // manager.addPlayer();
-                   addPlayerMenu();
+                  // addPlayerMenu();
                 } else if (i == 1) {
                     // view.runGame();
                 } else {
@@ -126,23 +126,22 @@ void NcursesView::printGrid() {
     maxX--;
     maxY--;
     changeFieldSize();
-    
 
     /* right and left lines*/
     for (int line = 0; line <= fieldSizeX - tileSizeX; line +=(fieldSizeX - tileSizeX)) {
         for (int x = 0; x <= tileSizeX; x += ( tileSizeX))
             for (int y = 0; y <= fieldSizeY; y++) {
                 move(y, line + x);
-                printw("|");
+                addch(ACS_VLINE);
             }
     }
 
     /*bottom and top lines*/
     for (int line = 0; line <= fieldSizeY - tileSizeY; line += (fieldSizeY - tileSizeY)) {
         for (int y = 0; y <= tileSizeY; y+=tileSizeY)
-            for (int x = 0; x <= fieldSizeX; x++) {
+            for (int x = 1; x < fieldSizeX; x++) {
                 move(line + y, x);
-                printw("-");
+                addch(ACS_HLINE);
             }
         
     }
@@ -150,33 +149,49 @@ void NcursesView::printGrid() {
     /*cells of right and left */ 
     for (int line = 0; line <= fieldSizeX - tileSizeX; line +=(fieldSizeX - tileSizeX)) {
         for (int y = 0; y <= (fieldSizeY); y+=tileSizeY)
-            for (int x = 0; x <= tileSizeX; x++) {
+            for (int x = 1; x < tileSizeX; x++) {
                 move(y, line + x);
-                printw("-");
+                addch(ACS_HLINE);
             }
     }
 
      /*cells of bottom and top lines*/
     for (int line = 0; line <= fieldSizeY - tileSizeY; line += (fieldSizeY - tileSizeY)) {
         for (int x = 0; x <= fieldSizeX; x+=tileSizeX)
-                for (int y = 0; y <= tileSizeY; y++) {
+                for (int y = 1; y < tileSizeY; y++) {
                     move(y + line, x);
-                    printw("|");
+                    addch(ACS_VLINE);
                 }
     }
-    
-    move(tileSizeY, tileSizeX);
-    printw("+");
 
-    move(fieldSizeY - tileSizeY, tileSizeX);
-    printw("+");
+    /* corners */
+    mvaddch(0, 0, ACS_ULCORNER);
+    mvaddch(0, fieldSizeX, ACS_URCORNER);
+    mvaddch(fieldSizeY, 0, ACS_LLCORNER);
+    mvaddch(fieldSizeY, fieldSizeX, ACS_LRCORNER);
 
-    move(tileSizeY, fieldSizeX - tileSizeX);
-    printw("+");
+    for (int x = 0; x <= fieldSizeX - tileSizeX; x+=(fieldSizeX - tileSizeX))
+        for (int y = tileSizeY; y < fieldSizeY; y+=tileSizeY)
+            mvaddch(y, x, ACS_LTEE);
 
-    move(fieldSizeY - tileSizeY, fieldSizeX - tileSizeX);
-    printw("+");
+    for (int x = tileSizeX; x <= fieldSizeX; x+=(fieldSizeX - tileSizeX))
+        for (int y = tileSizeY; y < fieldSizeY; y+= tileSizeY)
+            mvaddch(y, x, ACS_RTEE);
 
+    for (int y = 0; y<= fieldSizeY - tileSizeY; y+=(fieldSizeY - tileSizeY))
+        for (int x = tileSizeX; x < fieldSizeX; x+=tileSizeX)
+            mvaddch(y, x, ACS_TTEE);
+
+    for (int y = tileSizeY; y<= fieldSizeY; y+=(fieldSizeY - tileSizeY))
+        for (int x = tileSizeX; x < fieldSizeX; x+=tileSizeX)
+            mvaddch(y, x, ACS_BTEE);
+
+    /* crosses */
+    for (int y = tileSizeY; y <= fieldSizeY - tileSizeY; y += fieldSizeY - 2 * tileSizeY)
+        for (int x = tileSizeX; x <= fieldSizeX - tileSizeX; x += fieldSizeX - 2 * tileSizeX) {
+            move(y, x);
+            addch(ACS_PLUS);
+        }
     move(fieldSizeY, fieldSizeX);
     refresh();
 }
@@ -191,9 +206,9 @@ bool NcursesView::getActionAlpha() {
 
 void NcursesView::runGame() {
     while (true) {
-	    printGrid();
         bool flag = false;
 		while (true) {
+            printGrid();
 			if (getActionAlpha()) { 
 				flag = true;
                 break;

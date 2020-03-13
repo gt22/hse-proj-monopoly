@@ -2,6 +2,8 @@
 #define MONOPOLYFWD_H
 
 #include <cstddef>
+#include <memory>
+//#include "View.h"
 
 struct PlayerData;
 class Board;
@@ -42,5 +44,11 @@ struct PlayerRequest;
 struct PlayerReply;
 
 class RandomSource;
+
+class AbstractView;
+class MenuView;
+class MonopolyView;
+class NcursesView;
+using ViewHolder = std::shared_ptr<AbstractView>;
 
 #endif //MONOPOLYFWD_H

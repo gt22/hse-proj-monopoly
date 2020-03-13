@@ -3,9 +3,11 @@
 
 #include "MonopolyFwd.h"
 #include "PlayerRequests.h"
+#include "View.h"
 #include <string>
 #include <vector>
 #include <variant>
+#include <memory>
 
 
 

@@ -7,6 +7,10 @@
 
 int main() {
     Manager manager;
+    MenuView menu(manager);
+    menu.menuInteraction();
+    NcursesView view(manager);
+    view.runGame();
     return 0;
 }
 
