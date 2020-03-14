@@ -6,11 +6,12 @@
 #include "View.h"
 
 int main() {
+    setlocale(LC_ALL, "");
     Manager manager;
     MenuView menu(manager);
     menu.menuInteraction();
-  //  NcursesView view(manager);
-   // view.runGame();
+    NcursesView view(manager);
+    view.runGame();
     return 0;
 }
 

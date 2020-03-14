@@ -13,11 +13,11 @@ class Manager {
 public:
     void addPlayer(std::unique_ptr<Player> player);
     PlayerReply sendRequest(Token token, PlayerRequest request);
-
+    std::shared_ptr<ViewHolder> view;
 private:
     void createGame();
 
-    std::shared_ptr<ViewHolder> view;
+
     std::unique_ptr<Game> game;
     std::vector<std::unique_ptr<Player>> players;
 };

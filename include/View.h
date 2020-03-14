@@ -37,6 +37,7 @@ public:
 
    virtual void redraw(const Board& board) = 0;
    virtual PlayerReply processRequest(Player& p, PlayerRequest req) = 0;
+  // virtual void getCoord(int &x, int &y, int index);
 
    // virtual Input::InputAction getAction(); //TODO: как православно обработать экшены
 };
@@ -48,6 +49,8 @@ public:
     bool getActionAlpha();
     void printGrid();
     void runGame();
+    void getCoord(int &x, int &y, int index);
+    void drawPlayer(int x, int y, int color);
     void redraw(const Board& board) override;
     //void drawField() override;
     //void printStatus() override;

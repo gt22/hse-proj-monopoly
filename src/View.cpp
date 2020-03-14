@@ -6,6 +6,8 @@
 
 AbstractView::AbstractView(Manager& manager) : manager(manager) {}
 
+// MENU VIEW
+
 MenuView::MenuView(Manager &manager) : AbstractView(manager) {
     initscr();
     noecho();
@@ -86,17 +88,17 @@ void MenuView::addPlayerMenu() {
                 break;
             case '\n':
                 if (i == 0) {
-                  //  manager.addPlayer(std::make_unique<LocalPlayer>(Token::DOG, manager.view));
+                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::DOG, manager.view));
                 } else if (i == 1) {
-                  //  manager.addPlayer(std::make_unique<LocalPlayer>(Token::HAT, manager.view));
+                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::HAT, manager.view));
                 } else if (i == 2) {
-                    //  manager.addPlayer(std::make_unique<LocalPlayer>(Token::BOOT, manager.view));
+                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::BOOT, manager.view));
                 } else if (i == 3) {
-                    //  manager.addPlayer(std::make_unique<LocalPlayer>(Token::CAT, manager.view));
+                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::CAT, manager.view));
                 } else if (i == 4) {
-                    //  manager.addPlayer(std::make_unique<LocalPlayer>(Token::CAR, manager.view));
+                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::CAR, manager.view));
                 } else if (i == 5) {
-                    //  manager.addPlayer(std::make_unique<LocalPlayer>(Token::SHIP, manager.view));
+                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::SHIP, manager.view));
                 }
                 flag = true;
                 break;
@@ -191,6 +193,9 @@ void MenuView::menuInteraction() {
     delwin(menuWindow);
 }
 
+
+// GAME VIEW
+
 MonopolyView::MonopolyView(Manager &manager) : AbstractView(manager) {}
 
 NcursesView::NcursesView(Manager& manager) : MonopolyView(manager) {
@@ -203,6 +208,40 @@ NcursesView::NcursesView(Manager& manager) : MonopolyView(manager) {
 NcursesView::~NcursesView() {
     endwin();
 }
+
+// PLAYER
+void NcursesView::getCoord(int &x, int &y, int index) {
+    if (index >= 40)
+        index %= 40;
+    if (index < TILES_PER_LINE) {
+        x = tileSizeX / 2 + (index) * tileSizeX;
+        y = tileSizeY / 2;
+    } else if (index < 2 * TILES_PER_LINE - 1) {
+        x = fieldSizeX - tileSizeX / 2;
+        y = tileSizeY / 2 + (index - TILES_PER_LINE + 1) * tileSizeY;
+    } else if (index < 3 * TILES_PER_LINE - 2) {
+        x = fieldSizeX - tileSizeX / 2 - (index - 2 * TILES_PER_LINE + 2) * tileSizeX;
+        y = fieldSizeY - tileSizeY / 2;
+    } else {
+        x = tileSizeX / 2;
+        y = fieldSizeY - tileSizeY / 2 - (index - 3 * TILES_PER_LINE + 3) * tileSizeY;
+    }
+}
+
+void NcursesView::drawPlayer(int x, int y, int color) {
+    if(has_colors() == FALSE) {
+        endwin();
+        printf("Your terminal does not support color\n");
+        exit(1);
+    }
+    start_color();
+    init_pair(1, color, COLOR_BLACK);
+    attron(COLOR_PAIR(1));
+    mvaddch(y, x, ' '|A_REVERSE);
+    attroff(COLOR_PAIR(1));
+}
+
+// FIELD
 
 void NcursesView::changeFieldSize() {
     while (maxX % TILES_PER_LINE != 0 && maxX > 0) {
@@ -291,23 +330,34 @@ void NcursesView::printGrid() {
 }
 
 
-bool NcursesView::getActionAlpha() {
-    int enteredChar = getch();
-    if (enteredChar == 'x')
-        return true;
-    return false;
-}
-
 void NcursesView::runGame() {
+    int ind = 0;
     while (true) {
         bool flag = false;
-		while (true) {
-            printGrid();
-			if (getActionAlpha()) { 
-				flag = true;
+        printGrid();
+        int x = 0, y = 0;
+        int enteredChar = getch();
+
+        switch(enteredChar) {
+            case 'x':
+                flag = true;
                 break;
-            }
-		}
+            case 'd':
+                erase();
+                getCoord(x, y, ind);
+                drawPlayer(x, y, COLOR_CYAN);
+                break;
+            case KEY_RIGHT:
+                erase();
+                refresh();
+                ind++;
+                refresh();
+                getCoord(x, y, ind);
+                drawPlayer(x, y, COLOR_CYAN);
+                refresh();
+                break;
+        }
+        refresh();
         if (flag)
             break;
     }
@@ -321,3 +371,4 @@ PlayerReply NcursesView::processRequest(Player& player, PlayerRequest req) {
 void NcursesView::redraw(const Board& board) {
     static_cast<void>(board);
 }
+
