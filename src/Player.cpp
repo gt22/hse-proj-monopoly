@@ -10,7 +10,7 @@ LocalPlayer::LocalPlayer(Token token, std::shared_ptr<ViewHolder> view)
 
 }
 
-PlayerReply LocalPlayer::sendRequest(PlayerRequest request) {
+PlayerReplyData LocalPlayer::sendRequest(PlayerRequest request) {
     return gameView().processRequest(*this, request);
 }
 

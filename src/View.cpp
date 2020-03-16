@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "View.h"
 #include "Manager.h"
+#include <memory>
 
 AbstractView::AbstractView(Manager& manager) : manager(manager) {}
 
@@ -365,7 +366,7 @@ void NcursesView::runGame() {
 
 PlayerReply NcursesView::processRequest(Player& player, PlayerRequest req) {
     static_cast<void>(player);
-    return {req.message.empty()};
+    return std::make_unique<EndTurnReply>();
 }
 
 void NcursesView::redraw(const Board& board) {

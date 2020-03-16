@@ -44,7 +44,7 @@ class BotPlayer;
 class LocalPlayer;
 
 struct PlayerRequest;
-struct PlayerReply;
+struct PlayerReplyData;
 
 class RandomSource;
 
