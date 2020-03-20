@@ -309,6 +309,16 @@ FreeParking::FreeParking(Board &board, int position, std::string name)
 
 void FreeParking::onPlayerPass(Token token) { }
 
+int getTax(int num) {
+    int tax = 25;
+    for (int i = 1; i <= num; i++) {
+        tax *= 2;
+    }
+    return tax;
+}
+
+Railway::Railway(Board &board, int position, std::string name, int cost, Color color)
+        : OwnableTile(board, position, std::move(name), cost, color) {}
 
 void Railway::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
@@ -341,9 +351,7 @@ void Railway::onPlayerEntry(Token token) {
             continue;
         }
         if (reply->action == PlayerAction::PAY_TO_OTHER_PLAYER) {
-            int tax = 25;
-            for (int i = 1; i <= fieldOwner.numberOfRailways; i++) {
-                tax *= 2;
+            int tax = getTax(fieldOwner.numberOfRailways);
             if (player.money >= tax) {
                 player.money -= tax;
                 mustHave.erase(mustHave.find(PlayerAction::PAY_TO_OTHER_PLAYER));
@@ -360,9 +368,6 @@ void Railway::onPlayerEntry(Token token) {
 
 OwnableTile::OwnableTile(Board &board, int position, std::string name, int cost, Color color)
  : FieldTile(board, position, std::move(name)), cost(cost), color(color) {}
-
-Railway::Railway(Board &board, int position, std::string name, int cost, Color color)
- : OwnableTile(board, position, std::move(name), cost, color) {}
 
 Street::Street(Board &board, int position, std::string name, int cost, Color color, int costPerHouse)
  : OwnableTile(board, position, std::move(name), cost, color), costPerHouse(costPerHouse) {}
