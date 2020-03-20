@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.15)
 project(hseproj)
 
-add_compile_options("-Wall")
-add_compile_options("-Wextra")
-add_compile_options("-Werror")
+add_compile_options(-Wall)
+add_compile_options(-Wextra)
+add_compile_options(-Werror)
+add_compile_options(-Wno-unused-parameter)
+add_compile_options(-Wno-unused-private-field)
 set(CMAKE_CXX_STANDARD 17)
 include_directories(include)
 
