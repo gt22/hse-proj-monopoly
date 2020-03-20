@@ -29,6 +29,7 @@ struct PlayerData {
 
     void newPosition(std::size_t throwSum);
     void toPrison();
+    void outOfPrison();
 };
 
 class Board {

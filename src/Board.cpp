@@ -19,6 +19,11 @@ void PlayerData::toPrison() {
     prisoner = true;
 }
 
+void PlayerData::outOfPrison() {
+    prisoner = false;
+    daysLeftInPrison = 0;
+}
+
 Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersList, Game& game) : field(), deck(), game(game) {
     players.reserve(playersList.size());
     for (auto [name, token] : playersList) {

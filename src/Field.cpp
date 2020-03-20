@@ -1,7 +1,9 @@
 #include "Field.h"
+#include "Board.h"
+#include "Random.h"
 
 #include <utility>
-#include "Board.h"
+#include <set>
 
 FieldTile::FieldTile(Board& board, int position, std::string name) :
                         board(board), position(position), name(std::move(name)) {}
@@ -19,14 +21,85 @@ Start::Start(Board &board, int position, std::string name)
  : FieldTile(board, position, std::move(name)) {}
 
 void Prison::onPlayerEntry(Token token) {
-    if (!board.getPlayer(token).prisoner) {
-        return;
+    PlayerData& player = board.getPlayer(token);
+    RandomSource rng;
+    PlayerRequest request({}, "");
+    std::set<PlayerAction> mustHave;
+    mustHave.insert(PlayerAction::END_TURN);
+    request.availableActions.push_back(PlayerAction::END_TURN);
+    request.availableActions.push_back(PlayerAction::BUY_BUILDING);
+    request.availableActions.push_back(PlayerAction::BUY_HOTEL);
+    request.availableActions.push_back(PlayerAction::START_TRADE);
+    request.availableActions.push_back(PlayerAction::MORTGAGE_HOLDINGS);
+    if (board.getPlayer(token).prisoner) {
+        mustHave.insert(PlayerAction::PAY_TAX);
+        request.availableActions.push_back(PlayerAction::PAY_TAX);
+        mustHave.insert(PlayerAction::USE_CARD);
+        request.availableActions.push_back(PlayerAction::USE_CARD);
+        mustHave.insert(PlayerAction::ROLL_DICE);
+        request.availableActions.push_back(PlayerAction::ROLL_DICE);
     }
-    if (board.sendRequest(token, PlayerRequest("Would you like to pay 50000 to leave prison?")).answer) {
-        board.getPlayer(token).money -= PRISON_FINE;
+    while (!mustHave.empty()) {
+        //print request
+        //get reply
+        if (reply.action == PlayerAction::END_TURN) {
+            if (player.prisoner) {
+                player.daysLeftInPrison--;
+                if (player.daysLeftInPrison == 0) {
+                    player.outOfPrison();
+                }
+            }
+            mustHave.clear();
+            continue;
+        }
+        if (reply.action == PlayerAction::ROLL_DICE) {
+            int firstTrow = rng.nextInt(1, 6), secondTrow = rng.nextInt(1, 6);
+            //send firstTrow, secondTrow(?)
+            if (firstTrow == secondTrow) {
+                player.outOfPrison();
+                mustHave.erase(mustHave.find(PlayerAction::USE_CARD));
+                mustHave.erase(mustHave.find(PlayerAction::PAY_TAX));
+                //delete from request.availableActions
+            }
+            mustHave.erase(mustHave.find(PlayerAction::ROLL_DICE));
+            //delete from request.availableActions
+            continue;
+        }
+        if (reply.action == PlayerAction::PAY_TAX) {
+            if (player.money >= tax) {
+                player.money -= tax;
+                player.outOfPrison();
+                mustHave.erase(mustHave.find(PlayerAction::USE_CARD));
+                mustHave.erase(mustHave.find(PlayerAction::PAY_TAX));
+                mustHave.erase(mustHave.find(PlayerAction::ROLL_DICE));
+                //delete from request.availableActions
+            } else {
+                //send message not enough money
+            }
+            continue;
+        }
+        if (reply.action == PlayerAction::USE_CARD) {
+            //пользователь выбирает карту, проверка, что подходит
+            //либо он говорит, что хочет использовать, а я ищу карту или говорю, что ее нет
+            continue;
+        }
+        if (reply.action == PlayerAction::BUY_BUILDING) {
+            //TODO
+            continue;
+        }
+        if (reply.action == PlayerAction::BUY_HOTEL) {
+            //TODO
+            continue;
+        }
+        if (reply.action == PlayerAction::START_TRADE) {
+            //TODO
+            continue;
+        }
+        if (reply.action == PlayerAction::MORTGAGE_HOLDINGS) {
+            //TODO
+            continue;
+        }
     }
-    //ask to pay fine 50
-    //ask to use special card
     return;
 }
 

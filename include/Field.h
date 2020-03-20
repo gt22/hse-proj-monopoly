@@ -69,6 +69,7 @@ class Prison final : public FieldTile {
 public:
     Prison(Board& board, int position, std::string name);
     void onPlayerEntry(Token token) override;
+    int tax = 50;
 };
 
 //Considered harmful

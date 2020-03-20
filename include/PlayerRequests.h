@@ -9,6 +9,13 @@ enum class PlayerAction {
     PAY_TAX,
     BUY_PROPERTY,
     BUY_BUILDING,
+    BUY_HOTEL,
+    USE_CARD,
+    PAY_TO_OTHER_PLAYER,
+    TAKE_CARD,
+    MORTGAGE_HOLDINGS,
+    START_TRADE,
+    ROLL_DICE,
     END_TURN
 };
 
