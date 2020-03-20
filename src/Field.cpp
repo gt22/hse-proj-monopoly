@@ -309,7 +309,7 @@ FreeParking::FreeParking(Board &board, int position, std::string name)
 
 void FreeParking::onPlayerPass(Token token) { }
 
-int getTax(int num) {
+int getRailwayTax(int num) {
     int tax = 25;
     for (int i = 1; i <= num; i++) {
         tax *= 2;
@@ -351,7 +351,7 @@ void Railway::onPlayerEntry(Token token) {
             continue;
         }
         if (reply->action == PlayerAction::PAY_TO_OTHER_PLAYER) {
-            int tax = getTax(fieldOwner.numberOfRailways);
+            int tax = getRailwayTax(fieldOwner.numberOfRailways);
             if (player.money >= tax) {
                 player.money -= tax;
                 mustHave.erase(mustHave.find(PlayerAction::PAY_TO_OTHER_PLAYER));
@@ -362,8 +362,23 @@ void Railway::onPlayerEntry(Token token) {
             request.message = "Not enough money :(";
             continue;
         }
+        if (reply->action == PlayerAction::BUY_PROPERTY) {
+            if (player.money >= cost) {
+                player.money -= cost;
+                player.numberOfRailways++;
+                owner = token;
+                mustHave.erase(mustHave.find(PlayerAction::BUY_PROPERTY));
+                request.availableActions.erase(request.availableActions.begin() +
+                                               findInVector(request.availableActions, PlayerAction::BUY_PROPERTY));
+                mustHave.erase(mustHave.find(PlayerAction::START_TRADE_NEW_FIELD));
+                request.availableActions.erase(request.availableActions.begin() +
+                                               findInVector(request.availableActions, PlayerAction::START_TRADE_NEW_FIELD));
+                continue;
+            }
+            request.message = "Not enough money :(";
+            continue;
+        }
     }
-
 }
 
 OwnableTile::OwnableTile(Board &board, int position, std::string name, int cost, Color color)
@@ -374,3 +389,7 @@ Street::Street(Board &board, int position, std::string name, int cost, Color col
 
 Utility::Utility(Board &board, int position, std::string name, int cost, Color color)
  : OwnableTile(board, position, std::move(name), cost, color) {}
+
+void Utility::onPlayerEntry(Token token) {
+
+}

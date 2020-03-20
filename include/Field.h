@@ -58,6 +58,7 @@ class Utility final : public OwnableTile {
 public:
     Utility(Board& board, int position, std::string name,
             int cost, Color color);
+    void onPlayerEntry(Token token) override;
 };
 
 class Start final : public FieldTile {
