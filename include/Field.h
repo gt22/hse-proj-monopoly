@@ -5,6 +5,7 @@
 #include <string>
 
 static constexpr int PRISON_FINE = 50;
+static constexpr int START_SUM = 200;
 
 enum class Color : std::size_t {
     COL1,
@@ -63,6 +64,7 @@ class Start final : public FieldTile {
 public:
     Start(Board& board, int position, std::string name);
     void onPlayerPass(Token token) override;
+    void onPlayerEntry(Token token) override;
 };
 
 class Prison final : public FieldTile {

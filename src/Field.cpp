@@ -14,11 +14,62 @@ void FieldTile::onPlayerEntry(Token) {}
 
 void Start::onPlayerPass(Token token) {
     PlayerData& player = board.getPlayer(token);
-    player.money += 200;
+    player.money += START_SUM;
+}
+
+template<typename T>
+int findInVector(std::vector<T>& vec, T val) {
+    for (std::size_t i = 0; i < vec.size(); i++) {
+        if (vec[i] == val) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 Start::Start(Board &board, int position, std::string name)
  : FieldTile(board, position, std::move(name)) {}
+
+void Start::onPlayerEntry(Token token) {
+    PlayerData& player = board.getPlayer(token);
+    player.money += START_SUM;
+    PlayerRequest request({}, "");
+    std::set<PlayerAction> mustHave;
+    mustHave.insert(PlayerAction::END_TURN);
+    request.availableActions.push_back(PlayerAction::END_TURN);
+    request.availableActions.push_back(PlayerAction::USE_CARD);
+    request.availableActions.push_back(PlayerAction::BUY_BUILDING);
+    request.availableActions.push_back(PlayerAction::BUY_HOTEL);
+    request.availableActions.push_back(PlayerAction::MORTGAGE_HOLDINGS);
+    request.availableActions.push_back(PlayerAction::START_TRADE);
+    while (!mustHave.empty()) {
+        PlayerReply reply = board.sendRequest(token, request);
+        if (reply->action == PlayerAction::END_TURN) {
+            mustHave.clear();
+            continue;
+        }
+        if (reply->action == PlayerAction::USE_CARD) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::BUY_BUILDING) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::BUY_HOTEL) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::MORTGAGE_HOLDINGS) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::START_TRADE) {
+            //TODO
+            continue;
+        }
+    }
+}
 
 void Prison::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
@@ -32,17 +83,13 @@ void Prison::onPlayerEntry(Token token) {
     request.availableActions.push_back(PlayerAction::START_TRADE);
     request.availableActions.push_back(PlayerAction::MORTGAGE_HOLDINGS);
     if (board.getPlayer(token).prisoner) {
-        mustHave.insert(PlayerAction::PAY_TAX);
         request.availableActions.push_back(PlayerAction::PAY_TAX);
-        mustHave.insert(PlayerAction::USE_CARD);
         request.availableActions.push_back(PlayerAction::USE_CARD);
-        mustHave.insert(PlayerAction::ROLL_DICE);
         request.availableActions.push_back(PlayerAction::ROLL_DICE);
     }
     while (!mustHave.empty()) {
-        //print request
-        //get reply
-        if (reply.action == PlayerAction::END_TURN) {
+        PlayerReply reply = board.sendRequest(token, request);
+        if (reply->action == PlayerAction::END_TURN) {
             if (player.prisoner) {
                 player.daysLeftInPrison--;
                 if (player.daysLeftInPrison == 0) {
@@ -52,55 +99,57 @@ void Prison::onPlayerEntry(Token token) {
             mustHave.clear();
             continue;
         }
-        if (reply.action == PlayerAction::ROLL_DICE) {
+        if (reply->action == PlayerAction::ROLL_DICE) {
             int firstTrow = rng.nextInt(1, 6), secondTrow = rng.nextInt(1, 6);
-            //send firstTrow, secondTrow(?)
             if (firstTrow == secondTrow) {
+                request.message = std::to_string(firstTrow) + " " + std::to_string(secondTrow) + "\nYou are leaving the prison!";
                 player.outOfPrison();
-                mustHave.erase(mustHave.find(PlayerAction::USE_CARD));
-                mustHave.erase(mustHave.find(PlayerAction::PAY_TAX));
-                //delete from request.availableActions
+                request.availableActions.erase(request.availableActions.begin() +
+                                               findInVector(request.availableActions, PlayerAction::USE_CARD));
+                request.availableActions.erase(request.availableActions.begin() +
+                                               findInVector(request.availableActions, PlayerAction::PAY_TAX));
             }
-            mustHave.erase(mustHave.find(PlayerAction::ROLL_DICE));
-            //delete from request.availableActions
+            request.message = std::to_string(firstTrow) + " != " + std::to_string(secondTrow) + "\nYou don't leave prison :(";
+            request.availableActions.erase(request.availableActions.begin() +
+                                           findInVector(request.availableActions, PlayerAction::ROLL_DICE));
             continue;
         }
-        if (reply.action == PlayerAction::PAY_TAX) {
+        if (reply->action == PlayerAction::PAY_TAX) {
             if (player.money >= tax) {
                 player.money -= tax;
                 player.outOfPrison();
-                mustHave.erase(mustHave.find(PlayerAction::USE_CARD));
-                mustHave.erase(mustHave.find(PlayerAction::PAY_TAX));
-                mustHave.erase(mustHave.find(PlayerAction::ROLL_DICE));
-                //delete from request.availableActions
+                request.availableActions.erase(request.availableActions.begin() +
+                                               findInVector(request.availableActions, PlayerAction::USE_CARD));
+                request.availableActions.erase(request.availableActions.begin() +
+                                               findInVector(request.availableActions, PlayerAction::PAY_TAX));
+                request.availableActions.erase(request.availableActions.begin() +
+                                               findInVector(request.availableActions, PlayerAction::ROLL_DICE));
             } else {
-                //send message not enough money
+                request.message = "Not enough money :(";
             }
             continue;
         }
-        if (reply.action == PlayerAction::USE_CARD) {
-            //пользователь выбирает карту, проверка, что подходит
-            //либо он говорит, что хочет использовать, а я ищу карту или говорю, что ее нет
+        if (reply->action == PlayerAction::USE_CARD) {
+            //TODO: пользователь видит список доступных карт, выбирает из них
             continue;
         }
-        if (reply.action == PlayerAction::BUY_BUILDING) {
+        if (reply->action == PlayerAction::BUY_BUILDING) {
             //TODO
             continue;
         }
-        if (reply.action == PlayerAction::BUY_HOTEL) {
+        if (reply->action == PlayerAction::BUY_HOTEL) {
             //TODO
             continue;
         }
-        if (reply.action == PlayerAction::START_TRADE) {
+        if (reply->action == PlayerAction::START_TRADE) {
             //TODO
             continue;
         }
-        if (reply.action == PlayerAction::MORTGAGE_HOLDINGS) {
+        if (reply->action == PlayerAction::MORTGAGE_HOLDINGS) {
             //TODO
             continue;
         }
     }
-    return;
 }
 
 Prison::Prison(Board &board, int position, std::string name)
@@ -123,7 +172,7 @@ Chance::Chance(Board &board, int position, std::string name)
 
 void IncomeTax::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
-    //check property
+    /*//check property
     if (player.money < tax) {
         // aks other players if they want to buy smth(???)
     }
@@ -137,7 +186,7 @@ void IncomeTax::onPlayerEntry(Token token) {
         player.money -= tax;
         return;
     }
-    //lose
+    //lose*/
 }
 
 IncomeTax::IncomeTax(Board &board, int position, std::string name, int tax)
@@ -149,7 +198,7 @@ FreeParking::FreeParking(Board &board, int position, std::string name)
  : FieldTile(board, position, std::move(name)) {}
 
 void Railway::onPlayerEntry(Token token) {
-    if (owner == token) {
+    /*if (owner == token) {
         return;
     }
     PlayerData& player = board.getPlayer(token);
@@ -171,7 +220,7 @@ void Railway::onPlayerEntry(Token token) {
         tax *= 2;
     }
     static_cast<void>(player);
-    //TODO: проверить, что может заплатить
+    //TODO: проверить, что может заплатить*/
 }
 
 OwnableTile::OwnableTile(Board &board, int position, std::string name, int cost, Color color)
