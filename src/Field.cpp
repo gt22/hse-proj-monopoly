@@ -197,8 +197,8 @@ void Chance::onPlayerEntry(Token token) {
 
 
 void IncomeTax::onPlayerEntry(Token token) {
-    PlayerData& player = board.getPlayer(token);
-    /*//check property
+    /*PlayerData& player = board.getPlayer(token);
+    //check property
     if (player.money < tax) {
         // aks other players if they want to buy smth(???)
     }
@@ -218,7 +218,7 @@ void IncomeTax::onPlayerEntry(Token token) {
 IncomeTax::IncomeTax(Board &board, int position, std::string name, int tax)
  : FieldTile(board, position, std::move(name)), tax(tax) {}
 
-void FreeParking::onPlayerPass(Token token) { static_cast<void>(token); }
+void FreeParking::onPlayerPass(Token token) { }
 
 FreeParking::FreeParking(Board &board, int position, std::string name)
  : FieldTile(board, position, std::move(name)) {}
@@ -245,7 +245,6 @@ void Railway::onPlayerEntry(Token token) {
     for (int i = 1; i <= fieldOwner.numberOfRailways; i++) {
         tax *= 2;
     }
-    static_cast<void>(player);
     //TODO: проверить, что может заплатить*/
 }
 

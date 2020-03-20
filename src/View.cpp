@@ -365,11 +365,10 @@ void NcursesView::runGame() {
 }
 
 PlayerReply NcursesView::processRequest(Player& player, PlayerRequest req) {
-    static_cast<void>(player);
     return std::make_unique<EndTurnReply>();
 }
 
 void NcursesView::redraw(const Board& board) {
-    static_cast<void>(board);
+
 }
 

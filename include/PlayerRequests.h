@@ -32,9 +32,9 @@ struct PlayerReplyData {
     const PlayerAction action;
 };
 
-template<PlayerAction action>
+template<PlayerAction ACTION>
 struct BasicReply : PlayerReplyData {
-    BasicReply() : PlayerReplyData(action) {}
+    BasicReply() : PlayerReplyData(ACTION) {}
 };
 
 struct PayTaxReply : BasicReply<PlayerAction::PAY_TAX> {};
