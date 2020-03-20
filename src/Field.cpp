@@ -192,36 +192,123 @@ Chance::Chance(Board &board, int position, std::string name)
  : FieldTile(board, position, std::move(name)) {}
 
 void Chance::onPlayerEntry(Token token) {
-    board.getPlayer(token).cards.push_back(board.deck.takeCard());
-}
-
-
-void IncomeTax::onPlayerEntry(Token token) {
-    /*PlayerData& player = board.getPlayer(token);
-    //check property
-    if (player.money < tax) {
-        // aks other players if they want to buy smth(???)
-    }
-    while (player.money < tax) {
-        if (!board.sendRequest(token, PlayerRequest("You don't have enough money.\n Would you like to mortgage real estate?")).answer) {
-            break;
+    PlayerData& player = board.getPlayer(token);
+    PlayerRequest request({}, "");
+    std::set<PlayerAction> mustHave;
+    mustHave.insert(PlayerAction::END_TURN);
+    mustHave.insert(PlayerAction::TAKE_CARD);
+    request.availableActions.push_back(PlayerAction::END_TURN);
+    request.availableActions.push_back(PlayerAction::USE_CARD);
+    request.availableActions.push_back(PlayerAction::START_TRADE);
+    request.availableActions.push_back(PlayerAction::MORTGAGE_HOLDINGS);
+    request.availableActions.push_back(PlayerAction::BUY_HOTEL);
+    request.availableActions.push_back(PlayerAction::BUY_BUILDING);
+    request.availableActions.push_back(PlayerAction::TAKE_CARD);
+    while (!mustHave.empty()) {
+        PlayerReply reply = board.sendRequest(token, request);
+        if (reply->action == PlayerAction::END_TURN) {
+            if (mustHave.find(PlayerAction::TAKE_CARD) == mustHave.end()) {
+                mustHave.clear();
+                continue;
+            }
+            request.message = "You can't finish turn";
+            continue;
         }
-        //what do you want to mortgage?
+        if (reply->action == PlayerAction::TAKE_CARD) {
+            mustHave.erase(mustHave.find(PlayerAction::TAKE_CARD));
+            request.availableActions.erase(request.availableActions.begin() +
+                                           findInVector(request.availableActions, PlayerAction::TAKE_CARD));
+            player.cards.push_back(board.deck.takeCard());
+            continue;
+        }
+        if (reply->action == PlayerAction::USE_CARD) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::START_TRADE) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::MORTGAGE_HOLDINGS) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::BUY_BUILDING) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::BUY_HOTEL) {
+            //TODO
+            continue;
+        }
     }
-    if (player.money >= tax) {
-        player.money -= tax;
-        return;
-    }
-    //lose*/
 }
 
 IncomeTax::IncomeTax(Board &board, int position, std::string name, int tax)
- : FieldTile(board, position, std::move(name)), tax(tax) {}
+        : FieldTile(board, position, std::move(name)), tax(tax) {}
+
+void IncomeTax::onPlayerEntry(Token token) {
+    PlayerData& player = board.getPlayer(token);
+    PlayerRequest request({}, "");
+    std::set<PlayerAction> mustHave;
+    mustHave.insert(PlayerAction::END_TURN);
+    mustHave.insert(PlayerAction::PAY_TAX);
+    request.availableActions.push_back(PlayerAction::END_TURN);
+    request.availableActions.push_back(PlayerAction::USE_CARD);
+    request.availableActions.push_back(PlayerAction::START_TRADE);
+    request.availableActions.push_back(PlayerAction::MORTGAGE_HOLDINGS);
+    request.availableActions.push_back(PlayerAction::BUY_HOTEL);
+    request.availableActions.push_back(PlayerAction::BUY_BUILDING);
+    request.availableActions.push_back(PlayerAction::PAY_TAX);
+    while (!mustHave.empty()) {
+        PlayerReply reply = board.sendRequest(token, request);
+        if (reply->action == PlayerAction::END_TURN) {
+            if (mustHave.find(PlayerAction::PAY_TAX) == mustHave.end()) {
+                mustHave.clear();
+                continue;
+            }
+            request.message = "You can't finish turn";
+            continue;
+        }
+        if (reply->action == PlayerAction::PAY_TAX) {
+            if (player.money >= tax) {
+                player.money -= tax;
+                mustHave.erase(mustHave.find(PlayerAction::PAY_TAX));
+                request.availableActions.erase(request.availableActions.begin() +
+                                               findInVector(request.availableActions, PlayerAction::PAY_TAX));
+                continue;
+            }
+            request.message = "Not enough money :(";
+            continue;
+        }
+        if (reply->action == PlayerAction::USE_CARD) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::START_TRADE) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::MORTGAGE_HOLDINGS) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::BUY_BUILDING) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::BUY_HOTEL) {
+            //TODO
+            continue;
+        }
+    }
+}
+
+FreeParking::FreeParking(Board &board, int position, std::string name)
+        : FieldTile(board, position, std::move(name)) {}
 
 void FreeParking::onPlayerPass(Token token) { }
 
-FreeParking::FreeParking(Board &board, int position, std::string name)
- : FieldTile(board, position, std::move(name)) {}
 
 void Railway::onPlayerEntry(Token token) {
     /*if (owner == token) {
