@@ -15,6 +15,7 @@ enum class PlayerAction {
     TAKE_CARD,
     MORTGAGE_HOLDINGS,
     START_TRADE,
+    START_TRADE_NEW_FIELD,
     ROLL_DICE,
     END_TURN
 };

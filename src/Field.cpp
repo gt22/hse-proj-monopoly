@@ -311,28 +311,51 @@ void FreeParking::onPlayerPass(Token token) { }
 
 
 void Railway::onPlayerEntry(Token token) {
-    /*if (owner == token) {
-        return;
-    }
     PlayerData& player = board.getPlayer(token);
-    if (owner == Token::FREE_FIELD) {
-        if (board.sendRequest(token, PlayerRequest("Would you like to buy" + this->name + "?")).answer) {
-            if (player.money >= cost) {
-                player.money -= cost;
-                (*this).owner = player.token;
-                return;
-            }
-            //sendMessage "You don't have enough money"
-        }
-        //TODO: покупка торги
-        return;
-    }
     PlayerData& fieldOwner = board.getPlayer(owner);
-    int tax = 25;
-    for (int i = 1; i <= fieldOwner.numberOfRailways; i++) {
-        tax *= 2;
+    PlayerRequest request({}, "");
+    std::set<PlayerAction> mustHave;
+    mustHave.insert(PlayerAction::END_TURN);
+    request.availableActions.push_back(PlayerAction::END_TURN);
+    request.availableActions.push_back(PlayerAction::BUY_HOTEL);
+    request.availableActions.push_back(PlayerAction::BUY_BUILDING);
+    request.availableActions.push_back(PlayerAction::START_TRADE);
+    request.availableActions.push_back(PlayerAction::MORTGAGE_HOLDINGS);
+    if (owner == Token::FREE_FIELD) {
+        request.availableActions.push_back(PlayerAction::BUY_PROPERTY);
+        mustHave.insert(PlayerAction::BUY_PROPERTY);
+        request.availableActions.push_back(PlayerAction::START_TRADE_NEW_FIELD);
+        mustHave.insert(PlayerAction::START_TRADE_NEW_FIELD);
+    } else if (owner != token) {
+        request.availableActions.push_back(PlayerAction::PAY_TO_OTHER_PLAYER);
+        mustHave.insert(PlayerAction::PAY_TO_OTHER_PLAYER);
     }
-    //TODO: проверить, что может заплатить*/
+    while (!mustHave.empty()) {
+        PlayerReply reply = board.sendRequest(token, request);
+        if (reply->action == PlayerAction::END_TURN) {
+            if (mustHave.size() == 1) {
+                mustHave.clear();
+                continue;
+            }
+            request.message = "You can't finish turn";
+            continue;
+        }
+        if (reply->action == PlayerAction::PAY_TO_OTHER_PLAYER) {
+            int tax = 25;
+            for (int i = 1; i <= fieldOwner.numberOfRailways; i++) {
+                tax *= 2;
+            if (player.money >= tax) {
+                player.money -= tax;
+                mustHave.erase(mustHave.find(PlayerAction::PAY_TO_OTHER_PLAYER));
+                request.availableActions.erase(request.availableActions.begin() +
+                                               findInVector(request.availableActions, PlayerAction::PAY_TO_OTHER_PLAYER));
+                continue;
+            }
+            request.message = "Not enough money :(";
+            continue;
+        }
+    }
+
 }
 
 OwnableTile::OwnableTile(Board &board, int position, std::string name, int cost, Color color)
