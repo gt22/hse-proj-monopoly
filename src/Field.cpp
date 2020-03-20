@@ -71,6 +71,9 @@ void Start::onPlayerEntry(Token token) {
     }
 }
 
+Prison::Prison(Board &board, int position, std::string name)
+        : FieldTile(board, position, std::move(name)) {}
+
 void Prison::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
     RandomSource rng;
@@ -152,23 +155,46 @@ void Prison::onPlayerEntry(Token token) {
     }
 }
 
-Prison::Prison(Board &board, int position, std::string name)
+GoToPrison::GoToPrison(Board &board, int position, std::string name)
  : FieldTile(board, position, std::move(name)) {}
+
 
 void GoToPrison::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
+    RandomSource rng;
+    PlayerRequest request({}, "");
+    std::set<PlayerAction> mustHave;
+    mustHave.insert(PlayerAction::END_TURN);
+    request.availableActions.push_back(PlayerAction::END_TURN);
+    request.availableActions.push_back(PlayerAction::ROLL_DICE);
     player.toPrison();
+    while (!mustHave.empty()) {
+        PlayerReply reply = board.sendRequest(token, request);
+        if (reply->action == PlayerAction::END_TURN) {
+            mustHave.clear();
+            continue;
+        }
+        if (reply->action == PlayerAction::ROLL_DICE) {
+            int firstTrow = rng.nextInt(1, 6), secondTrow = rng.nextInt(1, 6);
+            if (firstTrow == secondTrow) {
+                request.message = std::to_string(firstTrow) + " " + std::to_string(secondTrow) + "\nYou are leaving the prison!";
+                player.outOfPrison();
+            }
+            request.message = std::to_string(firstTrow) + " != " + std::to_string(secondTrow) + "\nYou don't leave prison :(";
+            request.availableActions.erase(request.availableActions.begin() +
+                                           findInVector(request.availableActions, PlayerAction::ROLL_DICE));
+            continue;
+        }
+    }
 }
 
-GoToPrison::GoToPrison(Board &board, int position, std::string name)
+Chance::Chance(Board &board, int position, std::string name)
  : FieldTile(board, position, std::move(name)) {}
 
 void Chance::onPlayerEntry(Token token) {
     board.getPlayer(token).cards.push_back(board.deck.takeCard());
 }
 
-Chance::Chance(Board &board, int position, std::string name)
- : FieldTile(board, position, std::move(name)) {}
 
 void IncomeTax::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
