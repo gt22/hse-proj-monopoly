@@ -26,6 +26,7 @@ void Game::runGame() {
             continue;
         }
         int firstTrow = rng.nextInt(1, 6), secondTrow = rng.nextInt(1, 6);
+        curPlayer.lastTrow = firstTrow + secondTrow;
         bool extraTurn = false;
         if (firstTrow == secondTrow) {
             curPlayer.doubleDice++;

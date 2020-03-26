@@ -50,6 +50,7 @@ class Street final : public OwnableTile {
 public:
     Street(Board& board, int position, std::string name,
            int cost, Color color, int costPerHouse);
+    void onPlayerEntry(Token token) override;
     int numberOfHouses = 0;
     int costPerHouse;
 };
@@ -101,7 +102,7 @@ private:
 class FreeParking final : public FieldTile {
 public:
     FreeParking(Board& board, int position, std::string name);
-    void onPlayerPass(Token token) override;
+    void onPlayerEntry(Token token) override;
 };
 
 #endif //FIELD_H

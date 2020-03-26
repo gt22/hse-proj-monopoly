@@ -307,7 +307,7 @@ void IncomeTax::onPlayerEntry(Token token) {
 FreeParking::FreeParking(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {}
 
-void FreeParking::onPlayerPass(Token token) { }
+void FreeParking::onPlayerEntry(Token token) { }
 
 int getRailwayTax(int num) {
     int tax = 25;
@@ -328,6 +328,7 @@ void Railway::onPlayerEntry(Token token) {
     mustHave.insert(PlayerAction::END_TURN);
     request.availableActions.push_back(PlayerAction::END_TURN);
     request.availableActions.push_back(PlayerAction::BUY_HOTEL);
+    request.availableActions.push_back(PlayerAction::USE_CARD);
     request.availableActions.push_back(PlayerAction::BUY_BUILDING);
     request.availableActions.push_back(PlayerAction::START_TRADE);
     request.availableActions.push_back(PlayerAction::MORTGAGE_HOLDINGS);
@@ -354,6 +355,7 @@ void Railway::onPlayerEntry(Token token) {
             int tax = getRailwayTax(fieldOwner.numberOfRailways);
             if (player.money >= tax) {
                 player.money -= tax;
+                fieldOwner.money += tax;
                 mustHave.erase(mustHave.find(PlayerAction::PAY_TO_OTHER_PLAYER));
                 request.availableActions.erase(request.availableActions.begin() +
                                                findInVector(request.availableActions, PlayerAction::PAY_TO_OTHER_PLAYER));
@@ -391,5 +393,88 @@ Utility::Utility(Board &board, int position, std::string name, int cost, Color c
  : OwnableTile(board, position, std::move(name), cost, color) {}
 
 void Utility::onPlayerEntry(Token token) {
-
+    PlayerData& player = board.getPlayer(token);
+    PlayerData& fieldOwner = board.getPlayer(owner);
+    PlayerRequest request({}, "");
+    std::set<PlayerAction> mustHave;
+    mustHave.insert(PlayerAction::END_TURN);
+    request.availableActions.push_back(PlayerAction::END_TURN);
+    request.availableActions.push_back(PlayerAction::BUY_HOTEL);
+    request.availableActions.push_back(PlayerAction::USE_CARD);
+    request.availableActions.push_back(PlayerAction::BUY_BUILDING);
+    request.availableActions.push_back(PlayerAction::START_TRADE);
+    request.availableActions.push_back(PlayerAction::MORTGAGE_HOLDINGS);
+    if (owner == Token::FREE_FIELD) {
+        request.availableActions.push_back(PlayerAction::BUY_PROPERTY);
+        mustHave.insert(PlayerAction::BUY_PROPERTY);
+        request.availableActions.push_back(PlayerAction::START_TRADE_NEW_FIELD);
+        mustHave.insert(PlayerAction::START_TRADE_NEW_FIELD);
+    } else if (owner != token) {
+        request.availableActions.push_back(PlayerAction::PAY_TO_OTHER_PLAYER);
+        mustHave.insert(PlayerAction::PAY_TO_OTHER_PLAYER);
+    }
+    while (!mustHave.empty()) {
+        PlayerReply reply = board.sendRequest(token, request);
+        if (reply->action == PlayerAction::END_TURN) {
+            if (mustHave.size() == 1) {
+                mustHave.clear();
+                continue;
+            }
+            request.message = "You can't finish turn";
+            continue;
+        }
+        if (reply->action == PlayerAction::PAY_TO_OTHER_PLAYER) {
+            int tax = player.lastTrow;
+            switch (fieldOwner.numberOfUtilities) {
+                case 1: tax *= 4;
+                case 2: tax *= 10;
+            }
+            if (player.money >= tax) {
+                player.money -= tax;
+                fieldOwner.money += tax;
+                mustHave.erase(mustHave.find(PlayerAction::PAY_TO_OTHER_PLAYER));
+                request.availableActions.erase(request.availableActions.begin() +
+                                               findInVector(request.availableActions, PlayerAction::PAY_TO_OTHER_PLAYER));
+                continue;
+            }
+            request.message = "Not enough money :(";
+            continue;
+        }
+        if (reply->action == PlayerAction::BUY_PROPERTY) {
+            if (player.money >= cost) {
+                player.money -= cost;
+                player.numberOfUtilities++;
+                owner = token;
+                mustHave.erase(mustHave.find(PlayerAction::BUY_PROPERTY));
+                request.availableActions.erase(request.availableActions.begin() +
+                                               findInVector(request.availableActions, PlayerAction::BUY_PROPERTY));
+                mustHave.erase(mustHave.find(PlayerAction::START_TRADE_NEW_FIELD));
+                request.availableActions.erase(request.availableActions.begin() +
+                                               findInVector(request.availableActions, PlayerAction::START_TRADE_NEW_FIELD));
+                continue;
+            }
+            request.message = "Not enough money :(";
+            continue;
+        }
+        if (reply->action == PlayerAction::USE_CARD) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::START_TRADE) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::MORTGAGE_HOLDINGS) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::BUY_BUILDING) {
+            //TODO
+            continue;
+        }
+        if (reply->action == PlayerAction::BUY_HOTEL) {
+            //TODO
+            continue;
+        }
+    }
 }
