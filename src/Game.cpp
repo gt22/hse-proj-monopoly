@@ -30,6 +30,8 @@ void Game::runGame() {
             continue;
         }
         int firstTrow = rng.nextInt(1, 6), secondTrow = rng.nextInt(1, 6);
+        PlayerMessage message(std::to_string(firstTrow) + " " + std::to_string(secondTrow));
+        sendMessage(curPlayer.token, message);
         curPlayer.lastTrow = firstTrow + secondTrow;
         bool extraTurn = false;
         if (firstTrow == secondTrow) {
