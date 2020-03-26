@@ -220,7 +220,6 @@ void IncomeTax::onPlayerEntry(Token token) {
 
     while (true) {
         makeDefaultRequest(request);
-        request.availableActions.push_back(PlayerAction::MORTGAGE_HOLDINGS);
         addAll(request.availableActions, mustHave);
 
         PlayerReply reply = board.sendRequest(token, request);
@@ -263,7 +262,6 @@ void OwnableTile::onPlayerEntry(Token token) {
     while (true) {
         std::set<PlayerAction> mustHave = makePropertyMusthave(*this, token, taxPaid);
         makeDefaultRequest(request);
-        request.availableActions.push_back(PlayerAction::MORTGAGE_HOLDINGS);
         addAll(request.availableActions, mustHave);
 
         PlayerReply reply = board.sendRequest(token, request);
