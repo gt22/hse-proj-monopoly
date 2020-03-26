@@ -389,8 +389,20 @@ OwnableTile::OwnableTile(Board &board, int position, std::string name, int cost,
 Street::Street(Board &board, int position, std::string name, int cost, Color color, int costPerHouse)
  : OwnableTile(board, position, std::move(name), cost, color), costPerHouse(costPerHouse) {}
 
+void Street::onPlayerEntry(Token token) {}
+
 Utility::Utility(Board &board, int position, std::string name, int cost, Color color)
  : OwnableTile(board, position, std::move(name), cost, color) {}
+
+int getUtilityTax(int sum, int numberOfUtility) {
+    if (numberOfUtility == 1) {
+        return sum * 4;
+    }
+    if (numberOfUtility == 2) {
+        return sum * 10;
+    }
+    return -1;
+}
 
 void Utility::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
@@ -424,11 +436,7 @@ void Utility::onPlayerEntry(Token token) {
             continue;
         }
         if (reply->action == PlayerAction::PAY_TO_OTHER_PLAYER) {
-            int tax = player.lastTrow;
-            switch (fieldOwner.numberOfUtilities) {
-                case 1: tax *= 4;
-                case 2: tax *= 10;
-            }
+            int tax = getUtilityTax(player.lastTrow, fieldOwner.numberOfUtilities);
             if (player.money >= tax) {
                 player.money -= tax;
                 fieldOwner.money += tax;
