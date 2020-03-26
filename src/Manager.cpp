@@ -16,6 +16,16 @@ PlayerReply Manager::sendRequest(Token token, PlayerRequest request) {
     throw 1; //TODO: сделать PlayerNotFoundException или что-нибудь такое
 }
 
+void Manager::sendMessage(Token token, PlayerMessage mes) {
+    for(auto& p : players) {
+        if(p->token == token) {
+            p->sendMessage(std::move(mes));
+            return;
+        }
+    }
+    throw 1; //TODO: сделать PlayerNotFoundException или что-нибудь такое
+}
+
 void Manager::createGame() {
     assert(!game);
     std::vector<std::pair<std::string_view, Token>> gameData;

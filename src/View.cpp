@@ -368,6 +368,10 @@ PlayerReply NcursesView::processRequest(Player& player, PlayerRequest req) {
     return std::make_unique<EndTurnReply>();
 }
 
+void NcursesView::processMessage(Player &p, PlayerMessage mes) {
+    std::make_unique<EndTurnReply>();
+}
+
 void NcursesView::redraw(const Board& board) {
 
 }

@@ -14,6 +14,7 @@ public:
     Game(const std::vector<std::pair<std::string_view, Token>>& players, Manager&);
     void runGame();
     PlayerReply sendRequest(Token token, PlayerRequest request);
+    void sendMessage(Token token, PlayerMessage mes);
 
 private:
     //std::unique_ptr<View> view;

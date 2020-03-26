@@ -27,6 +27,11 @@ struct PlayerRequest final {
     std::string message;
 };
 
+struct PlayerMessage final {
+    explicit PlayerMessage(std::string message);
+    std::string message;
+};
+
 struct PlayerReplyData {
     explicit PlayerReplyData(PlayerAction action);
     virtual ~PlayerReplyData() = default;

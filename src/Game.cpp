@@ -12,6 +12,10 @@ PlayerReply Game::sendRequest(Token token, PlayerRequest request) {
     return manager.sendRequest(token, std::move(request));
 }
 
+void Game::sendMessage(Token token, PlayerMessage mes) {
+    manager.sendMessage(token, std::move(mes));
+}
+
 void Game::runGame() {
     std::size_t curPlayerNum = 0;
     while (true) {

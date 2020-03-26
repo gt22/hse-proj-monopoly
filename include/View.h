@@ -37,6 +37,7 @@ public:
 
    virtual void redraw(const Board& board) = 0;
    virtual PlayerReply processRequest(Player& p, PlayerRequest req) = 0;
+   virtual void processMessage(Player& p, PlayerMessage mes) = 0;
   // virtual void getCoord(int &x, int &y, int index);
 
    // virtual Input::InputAction getAction(); //TODO: как православно обработать экшены
@@ -55,6 +56,7 @@ public:
     //void drawField() override;
     //void printStatus() override;
     PlayerReply processRequest(Player& p, PlayerRequest req) override;
+    void processMessage(Player& p, PlayerMessage mes) override;
     void changeFieldSize();
 private:
     const static int TILES_PER_LINE = 11;

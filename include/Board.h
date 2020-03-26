@@ -45,6 +45,7 @@ public:
     Token getPlayerToken(std::size_t index);
     const std::vector<PlayerData>& getPlayers();
     PlayerReply sendRequest(Token token, PlayerRequest request);
+    void sendMessage(Token token, PlayerMessage mes);
     std::size_t getPlayersNumber();
 
 private:

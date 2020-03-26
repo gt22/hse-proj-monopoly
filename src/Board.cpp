@@ -160,3 +160,7 @@ Token Board::getPlayerToken(std::size_t index) {
 PlayerReply Board::sendRequest(Token token, PlayerRequest request) {
     return game.sendRequest(token, request);
 }
+
+void Board::sendMessage(Token token, PlayerMessage mes) {
+    game.sendMessage(token, mes);
+}

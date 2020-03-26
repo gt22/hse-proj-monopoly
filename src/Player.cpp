@@ -14,6 +14,10 @@ PlayerReply LocalPlayer::sendRequest(PlayerRequest request) {
     return gameView().processRequest(*this, request);
 }
 
+void LocalPlayer::sendMessage(PlayerMessage request) {
+    gameView().processMessage(*this, request);
+}
+
 void LocalPlayer::sync(const Board &board) {
     gameView().redraw(board);
 }
