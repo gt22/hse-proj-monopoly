@@ -21,15 +21,16 @@ enum class PlayerAction {
 };
 
 struct PlayerRequest final {
+    PlayerRequest();
     explicit PlayerRequest(std::vector<PlayerAction> availableActions,
-            std::string message);
+            std::string_view message);
     std::vector<PlayerAction> availableActions;
-    std::string message;
+    std::string_view message;
 };
 
 struct PlayerMessage final {
-    explicit PlayerMessage(std::string message);
-    std::string message;
+    explicit PlayerMessage(std::string_view message);
+    std::string_view message;
 };
 
 struct PlayerReplyData {

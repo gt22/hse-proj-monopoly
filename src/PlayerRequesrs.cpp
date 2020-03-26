@@ -1,9 +1,11 @@
 #include "PlayerRequests.h"
 
-PlayerRequest::PlayerRequest(std::vector<PlayerAction> availableActions,
-        std::string message)
- : availableActions(std::move(availableActions)), message(std::move(message)) {}
+PlayerRequest::PlayerRequest() : PlayerRequest({}, "") {}
 
-PlayerMessage::PlayerMessage(std::string message) : message(std::move(message)) {}
+PlayerRequest::PlayerRequest(std::vector<PlayerAction> availableActions,
+        std::string_view message)
+ : availableActions(std::move(availableActions)), message(message) {}
+
+PlayerMessage::PlayerMessage(std::string_view message) : message(message) {}
 
 PlayerReplyData::PlayerReplyData(PlayerAction action) : action(action) {}

@@ -22,8 +22,8 @@ struct PlayerData {
     int money = 1500;
     int doubleDice = 0;
     int daysLeftInPrison = 0; //TODO: придумать нормальное имя
-    int numberOfRailways = 0;
-    int numberOfUtilities = 0;
+    size_t numberOfRailways = 0;
+    size_t numberOfUtilities = 0;
     int lastTrow = 0;
     bool prisoner = false;
     bool alive = true;

@@ -33,6 +33,9 @@ class OwnableTile : public FieldTile {
 public:
     OwnableTile(Board& board, int position, std::string name,
             int cost, Color color);
+    virtual size_t calculateTax(Token token) = 0;
+    virtual void onPurchase(Token token) = 0;
+    void onPlayerEntry(Token token) override;
     int cost;
     int costOfParking = 0;
     Color color;
@@ -43,13 +46,16 @@ class Railway final : public OwnableTile {
 public:
     Railway(Board& board, int position, std::string name,
             int cost, Color color);
-    void onPlayerEntry(Token token) override;
+    size_t calculateTax(Token token) override;
+    void onPurchase(Token token) override;
 };
 
 class Street final : public OwnableTile {
 public:
     Street(Board& board, int position, std::string name,
            int cost, Color color, int costPerHouse);
+    size_t calculateTax(Token token) override;
+    void onPurchase(Token token) override;
     void onPlayerEntry(Token token) override;
     int numberOfHouses = 0;
     int costPerHouse;
@@ -59,7 +65,8 @@ class Utility final : public OwnableTile {
 public:
     Utility(Board& board, int position, std::string name,
             int cost, Color color);
-    void onPlayerEntry(Token token) override;
+    size_t calculateTax(Token token) override;
+    void onPurchase(Token token) override;
 };
 
 class Start final : public FieldTile {
@@ -102,7 +109,6 @@ private:
 class FreeParking final : public FieldTile {
 public:
     FreeParking(Board& board, int position, std::string name);
-    void onPlayerEntry(Token token) override;
 };
 
 #endif //FIELD_H
