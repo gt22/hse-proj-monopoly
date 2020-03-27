@@ -203,6 +203,7 @@ NcursesView::NcursesView(Manager& manager) : MonopolyView(manager) {
     initscr();
     noecho();
     keypad(stdscr, TRUE);
+    mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
     curs_set(0);
 }
 
@@ -376,3 +377,31 @@ void NcursesView::redraw(const Board& board) {
 
 }
 
+int NcursesView::transformCoord(int x, int y) {
+    if (x > tileSizeX && y > tileSizeY && x < fieldSizeX - tileSizeX && y < fieldSizeY - tileSizeY)
+        return -1;
+    if (y < tileSizeY)
+        return x / tileSizeX;
+    else if (x > fieldSizeX - tileSizeX)
+        return TILES_PER_LINE - 1 + y / tileSizeY;
+    else if (y > fieldSizeY - tileSizeY)
+        return 3 * TILES_PER_LINE -  3 - x / tileSizeX;
+    else if (x < tileSizeX)
+        return 4 * TILES_PER_LINE - 4 - y / tileSizeY;
+    return -1;
+}
+
+int NcursesView::mouseAction() {
+    int c = getch();
+    MEVENT event;
+    if (c == KEY_MOUSE) {
+        if (getmouse(&event) == OK) {
+            if (event.bstate & BUTTON1_DOUBLE_CLICKED) {
+                return transformCoord(event.x, event.y);
+            } else if (event.bstate & BUTTON1_PRESSED) {
+                // tile info
+            }
+        }
+    }
+    return -1;
+}

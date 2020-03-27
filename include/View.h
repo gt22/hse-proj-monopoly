@@ -58,6 +58,9 @@ public:
     PlayerReply processRequest(Player& p, PlayerRequest req) override;
     void processMessage(Player& p, PlayerMessage mes) override;
     void changeFieldSize();
+
+    int transformCoord(int x, int y);
+    int mouseAction();
 private:
     const static int TILES_PER_LINE = 11;
     int maxX = 0;
