@@ -392,16 +392,21 @@ int NcursesView::transformCoord(int x, int y) {
 }
 
 int NcursesView::mouseAction() {
-    int c = getch();
     MEVENT event;
-    if (c == KEY_MOUSE) {
-        if (getmouse(&event) == OK) {
-            if (event.bstate & BUTTON1_DOUBLE_CLICKED) {
-                return transformCoord(event.x, event.y);
-            } else if (event.bstate & BUTTON1_PRESSED) {
-                // tile info
+    int ch, pos;
+    while (true) {
+        ch = getch();
+        if (ch == KEY_MOUSE) {
+            if (getmouse(&event) == OK) {
+                if (event.bstate & BUTTON1_DOUBLE_CLICKED) {
+                    pos = transformCoord(event.x, event.y);
+                    if (pos != -1)
+                        break;
+                } else if (event.bstate & BUTTON1_PRESSED) {
+                    // tile info
+                }
             }
         }
     }
-    return -1;
+    return pos;
 }
