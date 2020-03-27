@@ -19,7 +19,7 @@ void LocalPlayer::sendMessage(PlayerMessage request) {
 }
 
 void LocalPlayer::sync(const Board &board) {
-    gameView().redraw(board);
+    //gameView().redraw(board);
 }
 
 MonopolyView &LocalPlayer::gameView() {

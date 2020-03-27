@@ -25,6 +25,8 @@ NcursesView::~NcursesView() {
 void NcursesView::getCoord(int &x, int &y, int index) {
     if (index >= 40)
         index %= 40;
+    if (index < 0)
+        index +=40;
     if (index < TILES_PER_LINE) {
         x = tileSizeX / 2 + (index) * tileSizeX;
         y = tileSizeY / 2;
@@ -47,10 +49,15 @@ void NcursesView::drawPlayer(int x, int y, int color) {
         exit(1);
     }
     start_color();
-    init_pair(1, color, COLOR_BLACK);
-    attron(COLOR_PAIR(1));
+    init_pair(0, COLOR_RED, COLOR_BLACK);
+    init_pair(1, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(2, COLOR_BLUE, COLOR_BLACK);
+    init_pair(3, COLOR_CYAN, COLOR_BLACK);
+    init_pair(4, COLOR_GREEN, COLOR_BLACK);
+    init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
+    attron(COLOR_PAIR(color));
     mvaddch(y, x, ' '|A_REVERSE);
-    attroff(COLOR_PAIR(1));
+    attroff(COLOR_PAIR(color));
 }
 
 // FIELD
@@ -144,18 +151,27 @@ void NcursesView::printGrid() {
 
 
 void NcursesView::runGame() {
-    int ind = 0;
+    //int ind = 0;
     while (true) {
         bool flag = false;
-        printGrid();
-        int x = 0, y = 0;
+        //printGrid();
+        redraw();
+        //int x = 0, y = 0;
         int enteredChar = getch();
 
         switch(enteredChar) {
             case 'x':
                 flag = true;
                 break;
-            case 'd':
+            case KEY_RIGHT:
+                for (int i = 0; i < 6; i++)
+                    ar[i]++;
+                break;
+            case KEY_LEFT:
+                for (int i = 0; i < 6; i++)
+                    ar[i]--;
+                break;
+         /*   case 'd':
                 erase();
                 getCoord(x, y, ind);
                 drawPlayer(x, y, COLOR_CYAN);
@@ -168,7 +184,8 @@ void NcursesView::runGame() {
                 getCoord(x, y, ind);
                 drawPlayer(x, y, COLOR_CYAN);
                 refresh();
-                break;
+                break;*/
+
         }
         refresh();
         if (flag)
@@ -184,7 +201,39 @@ void NcursesView::processMessage(Player &p, PlayerMessage mes) {
     std::make_unique<EndTurnReply>();
 }
 
-void NcursesView::redraw(const Board& board) {
+void NcursesView::redraw() {
+    // TODO: const Board& board - лажа с константностью
+    clear();
+    refresh();
+    printGrid();
+    // TODO: размер вектора (кол-во игроков?) board.getPlayers()
+
+
+    size_t size = 6;
+
+    for (size_t i = 0; i < size; i++) {
+        int x, y;
+        //getCoord(x, y, board.getPlayer(board.getPlayerToken(i)).position);
+        getCoord(x, y, ar[i]);
+        if (i == 0) {
+            x-=2;
+            y--;
+        } else if (i == 1) {
+            y--;
+        } else if (i == 2) {
+            x+=2;
+            y--;
+        } else if (i == 3) {
+            x-=2;
+            y++;
+        } else if (i == 4) {
+            y++;
+        } else if (i == 5) {
+            x+=2;
+            y++;
+        }
+        drawPlayer(x, y, i);
+    }
 
 }
 
