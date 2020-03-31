@@ -41,12 +41,13 @@ public:
     std::array<FieldTile *, FIELD_SIZE>  field;
     CardPool deck;
 
-    PlayerData& getPlayer(Token);
-    Token getPlayerToken(std::size_t index);
-    const std::vector<PlayerData>& getPlayers();
-    PlayerReply sendRequest(Token token, PlayerRequest request);
-    void sendMessage(Token token, PlayerMessage mes);
-    std::size_t getPlayersNumber();
+    PlayerData& getPlayer(Token token);
+    const PlayerData& getPlayer(Token token) const;
+    Token getPlayerToken(std::size_t index) const;
+    const std::vector<PlayerData>& getPlayers() const;
+    PlayerReply sendRequest(Token token, PlayerRequest request) const;
+    void sendMessage(Token token, PlayerMessage mes) const;
+    std::size_t getPlayersNumber() const;
 
 private:
     std::vector<PlayerData> players;

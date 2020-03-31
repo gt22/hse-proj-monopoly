@@ -149,18 +149,32 @@ PlayerData& Board::getPlayer(Token token) {
     throw 1;
 }
 
-std::size_t Board::getPlayersNumber() {
-    return players.size();
+const PlayerData &Board::getPlayer(Token token) const {
+    for (auto &player : players) {
+        if (player.token == token) {
+            return player;
+        }
+    }
+    //TODO: что вернуть если не нашли.
+    throw 1;
 }
 
-Token Board::getPlayerToken(std::size_t index) {
+Token Board::getPlayerToken(std::size_t index) const {
     return players[index].token;
 }
 
-PlayerReply Board::sendRequest(Token token, PlayerRequest request) {
+PlayerReply Board::sendRequest(Token token, PlayerRequest request) const {
     return game.sendRequest(token, request);
 }
 
-void Board::sendMessage(Token token, PlayerMessage mes) {
+void Board::sendMessage(Token token, PlayerMessage mes) const {
     game.sendMessage(token, mes);
+}
+
+std::size_t Board::getPlayersNumber() const {
+    return players.size();
+}
+
+const std::vector<PlayerData> &Board::getPlayers() const {
+    return players;
 }

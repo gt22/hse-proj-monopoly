@@ -14,20 +14,6 @@ protected:
     Manager& manager;
 };
 
-class MenuView final : public AbstractView {
-public:
-    explicit MenuView(Manager& manager);
-    ~MenuView() override;
-    void menuInteraction();
-    int getPlayersNumber();
-    void addPlayerMenu();
-private:
-    WINDOW* menuWindow;
-    int menuSizeX = 0;
-    int menuSizeY = 0;
-    static const int NUMBER_OF_BUTTONS = 3;
-    static const int NUMBER_OF_TOKENS = 6;
-};
 
 class MonopolyView : public AbstractView {
 public:
@@ -35,7 +21,7 @@ public:
    // virtual void drawField();
    // virtual void printStatus();
 
-   virtual void redraw(const Board& board) = 0;
+   virtual void redraw() = 0;
    virtual PlayerReply processRequest(Player& p, PlayerRequest req) = 0;
    virtual void processMessage(Player& p, PlayerMessage mes) = 0;
   // virtual void getCoord(int &x, int &y, int index);
@@ -52,12 +38,15 @@ public:
     void runGame();
     void getCoord(int &x, int &y, int index);
     void drawPlayer(int x, int y, int color);
-    void redraw(const Board& board) override;
+    void redraw() override;
     //void drawField() override;
     //void printStatus() override;
     PlayerReply processRequest(Player& p, PlayerRequest req) override;
     void processMessage(Player& p, PlayerMessage mes) override;
     void changeFieldSize();
+
+    int transformCoord(int x, int y);
+    int mouseAction();
 private:
     const static int TILES_PER_LINE = 11;
     int maxX = 0;
@@ -66,5 +55,6 @@ private:
     int fieldSizeY = 0;
     int tileSizeX = 0;
     int tileSizeY = 0;
+    int ar[6] ={0, 0, 1, 5, 7, 15};
 };
 #endif

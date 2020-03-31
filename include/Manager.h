@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Game.h"
 #include "View.h"
+#include "Menu.h"
 #include <vector>
 #include <memory>
 

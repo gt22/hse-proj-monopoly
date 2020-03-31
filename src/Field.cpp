@@ -36,6 +36,21 @@ Railway::Railway(Board &board, int position, std::string name, int cost, Color c
 Street::Street(Board &board, int position, std::string name, int cost, Color color, int costPerHouse)
         : OwnableTile(board, position, std::move(name), cost, color), costPerHouse(costPerHouse) {}
 
+size_t Street::calculateTax(Token token) {
+    // TODO
+    return 0;
+}
+
+void Street::onPurchase(Token token) {
+    // TODO
+    return;
+}
+
+void Street::onPlayerEntry(Token token) {
+    // TODO
+    return;
+}
+
 Utility::Utility(Board &board, int position, std::string name, int cost, Color color)
         : OwnableTile(board, position, std::move(name), cost, color) {}
 
