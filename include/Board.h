@@ -13,6 +13,7 @@ static constexpr int PRISON_POS = 10;
 struct PlayerData {
     PlayerData(std::string_view name, Token token);
     PlayerData(const PlayerData&) = delete;
+    virtual ~PlayerData() = default;
     void operator=(PlayerData) = delete;
     PlayerData(PlayerData&&) noexcept = default;
     PlayerData& operator=(PlayerData&&) noexcept = default;
@@ -41,11 +42,11 @@ public:
     std::array<FieldTile *, FIELD_SIZE>  field;
     CardPool deck;
 
-    PlayerData& getPlayer(Token token);
+    virtual PlayerData& getPlayer(Token token);
     const PlayerData& getPlayer(Token token) const;
     Token getPlayerToken(std::size_t index) const;
     const std::vector<PlayerData>& getPlayers() const;
-    PlayerReply sendRequest(Token token, PlayerRequest request) const;
+    virtual PlayerReply sendRequest(Token token, PlayerRequest request) const;
     void sendMessage(Token token, PlayerMessage mes) const;
     std::size_t getPlayersNumber() const;
 
