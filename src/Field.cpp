@@ -65,7 +65,7 @@ void makeDefaultRequest(PlayerRequest& r) {
             PlayerAction::BUY_BUILDING,
             PlayerAction::BUY_HOTEL,
             PlayerAction::START_TRADE,
-            PlayerAction::MORTGAGE_HOLDINGS //TODO: вроде оно не добавлялось в список доступных действий, но при этом обрабатывалось обычно...
+            PlayerAction::MORTGAGE_HOLDINGS
     };
 }
 
@@ -148,11 +148,6 @@ void Prison::onPlayerEntry(Token token) {
             } else {
                 request.message = "Not enough money :(";
             }
-            continue;
-        }
-        //TODO: нужна-ли здесь специальная обработка, или сойдёт запихнуть её в общий случай?
-        if (reply->action == PlayerAction::USE_CARD) {
-            //TODO: пользователь видит список доступных карт, выбирает из них
             continue;
         }
         handleGenericActions(token, reply);
@@ -317,3 +312,9 @@ size_t Utility::calculateTax(Token token) {
 void Utility::onPurchase(Token token) {
     board.getPlayer(token).numberOfUtilities++;
 }
+
+size_t Street::calculateTax(Token token) {
+    return tax;
+}
+
+void Street::onPurchase(Token token) { }

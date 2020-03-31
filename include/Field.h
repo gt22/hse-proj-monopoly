@@ -59,6 +59,7 @@ public:
     void onPlayerEntry(Token token) override;
     int numberOfHouses = 0;
     int costPerHouse;
+    int tax;
 };
 
 class Utility final : public OwnableTile {

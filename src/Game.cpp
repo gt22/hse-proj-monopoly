@@ -41,6 +41,7 @@ void Game::runGame() {
             curPlayer.doubleDice = 0;
         }
         if (curPlayer.doubleDice == 3) {
+            extraTurn = false;
             curPlayer.toPrison();
         } else {
             curPlayer.newPosition(firstTrow + secondTrow);
