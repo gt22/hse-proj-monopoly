@@ -3,9 +3,9 @@
 PlayerRequest::PlayerRequest() : PlayerRequest({}, "") {}
 
 PlayerRequest::PlayerRequest(std::vector<PlayerAction> availableActions,
-        std::string_view message)
+        std::string message)
  : availableActions(std::move(availableActions)), message(message) {}
 
-PlayerMessage::PlayerMessage(std::string_view message) : message(message) {}
+PlayerMessage::PlayerMessage(std::string message) : message(message) {}
 
 PlayerReplyData::PlayerReplyData(PlayerAction action) : action(action) {}

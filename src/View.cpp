@@ -194,11 +194,11 @@ void NcursesView::runGame() {
 }
 
 PlayerReply NcursesView::processRequest(Player& player, PlayerRequest req) {
-    return std::make_unique<EndTurnReply>();
+    return std::make_unique<PlayerReplyData>(PlayerAction::END_TURN);
 }
 
 void NcursesView::processMessage(Player &p, PlayerMessage mes) {
-    std::make_unique<EndTurnReply>();
+
 }
 
 void NcursesView::redraw() {

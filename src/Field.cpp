@@ -6,37 +6,51 @@
 #include <set>
 #include <cassert>
 
-FieldTile::FieldTile(Board& board, int position, std::string name) :
-                        board(board), position(position), name(std::move(name)) {}
+FieldTile::FieldTile(Board &board) : board(board) {}
+FieldTile::FieldTile(Board& board, TileType type, int position, std::string name) :
+                        board(board), type(type), position(position), name(std::move(name))  {}
 
+Start::Start(Board &board) : FieldTile(board) {}
 Start::Start(Board &board, int position, std::string name)
-        : FieldTile(board, position, std::move(name)) {}
+        : FieldTile(board, TileType::START, position, std::move(name)) {}
 
+Prison::Prison(Board &board) : FieldTile(board) {}
 Prison::Prison(Board &board, int position, std::string name)
-        : FieldTile(board, position, std::move(name)) {}
+        : FieldTile(board, TileType::PRISON, position, std::move(name)) {}
 
+GoToPrison::GoToPrison(Board &board) : FieldTile(board) {}
 GoToPrison::GoToPrison(Board &board, int position, std::string name)
-        : FieldTile(board, position, std::move(name)) {}
+        : FieldTile(board, TileType::GOTO_PRISON, position, std::move(name)) {}
 
+Chance::Chance(Board &board) : FieldTile(board) {}
 Chance::Chance(Board &board, int position, std::string name)
-        : FieldTile(board, position, std::move(name)) {}
+        : FieldTile(board, TileType::CHANCE, position, std::move(name)) {}
 
-IncomeTax::IncomeTax(Board &board, int position, std::string name, int tax)
-        : FieldTile(board, position, std::move(name)), tax(tax) {}
+IncomeTax::IncomeTax(Board &board) : FieldTile(board) {}
+IncomeTax::IncomeTax(Board &board, int position, std::string name, uint32_t tax)
+        : FieldTile(board, TileType::INCOME_TAX, position, std::move(name)), tax(tax) {}
 
+FreeParking::FreeParking(Board &board) : FieldTile(board) {}
 FreeParking::FreeParking(Board &board, int position, std::string name)
-        : FieldTile(board, position, std::move(name)) {}
+        : FieldTile(board, TileType::FREE_PARKING, position, std::move(name)) {}
 
-OwnableTile::OwnableTile(Board &board, int position, std::string name, int cost, Color color)
-        : FieldTile(board, position, std::move(name)), cost(cost), color(color) {}
+OwnableTile::OwnableTile(Board &board) : FieldTile(board) {}
+OwnableTile::OwnableTile(Board &board, int position, std::string name, OwnableType ownableType, uint32_t cost, Color color)
+        : FieldTile(board, TileType::OWNABLE_TILE, position, std::move(name)), ownableType(ownableType), cost(cost), color(color)  {}
 
+Railway::Railway(Board &board) : OwnableTile(board) {}
 Railway::Railway(Board &board, int position, std::string name, int cost, Color color)
-        : OwnableTile(board, position, std::move(name), cost, color) {}
+        : OwnableTile(board, position, std::move(name), OwnableType::RAILWAY, cost, color) {}
 
+Street::Street(Board &board) : OwnableTile(board) {}
 Street::Street(Board &board, int position, std::string name, int cost, Color color, int costPerHouse)
-        : OwnableTile(board, position, std::move(name), cost, color), costPerHouse(costPerHouse) {}
+        : OwnableTile(board, position, std::move(name), OwnableType::STREET, cost, color), costPerHouse(costPerHouse) {}
 
-size_t Street::calculateTax(Token token) {
+Utility::Utility(Board &board) : OwnableTile(board) {}
+Utility::Utility(Board &board, int position, std::string name, int cost, Color color)
+        : OwnableTile(board, position, std::move(name), OwnableType::UTILITY, cost, color) {}
+
+uint32_t Street::calculateTax(Token token) {
     // TODO
     return 0;
 }
@@ -50,9 +64,6 @@ void Street::onPlayerEntry(Token token) {
     // TODO
     return;
 }
-
-Utility::Utility(Board &board, int position, std::string name, int cost, Color color)
-        : OwnableTile(board, position, std::move(name), cost, color) {}
 
 void FieldTile::onPlayerPass(Token) {}
 
@@ -157,8 +168,8 @@ void Prison::onPlayerEntry(Token token) {
             continue;
         }
         if (reply->action == PlayerAction::PAY_TAX) {
-            if (player.money >= tax) {
-                player.money -= tax;
+            if (player.money >= TAX) {
+                player.money -= TAX;
                 player.outOfPrison();
             } else {
                 request.message = "Not enough money :(";
@@ -288,7 +299,7 @@ void OwnableTile::onPlayerEntry(Token token) {
             continue;
         }
         if (reply->action == PlayerAction::PAY_TO_OTHER_PLAYER) {
-            int tax = calculateTax(token);
+            uint32_t tax = calculateTax(token);
             if (player.money >= tax) {
                 player.money -= tax;
                 fieldOwner.money += tax;
@@ -312,7 +323,7 @@ void OwnableTile::onPlayerEntry(Token token) {
     }
 }
 
-size_t Railway::calculateTax(Token token) {
+uint32_t Railway::calculateTax(Token token) {
     return 25 * (1u << board.getPlayer(owner).numberOfRailways);
 }
 
@@ -320,7 +331,9 @@ void Railway::onPurchase(Token token) {
     board.getPlayer(token).numberOfRailways++;
 }
 
-size_t Utility::calculateTax(Token token) {
+
+
+uint32_t Utility::calculateTax(Token token) {
     int lastThrow = board.getPlayer(token).lastTrow;
     switch(board.getPlayer(owner).numberOfUtilities) {
         case 1: return lastThrow * 4;

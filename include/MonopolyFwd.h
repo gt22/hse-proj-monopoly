@@ -29,13 +29,13 @@ class Game;
 class Manager;
 
 enum class Token : std::size_t {
+    FREE_FIELD,
     DOG,
     HAT,
     BOOT,
     CAT,
     CAR,
-    SHIP,
-    FREE_FIELD
+    SHIP
 };
 
 class Player;
@@ -44,7 +44,9 @@ class BotPlayer;
 class LocalPlayer;
 
 struct PlayerRequest;
+struct PlayerMessage;
 struct PlayerReplyData;
+typedef std::unique_ptr<PlayerReplyData> PlayerReply;
 
 class RandomSource;
 

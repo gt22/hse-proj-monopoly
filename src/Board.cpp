@@ -2,7 +2,7 @@
 #include "Field.h"
 #include "Game.h"
 
-PlayerData::PlayerData(std::string_view name, Token token) : name(name), token(token) {}
+PlayerData::PlayerData(std::string name, Token token) : name(std::move(name)), token(token) {}
 
 void PlayerData::newPosition(std::size_t throwSum) {
     std::size_t newPos = (position + throwSum) % Board::FIELD_SIZE;

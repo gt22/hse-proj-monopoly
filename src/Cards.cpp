@@ -23,3 +23,7 @@ void CardPool::shuffle() {
     static std::mt19937 g_gen(g_rd());
     std::shuffle(pool.begin(), pool.end(), g_gen);
 }
+
+const std::vector<std::unique_ptr<Card>>& CardPool::getCards() const {
+    return pool;
+}

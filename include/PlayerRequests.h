@@ -5,32 +5,32 @@
 #include <string>
 #include <memory>
 
-enum class PlayerAction {
-    PAY_TAX,
-    BUY_PROPERTY,
-    BUY_BUILDING,
-    BUY_HOTEL,
-    USE_CARD,
-    PAY_TO_OTHER_PLAYER,
-    TAKE_CARD,
-    MORTGAGE_HOLDINGS,
-    START_TRADE,
-    START_TRADE_NEW_FIELD,
-    ROLL_DICE,
-    END_TURN
+enum class PlayerAction : std::size_t {
+    END_TURN = 0,
+    PAY_TAX = 1,
+    BUY_PROPERTY = 2,
+    BUY_BUILDING = 3,
+    BUY_HOTEL = 4,
+    USE_CARD = 5,
+    PAY_TO_OTHER_PLAYER = 6,
+    TAKE_CARD = 7,
+    MORTGAGE_HOLDINGS = 8,
+    START_TRADE = 9,
+    START_TRADE_NEW_FIELD = 10,
+    ROLL_DICE = 11
 };
 
 struct PlayerRequest final {
     PlayerRequest();
     explicit PlayerRequest(std::vector<PlayerAction> availableActions,
-            std::string_view message);
+            std::string message);
     std::vector<PlayerAction> availableActions;
-    std::string_view message;
+    std::string message;
 };
 
 struct PlayerMessage final {
-    explicit PlayerMessage(std::string_view message);
-    std::string_view message;
+    explicit PlayerMessage(std::string message);
+    std::string message;
 };
 
 struct PlayerReplyData {
@@ -44,14 +44,6 @@ struct BasicReply : PlayerReplyData {
     BasicReply() : PlayerReplyData(ACTION) {}
 };
 
-struct PayTaxReply : BasicReply<PlayerAction::PAY_TAX> {};
-
-struct BuyPropertyReply : BasicReply<PlayerAction::BUY_PROPERTY> {};
-
-struct BuyBuildingReply : BasicReply<PlayerAction::BUY_BUILDING> {};
-
-struct EndTurnReply : BasicReply<PlayerAction::END_TURN> {};
-
-typedef std::unique_ptr<PlayerReplyData> PlayerReply;
+//TODO: разобраться с сабклассами.
 
 #endif //PLAYERREQUESTS_H

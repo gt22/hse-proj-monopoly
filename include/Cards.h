@@ -18,6 +18,7 @@ class CardPool {
 public:
     CardPool(); // Тут создаются карточки
 
+    const std::vector<std::unique_ptr<Card>>& getCards() const;
     std::unique_ptr<Card> takeCard();
     void returnCard(std::unique_ptr<Card> card);
     void shuffle();

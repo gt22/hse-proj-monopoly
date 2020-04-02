@@ -11,20 +11,20 @@
 static constexpr int PRISON_POS = 10;
 
 struct PlayerData {
-    PlayerData(std::string_view name, Token token);
+    PlayerData(std::string name, Token token);
     PlayerData(const PlayerData&) = delete;
     void operator=(PlayerData) = delete;
     PlayerData(PlayerData&&) noexcept = default;
     PlayerData& operator=(PlayerData&&) noexcept = default;
-    std::string_view name;
+    std::string name;
     Token token;
-    std::size_t position = 0;
-    int money = 1500;
-    int doubleDice = 0;
-    int daysLeftInPrison = 0; //TODO: придумать нормальное имя
-    size_t numberOfRailways = 0;
-    size_t numberOfUtilities = 0;
-    int lastTrow = 0;
+    uint32_t position = 0;
+    uint32_t money = 1500; //TODO: Negative money?
+    uint32_t doubleDice = 0;
+    uint32_t daysLeftInPrison = 0;
+    uint32_t numberOfRailways = 0;
+    uint32_t numberOfUtilities = 0;
+    uint32_t lastTrow = 0;
     bool prisoner = false;
     bool alive = true;
     std::vector<std::unique_ptr<Card>> cards;
@@ -38,7 +38,7 @@ class Board {
 public:
     Board(const std::vector<std::pair<std::string_view, Token>>& players, Game& game);
     static constexpr int FIELD_SIZE = 40;
-    std::array<FieldTile *, FIELD_SIZE>  field;
+    std::array<FieldTile *, FIELD_SIZE> field; //TODO: raw pointer?
     CardPool deck;
 
     PlayerData& getPlayer(Token token);

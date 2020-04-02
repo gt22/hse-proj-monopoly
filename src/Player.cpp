@@ -3,6 +3,7 @@
 #include <utility>
 #include "Cards.h"
 #include "View.h"
+
 Player::Player(Token token) : token(token) {}
 
 LocalPlayer::LocalPlayer(Token token, std::shared_ptr<ViewHolder> view)
