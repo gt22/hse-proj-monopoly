@@ -13,7 +13,8 @@ NcursesView::NcursesView(Manager& manager) : MonopolyView(manager) {
     initscr();
     noecho();
     keypad(stdscr, TRUE);
-    mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
+    //cbreak();
+    mousemask(ALL_MOUSE_EVENTS, NULL);
     curs_set(0);
 }
 
@@ -152,40 +153,34 @@ void NcursesView::printGrid() {
 
 void NcursesView::runGame() {
     //int ind = 0;
+    int pos;
     while (true) {
         bool flag = false;
-        //printGrid();
-        redraw();
+        MEVENT event;
+        printGrid();
+       // redraw();
         //int x = 0, y = 0;
         int enteredChar = getch();
-
+        refresh();
         switch(enteredChar) {
             case 'x':
                 flag = true;
                 break;
-            case KEY_RIGHT:
-                for (int i = 0; i < 6; i++)
-                    ar[i]++;
+            case KEY_MOUSE:
+                if (getmouse(&event) == OK) {
+                    if (event.bstate & BUTTON1_DOUBLE_CLICKED) {
+                        pos = transformCoord(event.x, event.y);
+                        mvprintw(12, 50, "You chose %d", pos);
+                        //if (pos != -1)
+                         //   break;
+                    } else if (event.bstate & BUTTON1_PRESSED) {
+                        // tile info
+                    }
+                }
                 break;
-            case KEY_LEFT:
-                for (int i = 0; i < 6; i++)
-                    ar[i]--;
+            case 'r':
+                processRequestTest();
                 break;
-         /*   case 'd':
-                erase();
-                getCoord(x, y, ind);
-                drawPlayer(x, y, COLOR_CYAN);
-                break;
-            case KEY_RIGHT:
-                erase();
-                refresh();
-                ind++;
-                refresh();
-                getCoord(x, y, ind);
-                drawPlayer(x, y, COLOR_CYAN);
-                refresh();
-                break;*/
-
         }
         refresh();
         if (flag)
@@ -194,27 +189,233 @@ void NcursesView::runGame() {
 }
 
 PlayerReply NcursesView::processRequest(Player& player, PlayerRequest req) {
+    WINDOW* actionWindow = newwin(fieldSizeY - 2 * tileSizeY, fieldSizeX - 2 * tileSizeX, tileSizeY + 1, tileSizeX + 1);
+    box(actionWindow, 0, 0);
+    wrefresh(actionWindow);
+    std::size_t x = tileSizeX + 1;
+    std::size_t y = tileSizeY + 1;
+    mvwprintw(actionWindow, y++, x, "Choose action number:");
+    std::vector<std::string> actionNames;
+    for (std::size_t i = 0; i < req.availableActions.size(); i++) {
+        if (req.availableActions[i] == PlayerAction::PAY_TAX) {
+            actionNames.push_back("PAY TAX");
+        } else if (req.availableActions[i] == PlayerAction::BUY_PROPERTY) {
+            actionNames.push_back("BUY PROPERTY");
+        } else if (req.availableActions[i] == PlayerAction::BUY_BUILDING) {
+            actionNames.push_back("BUY BUILDING");
+        } else if (req.availableActions[i] == PlayerAction::BUY_HOTEL) {
+            actionNames.push_back("BUY HOTEL");
+        } else if (req.availableActions[i] == PlayerAction::USE_CARD) {
+            actionNames.push_back("USE CARD");
+        } else if (req.availableActions[i] == PlayerAction::PAY_TO_OTHER_PLAYER) {
+            actionNames.push_back("PAY TO OTHER PLAYER");
+        } else if (req.availableActions[i] == PlayerAction::TAKE_CARD) {
+            actionNames.push_back("TAKE CARD");
+        } else if (req.availableActions[i] == PlayerAction::MORTGAGE_HOLDINGS) {
+            actionNames.push_back("MORTGAGE HOLDINGS");
+        } else if (req.availableActions[i] == PlayerAction::START_TRADE) {
+            actionNames.push_back("START TRADE");
+        } else if (req.availableActions[i] == PlayerAction::START_TRADE_NEW_FIELD) {
+            actionNames.push_back("START TRADE NEW FIELD");
+        } else if (req.availableActions[i] == PlayerAction::ROLL_DICE) {
+            actionNames.push_back("ROLL DICE");
+        } else if (req.availableActions[i] == PlayerAction::END_TURN) {
+            actionNames.push_back("END TURN");
+        }
+    }
+
+    std::size_t i;
+    for (i = 0; i < req.availableActions.size(); i++) {
+        mvwprintw(actionWindow, y + i, x, "%d. %s\n", i + 1, actionNames[i].c_str());
+    }
+    y += i;
+    nocbreak();
+    echo();
+
+    std::string actionNum;
+    mvwprintw(actionWindow, y, x, "ACTION: ");
+    int number;
+    while (true) {
+        wrefresh(actionWindow);
+        wmove(actionWindow, y, x + 8);
+        int ch = wgetch(actionWindow);
+
+        while (ch != '\n') {
+            actionNum.push_back(ch);
+            ch = wgetch(actionWindow);
+        }
+
+        bool flag = true;
+        number = 0;
+        for (char c : actionNum) {
+            if (c >= '0' && c <= '9')
+                number = number * 10 + (c - '0');
+            else {
+                flag = false;
+                number = 0;
+                break;
+            }
+        }
+        if (flag && number < 13)
+            break;
+        for (int erCh = 0; erCh < int(actionNum.size()); erCh++)
+            mvwaddch(actionWindow, y, x + 8 + erCh, ' ');
+        actionNum.clear();
+    }
+    noecho();
+    cbreak();
+    wrefresh(actionWindow);
+
+    y++;
+    mvwprintw(actionWindow, y, x, "You chose %d", number);
+    int ch = wgetch(actionWindow);
+
+    while (ch != 'x') {
+        ch = wgetch(actionWindow);
+    }
+    wborder(actionWindow, ' ', ' ', ' ',' ',' ',' ',' ',' ');
+    wrefresh(actionWindow);
+    delwin(actionWindow);
+
+    if (actionNames[number - 1] == "PAY TAX") {
+        return std::make_unique<PayTaxReply>();
+    } else if (actionNames[number - 1] == "BUY PROPERTY") {
+        return std::make_unique<BuyPropertyReply>();
+    } else if (actionNames[number - 1] == "BUY BUILDING") {
+        return std::make_unique<BuyBuildingReply>();
+    } else if (actionNames[number - 1] == "BUY HOTEL") {
+       // return std::make_unique<BuyHotelReply>();
+    } else if (actionNames[number - 1] == "USE CARD") {
+        //return std::make_unique<UseCardReply>();
+    } else if (actionNames[number - 1] == "PAY TO OTHER PLAYER") {
+        // return std::make_unique<PayToOtherPlayerReply>();
+    } else if (actionNames[number - 1] == "TAKE CARD") {
+        //return std::make_unique<TakeCardReply>();
+    } else if (actionNames[number - 1] == "MORTGAGE HOLDINGS") {
+        // return std::make_unique<MortageHoldingsReply>();
+    } else if (actionNames[number - 1] == "START TRADE") {
+        //return std::make_unique<StartTradeReply>();
+    } else if (actionNames[number - 1] == "START TRADE NEW FIELD") {
+        // return std::make_unique<StartTradeNewFieldReply>();
+    } else if (actionNames[number - 1] == "ROLL_DICE") {
+        //return std::make_unique<RollDiceReply>();
+    }
     return std::make_unique<EndTurnReply>();
 }
 
+void NcursesView::processRequestTest() {
+    std::vector<PlayerAction> availableActions;
+    for(int i = 0; i < 12; i++){
+        availableActions.push_back(static_cast<PlayerAction>(i));
+    }
+
+
+    WINDOW* actionWindow = newwin(fieldSizeY - 2 * tileSizeY - 1, fieldSizeX - 2 * tileSizeX - 1, tileSizeY + 1, tileSizeX + 1);
+    box(actionWindow, 0, 0);
+    wrefresh(actionWindow);
+    std::size_t x = tileSizeX + 1;
+    std::size_t y = tileSizeY + 1;
+    mvwprintw(actionWindow, y++, x, "Choose action number:");
+    std::vector<std::string> actionNames;
+    for (std::size_t i = 0; i < availableActions.size(); i++) {
+        if (availableActions[i] == PlayerAction::PAY_TAX) {
+            actionNames.push_back("PAY TAX");
+        } else if (availableActions[i] == PlayerAction::BUY_PROPERTY) {
+            actionNames.push_back("BUY PROPERTY");
+        } else if (availableActions[i] == PlayerAction::BUY_BUILDING) {
+            actionNames.push_back("BUY BUILDING");
+        } else if (availableActions[i] == PlayerAction::BUY_HOTEL) {
+            actionNames.push_back("BUY HOTEL");
+        } else if (availableActions[i] == PlayerAction::USE_CARD) {
+            actionNames.push_back("USE CARD");
+        } else if (availableActions[i] == PlayerAction::PAY_TO_OTHER_PLAYER) {
+            actionNames.push_back("PAY TO OTHER PLAYER");
+        } else if (availableActions[i] == PlayerAction::TAKE_CARD) {
+            actionNames.push_back("TAKE CARD");
+        } else if (availableActions[i] == PlayerAction::MORTGAGE_HOLDINGS) {
+            actionNames.push_back("MORTGAGE HOLDINGS");
+        } else if (availableActions[i] == PlayerAction::START_TRADE) {
+            actionNames.push_back("START TRADE");
+        } else if (availableActions[i] == PlayerAction::START_TRADE_NEW_FIELD) {
+            actionNames.push_back("START TRADE NEW FIELD");
+        } else if (availableActions[i] == PlayerAction::ROLL_DICE) {
+            actionNames.push_back("ROLL DICE");
+        } else if (availableActions[i] == PlayerAction::END_TURN) {
+            actionNames.push_back("END TURN");
+        }
+    }
+
+    std::size_t i;
+    for (i = 0; i < availableActions.size(); i++) {
+        mvwprintw(actionWindow, y + i, x, "%d. %s\n", i + 1, actionNames[i].c_str());
+    }
+    y += i;
+    nocbreak();
+    echo();
+
+    std::string actionNum;
+    mvwprintw(actionWindow, y, x, "ACTION: ");
+    int number;
+    while (true) {
+        wrefresh(actionWindow);
+        wmove(actionWindow, y, x + 8);
+        int ch = wgetch(actionWindow);
+
+        while (ch != '\n') {
+            actionNum.push_back(ch);
+            ch = wgetch(actionWindow);
+        }
+
+        bool flag = true;
+        number = 0;
+        for (char c : actionNum) {
+            if (c >= '0' && c <= '9')
+                number = number * 10 + (c - '0');
+            else {
+                flag = false;
+                number = 0;
+                break;
+            }
+        }
+        if (flag && number < 13)
+            break;
+        for (int erCh = 0; erCh < int(actionNum.size()); erCh++)
+            mvwaddch(actionWindow, y, x + 8 + erCh, ' ');
+        actionNum.clear();
+    }
+    noecho();
+    cbreak();
+    wrefresh(actionWindow);
+
+    y++;
+    mvwprintw(actionWindow, y, x, "You chose %d", number);
+    int ch = wgetch(actionWindow);
+
+    while (ch != 'x') {
+        ch = wgetch(actionWindow);
+    }
+    wborder(actionWindow, ' ', ' ', ' ',' ',' ',' ',' ',' ');
+    wrefresh(actionWindow);
+    delwin(actionWindow);
+    return;
+}
+
+
 void NcursesView::processMessage(Player &p, PlayerMessage mes) {
+    diceValue = mes.message;
     std::make_unique<EndTurnReply>();
 }
 
-void NcursesView::redraw() {
-    // TODO: const Board& board - лажа с константностью
+void NcursesView::redraw(const Board& board) {
     clear();
     refresh();
     printGrid();
-    // TODO: размер вектора (кол-во игроков?) board.getPlayers()
 
-
-    size_t size = 6;
+    size_t size = board.getPlayers().size();
 
     for (size_t i = 0; i < size; i++) {
         int x, y;
-        //getCoord(x, y, board.getPlayer(board.getPlayerToken(i)).position);
-        getCoord(x, y, ar[i]);
+        getCoord(x, y, board.getPlayer(board.getPlayerToken(i)).position);
         if (i == 0) {
             x-=2;
             y--;
@@ -234,7 +435,6 @@ void NcursesView::redraw() {
         }
         drawPlayer(x, y, i);
     }
-
 }
 
 int NcursesView::transformCoord(int x, int y) {
@@ -249,24 +449,4 @@ int NcursesView::transformCoord(int x, int y) {
     else if (x < tileSizeX)
         return 4 * TILES_PER_LINE - 4 - y / tileSizeY;
     return -1;
-}
-
-int NcursesView::mouseAction() {
-    MEVENT event;
-    int ch, pos;
-    while (true) {
-        ch = getch();
-        if (ch == KEY_MOUSE) {
-            if (getmouse(&event) == OK) {
-                if (event.bstate & BUTTON1_DOUBLE_CLICKED) {
-                    pos = transformCoord(event.x, event.y);
-                    if (pos != -1)
-                        break;
-                } else if (event.bstate & BUTTON1_PRESSED) {
-                    // tile info
-                }
-            }
-        }
-    }
-    return pos;
 }
