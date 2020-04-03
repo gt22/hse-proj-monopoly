@@ -35,14 +35,13 @@ public:
     void getCoord(int &x, int &y, int index);
     void drawPlayer(int x, int y, int color);
     void redraw(const Board& board) override;
-    //void drawField() override;
-    //void printStatus() override;
     PlayerReply processRequest(Player& p, PlayerRequest req) override;
     void processMessage(Player& p, PlayerMessage mes) override;
     void changeFieldSize();
 
     int transformCoord(int x, int y);
     void processRequestTest();
+    std::string diceValue;
 private:
     const static int TILES_PER_LINE = 11;
     int maxX = 0;

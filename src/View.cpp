@@ -402,6 +402,7 @@ void NcursesView::processRequestTest() {
 
 
 void NcursesView::processMessage(Player &p, PlayerMessage mes) {
+    diceValue = mes.message;
     std::make_unique<EndTurnReply>();
 }
 
