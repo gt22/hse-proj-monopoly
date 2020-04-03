@@ -155,7 +155,7 @@ void NcursesView::runGame() {
     while (true) {
         bool flag = false;
         //printGrid();
-        redraw();
+       // redraw();
         //int x = 0, y = 0;
         int enteredChar = getch();
 
@@ -164,28 +164,9 @@ void NcursesView::runGame() {
                 flag = true;
                 break;
             case KEY_RIGHT:
-                for (int i = 0; i < 6; i++)
-                    ar[i]++;
                 break;
             case KEY_LEFT:
-                for (int i = 0; i < 6; i++)
-                    ar[i]--;
                 break;
-         /*   case 'd':
-                erase();
-                getCoord(x, y, ind);
-                drawPlayer(x, y, COLOR_CYAN);
-                break;
-            case KEY_RIGHT:
-                erase();
-                refresh();
-                ind++;
-                refresh();
-                getCoord(x, y, ind);
-                drawPlayer(x, y, COLOR_CYAN);
-                refresh();
-                break;*/
-
         }
         refresh();
         if (flag)
@@ -201,20 +182,16 @@ void NcursesView::processMessage(Player &p, PlayerMessage mes) {
     std::make_unique<EndTurnReply>();
 }
 
-void NcursesView::redraw() {
-    // TODO: const Board& board - лажа с константностью
+void NcursesView::redraw(const Board& board) {
     clear();
     refresh();
     printGrid();
-    // TODO: размер вектора (кол-во игроков?) board.getPlayers()
 
-
-    size_t size = 6;
+    size_t size = board.getPlayers().size();
 
     for (size_t i = 0; i < size; i++) {
         int x, y;
-        //getCoord(x, y, board.getPlayer(board.getPlayerToken(i)).position);
-        getCoord(x, y, ar[i]);
+        getCoord(x, y, board.getPlayer(board.getPlayerToken(i)).position);
         if (i == 0) {
             x-=2;
             y--;
@@ -234,7 +211,6 @@ void NcursesView::redraw() {
         }
         drawPlayer(x, y, i);
     }
-
 }
 
 int NcursesView::transformCoord(int x, int y) {
