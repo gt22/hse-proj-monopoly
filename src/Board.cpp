@@ -4,10 +4,19 @@
 
 PlayerData::PlayerData(std::string_view name, Token token) : name(name), token(token) {}
 
+int PlayerData::getMoney() {
+    return money;
+}
+
+int PlayerData::addMoney(int newMoney) {
+    money += newMoney;
+    return money;
+}
+
 void PlayerData::newPosition(std::size_t throwSum) {
     std::size_t newPos = (position + throwSum) % Board::FIELD_SIZE;
     if (newPos < position) {
-        money += 200;
+        (*this).addMoney(START_SUM);
     }
     position = (position + throwSum) % Board::FIELD_SIZE;
 }

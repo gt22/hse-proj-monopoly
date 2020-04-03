@@ -30,6 +30,9 @@ struct PlayerData {
     bool alive = true;
     std::vector<std::unique_ptr<Card>> cards;
 
+    int getMoney();
+    int addMoney(int newMoney);
+
     void newPosition(std::size_t throwSum);
     void toPrison();
     void outOfPrison();

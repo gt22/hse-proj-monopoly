@@ -64,7 +64,7 @@ void FieldTile::onPlayerEntry(Token) {
 
 void Start::onPlayerPass(Token token) {
     PlayerData& player = board.getPlayer(token);
-    player.money += START_SUM;
+    player.addMoney(START_SUM);
 }
 
 template<typename T, typename C>
@@ -109,11 +109,10 @@ void handleGenericActions(Token token, const PlayerReply& reply) {
 
 void Start::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
-    player.money += START_SUM;
     PlayerRequest request;
     while (true) {
         makeDefaultRequest(request);
-        PlayerReply reply = board.sendRequest(token, request);
+        PlayerReply reply = board.sendRequest(player.token, request);
         if (reply->action == PlayerAction::END_TURN) {
             break;
         }
@@ -157,8 +156,8 @@ void Prison::onPlayerEntry(Token token) {
             continue;
         }
         if (reply->action == PlayerAction::PAY_TAX) {
-            if (player.money >= tax) {
-                player.money -= tax;
+            if (player.getMoney() >= tax) {
+                player.addMoney(-tax);
                 player.outOfPrison();
             } else {
                 request.message = "Not enough money :(";
@@ -241,8 +240,8 @@ void IncomeTax::onPlayerEntry(Token token) {
             continue;
         }
         if (reply->action == PlayerAction::PAY_TAX) {
-            if (player.money >= tax) {
-                player.money -= tax;
+            if (player.getMoney() >= tax) {
+                player.addMoney(-tax);
                 mustHave.erase(PlayerAction::PAY_TAX);
                 continue;
             }
@@ -284,9 +283,9 @@ void OwnableTile::onPlayerEntry(Token token) {
         }
         if (reply->action == PlayerAction::PAY_TO_OTHER_PLAYER) {
             int tax = calculateTax(token);
-            if (player.money >= tax) {
-                player.money -= tax;
-                fieldOwner.money += tax;
+            if (player.getMoney() >= tax) {
+                player.addMoney(-tax);
+                fieldOwner.addMoney(tax);
                 taxPaid = true;
                 continue;
             }
@@ -327,9 +326,3 @@ size_t Utility::calculateTax(Token token) {
 void Utility::onPurchase(Token token) {
     board.getPlayer(token).numberOfUtilities++;
 }
-
-size_t Street::calculateTax(Token token) {
-    return tax;
-}
-
-void Street::onPurchase(Token token) { }
