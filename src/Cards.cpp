@@ -1,6 +1,7 @@
 #include "Cards.h"
 #include <algorithm>
 #include <random>
+#include <Board.h>
 
 Card::Card(Board &board, std::string text) : board(board), text(std::move(text)) {}
 
@@ -10,13 +11,32 @@ LeftPrisonForFree::LeftPrisonForFree(Board &board, std::string text)
 GetMoney::GetMoney(Board &board, std::string text)
         : Card(board, std::move(text)) {}
 
-void LeftPrisonForFree::onPlayerGet(Token token) { }
+PayMoney::PayMoney(Board &board, std::string text)
+        : Card(board, std::move(text)) {}
 
-void LeftPrisonForFree::apply(Token token) { }
+GetMoneyFromOtherPlayers::GetMoneyFromOtherPlayers(Board &board, std::string text)
+                        : Card(board, std::move(text)) {}
 
-void GetMoney::onPlayerGet(Token token) { }
+Teleport::Teleport(Board &board, std::string text)
+        : Card(board, std::move(text)) {}
+
+TeleportToPrison::TeleportToPrison(Board &board, std::string text)
+                : Card(board, std::move(text)) {}
+
+void LeftPrisonForFree::apply(Token token) {
+    PlayerData& player = board.getPlayer(token);
+    player.cardToLeavePrison = true;
+}
 
 void GetMoney::apply(Token token) { }
+
+void PayMoney::apply(Token token) { }
+
+void GetMoneyFromOtherPlayers::apply(Token token) { }
+
+void Teleport::apply(Token token) { }
+
+void TeleportToPrison::apply(Token token) { }
 
 CardPool::CardPool() {
     //pool.push_back(std::make_unique(...))

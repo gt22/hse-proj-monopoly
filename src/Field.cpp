@@ -1,6 +1,7 @@
 #include "Field.h"
 #include "Board.h"
 #include "Random.h"
+#include "Cards.h"
 
 #include <utility>
 #include <set>
@@ -20,11 +21,29 @@ GoToPrison::GoToPrison(Board &board, int position, std::string name)
 
 Chance::Chance(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {
+    cards.resize(16);
     //TODO: fill vector cards
 }
 
 PublicTreasury::PublicTreasury(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {
+    cards.resize(16);
+    cards[0] = new LeftPrisonForFree(board);
+    cards[1] = new PayMoney(board, "");//50
+    cards[2] = new GetMoney(board, "Holiday pay! Get 100");//100
+    cards[3] = new GetMoney(board, "");//100
+    cards[4] = new PayMoney(board, "");//50
+    cards[5] = new GetMoney(board, "");//20
+    cards[6] = new GetMoney(board, "");//100
+    cards[7] = new TeleportToPrison(board, "");
+    cards[8] = new GetMoney(board, "");//25
+    cards[9] = new GetMoneyFromOtherPlayers(board, "");//10
+    cards[10] = new GetMoney(board, "");//100
+    cards[11] = new GetMoney(board, "");//50
+    cards[12] = new GetMoney(board, "");//10
+    cards[13] = new PayMoney(board, "");//30*buildings + 115*hotels
+    cards[14] = new Teleport(board, "");//to start
+    cards[15] = new GetMoney(board, "");//200
     //TODO: fill vector cards
 }
 
@@ -83,7 +102,6 @@ void makeDefaultRequest(PlayerRequest& r) {
     //TODO: New allocation each time... Maybe rewrite as clear, reserve & many push_backs?
     r.availableActions = {
             PlayerAction::END_TURN,
-            PlayerAction::USE_CARD,
             PlayerAction::BUY_BUILDING,
             PlayerAction::BUY_HOTEL,
             PlayerAction::START_TRADE,
@@ -92,10 +110,6 @@ void makeDefaultRequest(PlayerRequest& r) {
 }
 
 void handleGenericActions(Token token, const PlayerReply& reply) {
-    if (reply->action == PlayerAction::USE_CARD) {
-        //TODO
-        return;
-    }
     if (reply->action == PlayerAction::BUY_BUILDING) {
         //TODO
         return;
@@ -139,6 +153,9 @@ void Prison::onPlayerEntry(Token token) {
             if(!diceUsed) {
                 request.availableActions.push_back(PlayerAction::ROLL_DICE);
             }
+            if (player.cardToLeavePrison) {
+                request.availableActions.push_back(PlayerAction::ROLL_DICE);
+            }
         }
         PlayerReply reply = board.sendRequest(token, request);
         if (reply->action == PlayerAction::END_TURN) {
@@ -169,6 +186,10 @@ void Prison::onPlayerEntry(Token token) {
             } else {
                 request.message = "Not enough money :(";
             }
+            continue;
+        }
+        if (reply->action == PlayerAction::USE_CARD) {
+            player.outOfPrison();
             continue;
         }
         handleGenericActions(token, reply);

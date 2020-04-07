@@ -28,6 +28,7 @@ struct PlayerData {
     int lastTrow = 0;
     bool prisoner = false;
     bool alive = true;
+    bool cardToLeavePrison = false;
     std::vector<std::unique_ptr<Card>> cards;
 
     int getMoney();

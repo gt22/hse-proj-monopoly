@@ -12,22 +12,47 @@ public:
     Board& board;
     std::string text;
     virtual void apply(Token token) = 0;
-    virtual void onPlayerGet(Token token) = 0;
 };
 
 class LeftPrisonForFree : public Card {
+public:
     LeftPrisonForFree(Board& board, std::string text = "You can left prison for free");
     void apply(Token token) override;
-    void onPlayerGet(Token token) override;
 };
 
 class GetMoney : public Card {
+public:
     GetMoney(Board& board, std::string text = "");
     void apply(Token token) override;
-    void onPlayerGet(Token token) override;
     int amount = 50;
 };
 
+class PayMoney : public Card {
+public:
+    PayMoney(Board& board, std::string text = "");
+    void apply(Token token) override;
+    int amount = 50;
+};
+
+class GetMoneyFromOtherPlayers : public Card {
+public:
+    GetMoneyFromOtherPlayers(Board& board, std::string text = "");
+    void apply(Token token) override;
+    int amount = 50;
+};
+
+class Teleport : public Card {
+public:
+    Teleport(Board& board, std::string text = "");
+    void apply(Token token) override;
+    int amount = 50;
+};
+
+class TeleportToPrison : public Card {
+public:
+    TeleportToPrison(Board& board, std::string text = "");
+    void apply(Token token) override;
+};
 
 class CardPool {
 public:
