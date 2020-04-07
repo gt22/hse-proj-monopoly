@@ -97,6 +97,12 @@ public:
     void onPlayerEntry(Token token) override;
 };
 
+class PublicTreasury final : public FieldTile {
+public:
+    PublicTreasury(Board& board, int position, std::string name);
+    void onPlayerEntry(Token token) override;
+};
+
 class IncomeTax final : public FieldTile {
 public:
     IncomeTax(Board& board, int position, std::string name,

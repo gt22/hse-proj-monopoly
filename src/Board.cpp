@@ -44,7 +44,7 @@ Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersLis
     field[1] = new Street(*this, 1, "Zhitnaya street",
             60, Color::COL1, 50);
 
-    field[2] = new Chance(*this, 2, "Public treasury");
+    field[2] = new PublicTreasury(*this, 2, "Public treasury");
 
     field[3] = new Street(*this, 3, "Nagatinskaya street",
             60, Color::COL1, 50);
@@ -85,7 +85,7 @@ Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersLis
     field[16] = new Street(*this, 16, "Ryazansky prospect",
             180, Color::COL4, 100);
 
-    field[17] = new Chance(*this, 17, "Public treasury");
+    field[17] = new PublicTreasury(*this, 17, "Public treasury");
 
     field[18] = new Street(*this, 18, "Vavilov street",
             180, Color::COL4, 100);
@@ -129,7 +129,7 @@ Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersLis
     field[32] = new Street(*this, 32, "Gogolevsky boulevard",
             300, Color::COL7, 200);
 
-    field[33] = new Chance(*this, 33, "Public treasury");
+    field[33] = new PublicTreasury(*this, 33, "Public treasury");
 
     field[34] = new Street(*this, 34, "Kutuzovsky prospect",
             320, Color::COL7, 200);

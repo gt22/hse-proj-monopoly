@@ -21,6 +21,9 @@ GoToPrison::GoToPrison(Board &board, int position, std::string name)
 Chance::Chance(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {}
 
+PublicTreasury::PublicTreasury(Board &board, int position, std::string name)
+        : FieldTile(board, position, std::move(name)) {}
+
 IncomeTax::IncomeTax(Board &board, int position, std::string name, int tax)
         : FieldTile(board, position, std::move(name)), tax(tax) {}
 
@@ -199,6 +202,30 @@ void GoToPrison::onPlayerEntry(Token token) {
 }
 
 void Chance::onPlayerEntry(Token token) {
+    PlayerData& player = board.getPlayer(token);
+    PlayerRequest request;
+    std::set<PlayerAction> mustHave = { PlayerAction::TAKE_CARD };
+    while (true) {
+        makeDefaultRequest(request);
+        addAll(request.availableActions, mustHave);
+        PlayerReply reply = board.sendRequest(token, request);
+        if (reply->action == PlayerAction::END_TURN) {
+            if (mustHave.empty()) {
+                break;
+            }
+            request.message = "You can't finish turn";
+            continue;
+        }
+        if (reply->action == PlayerAction::TAKE_CARD) {
+            mustHave.erase(PlayerAction::TAKE_CARD);
+            player.cards.push_back(board.deck.takeCard());
+            continue;
+        }
+        handleGenericActions(token, reply);
+    }
+}
+
+void PublicTreasury::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
     PlayerRequest request;
     std::set<PlayerAction> mustHave = { PlayerAction::TAKE_CARD };
