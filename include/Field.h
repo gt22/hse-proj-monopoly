@@ -3,6 +3,7 @@
 
 #include "MonopolyFwd.h"
 #include <string>
+#include <vector>
 
 static constexpr int PRISON_FINE = 50;
 static constexpr int START_SUM = 200;
@@ -95,12 +96,16 @@ class Chance final : public FieldTile {
 public:
     Chance(Board& board, int position, std::string name);
     void onPlayerEntry(Token token) override;
+
+    std::vector<Card*> cards;
 };
 
 class PublicTreasury final : public FieldTile {
 public:
     PublicTreasury(Board& board, int position, std::string name);
     void onPlayerEntry(Token token) override;
+
+    std::vector<Card*> cards;
 };
 
 class IncomeTax final : public FieldTile {

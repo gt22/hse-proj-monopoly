@@ -4,6 +4,20 @@
 
 Card::Card(Board &board, std::string text) : board(board), text(std::move(text)) {}
 
+LeftPrisonForFree::LeftPrisonForFree(Board &board, std::string text)
+                 : Card(board, std::move(text)) {}
+
+GetMoney::GetMoney(Board &board, std::string text)
+        : Card(board, std::move(text)) {}
+
+void LeftPrisonForFree::onPlayerGet(Token token) { }
+
+void LeftPrisonForFree::apply(Token token) { }
+
+void GetMoney::onPlayerGet(Token token) { }
+
+void GetMoney::apply(Token token) { }
+
 CardPool::CardPool() {
     //pool.push_back(std::make_unique(...))
 }

@@ -19,10 +19,14 @@ GoToPrison::GoToPrison(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {}
 
 Chance::Chance(Board &board, int position, std::string name)
-        : FieldTile(board, position, std::move(name)) {}
+        : FieldTile(board, position, std::move(name)) {
+    //TODO: fill vector cards
+}
 
 PublicTreasury::PublicTreasury(Board &board, int position, std::string name)
-        : FieldTile(board, position, std::move(name)) {}
+        : FieldTile(board, position, std::move(name)) {
+    //TODO: fill vector cards
+}
 
 IncomeTax::IncomeTax(Board &board, int position, std::string name, int tax)
         : FieldTile(board, position, std::move(name)), tax(tax) {}
