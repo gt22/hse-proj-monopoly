@@ -190,6 +190,7 @@ void Prison::onPlayerEntry(Token token) {
         }
         if (reply->action == PlayerAction::USE_CARD) {
             player.outOfPrison();
+            player.cardToLeavePrison = false;
             continue;
         }
         handleGenericActions(token, reply);
