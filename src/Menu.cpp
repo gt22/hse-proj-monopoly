@@ -166,6 +166,10 @@ void MenuView::menuInteraction() {
                     addPlayerMenu();
 
                 } else if (i == 1) {
+                    clear();
+                    NcursesView view(manager);
+                    view.runGame();
+                    clear();
                     // view.runGame();
                 } else {
                     flag = true;

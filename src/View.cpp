@@ -165,6 +165,7 @@ void NcursesView::runGame() {
         switch(enteredChar) {
             case 'x':
                 flag = true;
+                clear();
                 break;
             case KEY_MOUSE:
                 if (getmouse(&event) == OK) {
@@ -173,13 +174,17 @@ void NcursesView::runGame() {
                         mvprintw(12, 50, "You chose %d", pos);
                         //if (pos != -1)
                          //   break;
-                    } else if (event.bstate & BUTTON1_PRESSED) {
-                        // tile info
+                    } else if (event.bstate & BUTTON1_CLICKED) {
+                        pos = transformCoord(event.x, event.y);
+                        //mvprintw(10, 50, "You chose %d", pos);
+                        if (pos != -1)
+                            writeTileInfo(pos);
                     }
                 }
                 break;
             case 'r':
                 processRequestTest();
+                //processRequest(...);
                 break;
         }
         refresh();
@@ -449,4 +454,33 @@ int NcursesView::transformCoord(int x, int y) {
     else if (x < tileSizeX)
         return 4 * TILES_PER_LINE - 4 - y / tileSizeY;
     return -1;
+}
+
+void NcursesView::writeTileInfo(int pos) {
+    WINDOW* cardWindow = newwin(tileSizeY * 4, tileSizeX * 3 / 2, fieldSizeY / 2 - 2 * tileSizeY,  fieldSizeX / 2 - tileSizeX * 3 / 4);
+    box(cardWindow, 0, 0);
+    wrefresh(cardWindow);
+    int x = tileSizeX / 2;
+    int y = 1;
+
+    mvwprintw(cardWindow, y, x, "CARD #%i", pos + 1);
+    y++;
+    // STREET:
+    // NAME
+    // PRICE
+    // 1,2,3,4 HOUSE PRICE
+    // HOTEL
+    // OWNER?
+
+    
+    wrefresh(cardWindow);
+    int ch = wgetch(cardWindow);
+
+    while (ch != 'x') {
+        ch = wgetch(cardWindow);
+    }
+    wborder(cardWindow, ' ', ' ', ' ',' ',' ',' ',' ',' ');
+    wrefresh(cardWindow);
+    delwin(cardWindow);
+    return;
 }

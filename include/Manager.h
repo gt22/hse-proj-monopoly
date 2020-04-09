@@ -18,8 +18,6 @@ public:
     std::shared_ptr<ViewHolder> view;
 private:
     void createGame();
-
-
     std::unique_ptr<Game> game;
     std::vector<std::unique_ptr<Player>> players;
 };

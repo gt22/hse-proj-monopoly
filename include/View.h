@@ -41,6 +41,7 @@ public:
 
     int transformCoord(int x, int y);
     void processRequestTest();
+    void writeTileInfo(int pos);
     std::string diceValue;
 private:
     const static int TILES_PER_LINE = 11;
