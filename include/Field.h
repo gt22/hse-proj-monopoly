@@ -28,7 +28,7 @@ public:
     std::string name;
     virtual void onPlayerPass(Token token);
     virtual void onPlayerEntry(Token token);
-    virtual std::string writeTileInfo();
+    virtual std::vector<std::string> writeTileInfo();
 };
 
 class OwnableTile : public FieldTile {
@@ -38,7 +38,7 @@ public:
     virtual size_t calculateTax(Token token) = 0;
     virtual void onPurchase(Token token) = 0;
     void onPlayerEntry(Token token) override;
-    virtual std::string writeTileInfo() override;
+    virtual std::vector<std::string> writeTileInfo() override;
     int cost;
     int costOfParking = 0;
     Color color;
@@ -51,7 +51,7 @@ public:
             int cost, Color color);
     size_t calculateTax(Token token) override;
     void onPurchase(Token token) override;
-    std::string writeTileInfo() override;
+    std::vector<std::string> writeTileInfo() override;
 };
 
 class Street final : public OwnableTile {
@@ -61,7 +61,7 @@ public:
     size_t calculateTax(Token token) override;
     void onPurchase(Token token) override;
     void onPlayerEntry(Token token) override;
-    std::string writeTileInfo() override;
+    std::vector<std::string> writeTileInfo() override;
     int numberOfHouses = 0;
     int costPerHouse;
     int tax;
@@ -71,7 +71,7 @@ class Utility final : public OwnableTile {
 public:
     Utility(Board& board, int position, std::string name,
             int cost, Color color);
-    std::string writeTileInfo() override;
+    std::vector<std::string> writeTileInfo() override;
     size_t calculateTax(Token token) override;
     void onPurchase(Token token) override;
 };
@@ -79,7 +79,7 @@ public:
 class Start final : public FieldTile {
 public:
     Start(Board& board, int position, std::string name);
-    std::string writeTileInfo() override;
+    std::vector<std::string> writeTileInfo() override;
     void onPlayerPass(Token token) override;
     void onPlayerEntry(Token token) override;
 };
@@ -87,7 +87,7 @@ public:
 class Prison final : public FieldTile {
 public:
     Prison(Board& board, int position, std::string name);
-    std::string writeTileInfo() override;
+    std::vector<std::string> writeTileInfo() override;
     void onPlayerEntry(Token token) override;
     int tax = 50;
 };
@@ -96,14 +96,14 @@ public:
 class GoToPrison final : public FieldTile {
 public:
     GoToPrison(Board& board, int position, std::string name);
-    std::string writeTileInfo() override;
+    std::vector<std::string> writeTileInfo() override;
     void onPlayerEntry(Token token) override;
 };
 
 class Chance final : public FieldTile {
 public:
     Chance(Board& board, int position, std::string name);
-    std::string writeTileInfo() override;
+    std::vector<std::string> writeTileInfo() override;
     void onPlayerEntry(Token token) override;
 
     std::vector<Card*> cards;
@@ -113,7 +113,7 @@ class PublicTreasury final : public FieldTile {
 public:
     PublicTreasury(Board& board, int position, std::string name);
     void onPlayerEntry(Token token) override;
-    std::string writeTileInfo() override;
+    std::vector<std::string> writeTileInfo() override;
     std::vector<Card*> cards;
 };
 
@@ -121,7 +121,7 @@ class IncomeTax final : public FieldTile {
 public:
     IncomeTax(Board& board, int position, std::string name,
             int tax);
-    std::string writeTileInfo() override;
+    std::vector<std::string> writeTileInfo() override;
     void onPlayerEntry(Token token) override;
 
 private:
@@ -131,7 +131,7 @@ private:
 class FreeParking final : public FieldTile {
 public:
     FreeParking(Board& board, int position, std::string name);
-    std::string writeTileInfo() override;
+    std::vector<std::string> writeTileInfo() override;
 };
 
 #endif //FIELD_H

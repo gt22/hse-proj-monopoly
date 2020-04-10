@@ -1,4 +1,4 @@
-#include <ncurses.h>
+#include "ncursesw/ncurses.h"
 #include <string>
 #include "Player.h"
 #include "View.h"
@@ -467,9 +467,41 @@ void NcursesView::writeTileInfo(int pos) {
 
     mvwprintw(cardWindow, y, x, "CARD #%i", pos + 1);
     y++;
-  //  const Board& board = manager.sendBoard();
-   // std::string name = board.field[pos]->name;
-   // mvwprintw(cardWindow, y, x, "%s", name.c_str());
+    if (pos == 0) {
+        y = tileSizeY * 2 - 1;
+        x+=3;
+        mvwprintw(cardWindow, y++, x, "GO");
+        mvwprintw(cardWindow, y, x, "->");
+        x-=3;
+    } else if (pos == 10) {
+        for (int yi = y; yi < tileSizeY * 4 - 1; yi++)
+            for (int xi = 0; xi < tileSizeX * 3 / 2; xi+=3) {
+                mvwaddch(cardWindow, yi, xi, ACS_VLINE);
+            }
+        y = tileSizeY * 2 - 1;
+        x+=1;
+        mvwprintw(cardWindow, y++, x, "IN JAIL");
+        x-=2;
+        mvwprintw(cardWindow, y, x, "OR VISITING");
+    } else if (pos == 20) {
+        y = tileSizeY * 2 - 1;
+        x+=2;
+        mvwprintw(cardWindow, y++, x, "FREE");
+        x-=2;
+        mvwprintw(cardWindow, y, x, "PARKING");
+    } else if (pos == 30) {
+        y = tileSizeY * 2 - 1;
+        mvwprintw(cardWindow, y++, x, "GO TO JAIL");
+    }
+    /*
+    const Board& board = manager.sendBoard();
+    std::string name = board.field[pos]->name;
+    std::vector<std::string> info = board.field[pos]->writeTileInfo();
+    y = tileSizeY * 2 - 1;
+    for (size_t i = 0; i < info.size(); i++) {
+        mvwprintw(cardWindow, y, x, "%s", info[i].c_str());
+    }
+     */
 
 
     // STREET:

@@ -1,7 +1,7 @@
 #include "MonopolyFwd.h"
 #include "Manager.h"
 #include "Board.h"
-
+#include "locale.h"
 #include <iostream>
 #include "View.h"
 

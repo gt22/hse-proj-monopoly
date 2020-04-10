@@ -380,15 +380,125 @@ void Utility::onPurchase(Token token) {
     board.getPlayer(token).numberOfUtilities++;
 }
 
-std::string FieldTile::writeTileInfo() { return " "; }
-std::string OwnableTile::writeTileInfo() { return " "; }
-std::string Start::writeTileInfo() { return " "; }
-std::string Street::writeTileInfo() { return " "; }
-std::string Railway::writeTileInfo() { return " "; }
-std::string Utility::writeTileInfo() { return " "; }
-std::string Prison::writeTileInfo() { return " "; }
-std::string GoToPrison::writeTileInfo() { return " "; }
-std::string Chance::writeTileInfo() { return " "; }
-std::string PublicTreasury::writeTileInfo() { return " "; }
-std::string IncomeTax::writeTileInfo() { return " "; }
-std::string FreeParking::writeTileInfo() { return " "; }
+std::vector<std::string> FieldTile::writeTileInfo() {
+    std::vector<std::string> info;
+    return info;
+}
+
+std::vector<std::string> OwnableTile::writeTileInfo() {
+    std::vector<std::string> info;
+    return info;
+}
+
+std::vector<std::string> Start::writeTileInfo() {
+    std::vector<std::string> info = {"GO", "->"};
+    return info;
+}
+
+std::vector<std::string> Street::writeTileInfo() {
+    std::vector<std::string> info;
+    info.push_back(name);
+    std::string item = std::to_string(cost) + "$";
+    info.push_back(item);
+    item = "RENT: " + std::to_string(costOfParking);
+    info.push_back(item);
+    item = "OWNER: ";
+    if (owner == Token::FREE_FIELD)
+        item += "NONE";
+    else if (owner == Token::SHIP)
+        item += "SHIP";
+    else if (owner == Token::BOOT)
+        item += "BOOT";
+    else if (owner == Token::CAR)
+        item += "CAR";
+    else if (owner == Token::CAT)
+        item += "CAT";
+    else if (owner == Token::DOG)
+        item += "DOG";
+    else if (owner == Token::HAT)
+        item += "HAT";
+    info.push_back(item);
+    item = "______";
+    info.push_back(item);
+    item = "HOUSE PRICE: " + std::to_string(costPerHouse);
+    info.push_back(item);
+    //item = "HOTEL PRICE: " + std::to_string(costPerHotel);
+    //info.push_back(item);
+    return info;
+}
+
+std::vector<std::string> Railway::writeTileInfo() {
+    std::vector<std::string> info;
+    info.push_back(name);
+    std::string item = std::to_string(cost) + "$";
+    info.push_back(item);
+    item = "RENT: " + std::to_string(costOfParking);
+    info.push_back(item);
+    item = "OWNER: ";
+    if (owner == Token::FREE_FIELD)
+        item += "NONE";
+    else if (owner == Token::SHIP)
+        item += "SHIP";
+    else if (owner == Token::BOOT)
+        item += "BOOT";
+    else if (owner == Token::CAR)
+        item += "CAR";
+    else if (owner == Token::CAT)
+        item += "CAT";
+    else if (owner == Token::DOG)
+        item += "DOG";
+    else if (owner == Token::HAT)
+        item += "HAT";
+    info.push_back(item);
+    item = "______";
+    info.push_back(item);
+    item = "if 2 railroads: ";
+    info.push_back(item);
+    item = "if 3 railroads: ";
+    info.push_back(item);
+    item = "if 4 railroads: ";
+    info.push_back(item);
+    item = "Moartage Value: ";
+    info.push_back(item);
+    return info;
+}
+
+std::vector<std::string> Utility::writeTileInfo() {
+    std::vector<std::string> info;
+    info.push_back(name);
+    std::string item = "RENT: " + std::to_string(costOfParking);
+    info.push_back(item);
+    item = "Moartage Value: ";
+    info.push_back(item);
+    return info;
+}
+
+std::vector<std::string> Prison::writeTileInfo() {
+    std::vector<std::string> info;
+    return info;
+}
+
+std::vector<std::string> GoToPrison::writeTileInfo() {
+    std::vector<std::string> info;
+    return info;
+}
+
+std::vector<std::string> Chance::writeTileInfo() {
+    std::vector<std::string> info;
+    return info;
+}
+
+std::vector<std::string> PublicTreasury::writeTileInfo() {
+    std::vector<std::string> info;
+    return info;
+}
+
+std::vector<std::string> IncomeTax::writeTileInfo() {
+    std::vector<std::string> info;
+    return info;
+}
+
+std::vector<std::string> FreeParking::writeTileInfo() {
+    std::vector<std::string> info;
+    return info;
+}
