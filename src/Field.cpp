@@ -168,13 +168,13 @@ void Prison::onPlayerEntry(Token token) {
             break;
         }
         if (reply->action == PlayerAction::ROLL_DICE) {
-            int firstTrow = rng.nextInt(1, 6), secondTrow = rng.nextInt(1, 6);
-            if (firstTrow == secondTrow) {
-                request.message = std::to_string(firstTrow) + " " + std::to_string(secondTrow) + "\nYou are leaving the prison!";
+            int firstThrow = rng.nextInt(1, 6), secondThrow = rng.nextInt(1, 6);
+            if (firstThrow == secondThrow) {
+                request.message = std::to_string(firstThrow) + " " + std::to_string(secondThrow) + "\nYou are leaving the prison!";
                 player.outOfPrison();
             } else {
                 request.message =
-                        std::to_string(firstTrow) + " != " + std::to_string(secondTrow) + "\nYou don't leave prison :(";
+                        std::to_string(firstThrow) + " != " + std::to_string(secondThrow) + "\nYou don't leave prison :(";
             }
             diceUsed = true;
             continue;
@@ -214,13 +214,13 @@ void GoToPrison::onPlayerEntry(Token token) {
             break;
         }
         if (reply->action == PlayerAction::ROLL_DICE) {
-            int firstTrow = rng.nextInt(1, 6), secondTrow = rng.nextInt(1, 6);
-            if (firstTrow == secondTrow) {
-                request.message = std::to_string(firstTrow) + " " + std::to_string(secondTrow) + "\nYou are leaving the prison!";
+            int firstThrow = rng.nextInt(1, 6), secondThrow = rng.nextInt(1, 6);
+            if (firstThrow == secondThrow) {
+                request.message = std::to_string(firstThrow) + " " + std::to_string(secondThrow) + "\nYou are leaving the prison!";
                 player.outOfPrison();
             } else {
                 request.message =
-                        std::to_string(firstTrow) + " != " + std::to_string(secondTrow) + "\nYou don't leave prison :(";
+                        std::to_string(firstThrow) + " != " + std::to_string(secondThrow) + "\nYou don't leave prison :(";
             }
             continue;
         }
@@ -229,6 +229,7 @@ void GoToPrison::onPlayerEntry(Token token) {
 
 void Chance::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
+    RandomSource rng;
     PlayerRequest request;
     std::set<PlayerAction> mustHave = { PlayerAction::TAKE_CARD };
     while (true) {
@@ -244,7 +245,11 @@ void Chance::onPlayerEntry(Token token) {
         }
         if (reply->action == PlayerAction::TAKE_CARD) {
             mustHave.erase(PlayerAction::TAKE_CARD);
-            player.cards.push_back(board.deck.takeCard());
+            int firstThrow = rng.nextInt(1, 6), secondThrow = rng.nextInt(1, 6), thirdThrow = rng.nextInt(1, 6);
+            std::size_t num = firstThrow + secondThrow + thirdThrow - 3;
+            board.sendMessage(token, PlayerMessage(std::to_string(firstThrow) + " " + std::to_string(secondThrow)
+                                                        + " " + std::to_string(thirdThrow) + "\n" + cards[num]->text));
+            cards[num]->apply(player.token);
             continue;
         }
         handleGenericActions(token, reply);
@@ -253,6 +258,7 @@ void Chance::onPlayerEntry(Token token) {
 
 void PublicTreasury::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
+    RandomSource rng;
     PlayerRequest request;
     std::set<PlayerAction> mustHave = { PlayerAction::TAKE_CARD };
     while (true) {
@@ -268,7 +274,11 @@ void PublicTreasury::onPlayerEntry(Token token) {
         }
         if (reply->action == PlayerAction::TAKE_CARD) {
             mustHave.erase(PlayerAction::TAKE_CARD);
-            player.cards.push_back(board.deck.takeCard());
+            int firstThrow = rng.nextInt(1, 6), secondThrow = rng.nextInt(1, 6), thirdThrow = rng.nextInt(1, 6);
+            std::size_t num = firstThrow + secondThrow + thirdThrow - 3;
+            board.sendMessage(token, PlayerMessage(std::to_string(firstThrow) + " " + std::to_string(secondThrow)
+                                                   + " " + std::to_string(thirdThrow) + "\n" + cards[num]->text));
+            cards[num]->apply(player.token);
             continue;
         }
         handleGenericActions(token, reply);
