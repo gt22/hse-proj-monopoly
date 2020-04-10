@@ -379,3 +379,16 @@ size_t Utility::calculateTax(Token token) {
 void Utility::onPurchase(Token token) {
     board.getPlayer(token).numberOfUtilities++;
 }
+
+std::string FieldTile::writeTileInfo() { return " "; }
+std::string OwnableTile::writeTileInfo() { return " "; }
+std::string Start::writeTileInfo() { return " "; }
+std::string Street::writeTileInfo() { return " "; }
+std::string Railway::writeTileInfo() { return " "; }
+std::string Utility::writeTileInfo() { return " "; }
+std::string Prison::writeTileInfo() { return " "; }
+std::string GoToPrison::writeTileInfo() { return " "; }
+std::string Chance::writeTileInfo() { return " "; }
+std::string PublicTreasury::writeTileInfo() { return " "; }
+std::string IncomeTax::writeTileInfo() { return " "; }
+std::string FreeParking::writeTileInfo() { return " "; }
