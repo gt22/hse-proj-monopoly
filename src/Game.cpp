@@ -53,3 +53,7 @@ void Game::runGame() {
         break;
     }
 }
+
+const Board &Game::sendBoard() {
+    return board;
+}

@@ -465,6 +465,10 @@ void NcursesView::writeTileInfo(int pos) {
 
     mvwprintw(cardWindow, y, x, "CARD #%i", pos + 1);
     y++;
+   // const Board& board = manager.sendBoard();
+   // string name name = board.field[pos];
+
+
     // STREET:
     // NAME
     // PRICE
@@ -472,7 +476,7 @@ void NcursesView::writeTileInfo(int pos) {
     // HOTEL
     // OWNER?
 
-    
+
     wrefresh(cardWindow);
     int ch = wgetch(cardWindow);
 

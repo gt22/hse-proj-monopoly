@@ -15,6 +15,7 @@ public:
     void runGame();
     PlayerReply sendRequest(Token token, PlayerRequest request);
     void sendMessage(Token token, PlayerMessage mes);
+    const Board& sendBoard();
 
 private:
     //std::unique_ptr<View> view;

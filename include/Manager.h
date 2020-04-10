@@ -16,6 +16,7 @@ public:
     PlayerReply sendRequest(Token token, PlayerRequest request);
     void sendMessage(Token token, PlayerMessage request);
     std::shared_ptr<ViewHolder> view;
+    const Board& sendBoard();
 private:
     void createGame();
     std::unique_ptr<Game> game;

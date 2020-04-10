@@ -36,3 +36,7 @@ void Manager::createGame() {
     game = std::make_unique<Game>(gameData, *this);
 }
 
+const Board &Manager::sendBoard() {
+    return game->sendBoard();
+}
+
