@@ -3,6 +3,8 @@
 #include "Player.h"
 #include "View.h"
 #include "Manager.h"
+#include "Board.h"
+#include "Field.h"
 #include <memory>
 
 AbstractView::AbstractView(Manager& manager) : manager(manager) {}
@@ -465,8 +467,9 @@ void NcursesView::writeTileInfo(int pos) {
 
     mvwprintw(cardWindow, y, x, "CARD #%i", pos + 1);
     y++;
-   // const Board& board = manager.sendBoard();
-   // string name name = board.field[pos];
+  //  const Board& board = manager.sendBoard();
+   // std::string name = board.field[pos]->name;
+   // mvwprintw(cardWindow, y, x, "%s", name.c_str());
 
 
     // STREET:
