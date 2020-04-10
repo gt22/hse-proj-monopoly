@@ -28,15 +28,36 @@ void LeftPrisonForFree::apply(Token token) {
     player.cardToLeavePrison = true;
 }
 
-void GetMoney::apply(Token token) { }
+void GetMoney::apply(Token token) {
+    PlayerData& player = board.getPlayer(token);
+    player.addMoney(amount);
+}
 
-void PayMoney::apply(Token token) { }
+void PayMoney::apply(Token token) {
+    //TODO
+}
 
-void GetMoneyFromOtherPlayers::apply(Token token) { }
+void GetMoneyFromOtherPlayers::apply(Token token) {
+    PlayerData& player = board.getPlayer(token);
+    for (std::size_t i = 0; i < board.getPlayers().size(); i++) {
+        if (board.getPlayers()[i].token == token) {
+            continue;
+        }
+        board.sendMessage(board.getPlayers()[i].token, PlayerMessage("You must pay " + std::to_string(amount)
+                                                              + " to " + std::string(board.getPlayers()[i].name)));
+        //TODO:
+        player.addMoney(amount);
+    }
+}
 
-void Teleport::apply(Token token) { }
+void Teleport::apply(Token token) {
+    //TODO
+}
 
-void TeleportToPrison::apply(Token token) { }
+void TeleportToPrison::apply(Token token) {
+    PlayerData& player = board.getPlayer(token);
+    player.toPrison();
+}
 
 CardPool::CardPool() {
     //pool.push_back(std::make_unique(...))
