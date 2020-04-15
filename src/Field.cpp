@@ -101,6 +101,7 @@ void addAll(std::vector<T>& vec, const C& cont) {
 void makeDefaultRequest(PlayerRequest& r) {
     //TODO: New allocation each time... Maybe rewrite as clear, reserve & many push_backs?
     r.availableActions = {
+            PlayerAction::LOSE,
             PlayerAction::END_TURN,
             PlayerAction::BUY_BUILDING,
             PlayerAction::BUY_HOTEL,
@@ -110,6 +111,10 @@ void makeDefaultRequest(PlayerRequest& r) {
 }
 
 void handleGenericActions(Token token, const PlayerReply& reply) {
+    if (reply->action == PlayerAction::LOSE) {
+        //TODO
+        return;
+    }
     if (reply->action == PlayerAction::BUY_BUILDING) {
         //TODO
         return;
