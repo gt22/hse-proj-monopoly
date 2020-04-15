@@ -13,6 +13,7 @@ static constexpr int PRISON_POS = 10;
 struct PlayerData {
     PlayerData(std::string name, Token token);
     PlayerData(const PlayerData&) = delete;
+    virtual ~PlayerData() = default;
     void operator=(PlayerData) = delete;
     PlayerData(PlayerData&&) noexcept = default;
     PlayerData& operator=(PlayerData&&) noexcept = default;
@@ -36,22 +37,32 @@ struct PlayerData {
 
 class Board {
 public:
+    explicit Board(Game& game); // Creates uninitialized board, for deserialization only
     Board(const std::vector<std::pair<std::string_view, Token>>& players, Game& game);
     static constexpr int FIELD_SIZE = 40;
-    std::array<FieldTile *, FIELD_SIZE> field; //TODO: raw pointer?
-    CardPool deck;
 
-    PlayerData& getPlayer(Token token);
+
+    virtual PlayerData& getPlayer(Token token);
     const PlayerData& getPlayer(Token token) const;
     Token getPlayerToken(std::size_t index) const;
-    const std::vector<PlayerData>& getPlayers() const;
-    PlayerReply sendRequest(Token token, PlayerRequest request) const;
+    virtual PlayerReply sendRequest(Token token, PlayerRequest request) const;
     void sendMessage(Token token, PlayerMessage mes) const;
     std::size_t getPlayersNumber() const;
 
+    std::array<FieldTile*, FIELD_SIZE>& getField();
+    const std::array<FieldTile*, FIELD_SIZE>& getField() const;
+
+    std::vector<PlayerData>& getPlayers();
+    const std::vector<PlayerData>& getPlayers() const;
+
+    CardPool& getDeck();
+    const CardPool& getDeck() const;
+
 private:
-    std::vector<PlayerData> players;
     Game& game;
+    std::array<FieldTile*, FIELD_SIZE> field; //TODO: raw pointer?
+    std::vector<PlayerData> players;
+    CardPool deck;
 };
 
 #endif //BOARD_H

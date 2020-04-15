@@ -25,7 +25,10 @@ namespace Monopoly::Serialization::Internal {
     Card* deserializeCard(const Pb::Card& data, Board&);
 
     Pb::PlayerData serializePlayerData(const PlayerData& data);
-    PlayerData deserializePlayerData(const Pb::PlayerData& ser);
+    PlayerData deserializePlayerData(const Pb::PlayerData& ser, Board&);
+
+    Pb::Board serializeBoard(const Board& board);
+    Board deserializeBoard(const Pb::Board& ser, Game& game);
 
 }
 

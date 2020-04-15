@@ -19,6 +19,39 @@ PROTOBUF_GENERATE_CPP(ProtoSources ProtoHeaders ${ProtoFiles})
 include_directories(${PROTOBUF_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(hseproj src/main.cpp include/View.h src/View.cpp src/Player.cpp include/Player.h src/Board.cpp include/Board.h src/Manager.cpp include/Manager.h include/Field.h src/Field.cpp include/MonopolyFwd.h src/Game.cpp include/Game.h include/Cards.h include/PlayerRequests.h src/Cards.cpp include/Random.h src/Random.cpp src/PlayerRequesrs.cpp src/Menu.cpp include/Menu.h include/network/internal/InternalSerialization.h ${ProtoSources} ${ProtoHeaders} src/network/internal/InternalSerialization.cpp)
+add_executable(hseproj src/main.cpp include/View.h src/View.cpp src/Player.cpp include/Player.h src/Board.cpp include/Board.h src/Manager.cpp include/Manager.h include/Field.h src/Field.cpp include/MonopolyFwd.h src/Game.cpp include/Game.h include/Cards.h include/PlayerRequests.h src/Cards.cpp include/Random.h src/Random.cpp src/PlayerRequesrs.cpp src/Menu.cpp include/Menu.h include/network/internal/InternalSerialization.h ${ProtoSources} ${ProtoHeaders} src/network/internal/InternalSerialization.cpp include/network/MonopolySerialization.h src/network/MonopolySerialization.cpp)
 target_link_libraries(hseproj ${CURSES_LIBRARIES} ${PROTOBUF_LIBRARIES})
 
+include(cmake/googletest.cmake)
+fetch_googletest(
+        ${PROJECT_SOURCE_DIR}/cmake
+        ${PROJECT_BINARY_DIR}/googletest
+)
+
+add_library(hseproj-lib "")
+
+file(GLOB_RECURSE sources "src/*")
+file(GLOB_RECURSE includes "include/*")
+
+target_sources(
+        hseproj-lib
+        PRIVATE
+            ${sources}
+            ${ProtoHeaders}
+            ${ProtoSources}
+        PUBLIC
+            ${include}
+)
+target_link_libraries(
+        hseproj-lib
+        ${PROTOBUF_LIBRARIES}
+)
+
+target_include_directories(
+        hseproj-lib
+        PUBLIC
+            include
+)
+
+enable_testing()
+add_subdirectory(test)

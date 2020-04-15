@@ -25,7 +25,7 @@ void Game::runGame() {
             continue;
         }
         if (curPlayer.prisoner) {
-            board.field[curPlayer.position]->onPlayerEntry(curPlayer.token);
+            board.getField()[curPlayer.position]->onPlayerEntry(curPlayer.token);
             curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
             continue;
         }
@@ -45,7 +45,7 @@ void Game::runGame() {
         } else {
             curPlayer.newPosition(firstTrow + secondTrow);
         }
-        board.field[curPlayer.position]->onPlayerEntry(curPlayer.token);
+        board.getField()[curPlayer.position]->onPlayerEntry(curPlayer.token);
         if (!extraTurn) {
             curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
         }

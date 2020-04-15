@@ -38,7 +38,7 @@ enum class OwnableType : std::size_t {
 
 class FieldTile {
 public:
-    explicit FieldTile(Board& board);
+    explicit FieldTile(Board& board); // Creates uninitialized tile, for deserialization only
     FieldTile(Board& board, TileType type, int position, std::string name);
     virtual ~FieldTile() = default;
     Board& board;

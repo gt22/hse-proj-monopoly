@@ -232,7 +232,7 @@ void Chance::onPlayerEntry(Token token) {
         }
         if (reply->action == PlayerAction::TAKE_CARD) {
             mustHave.erase(PlayerAction::TAKE_CARD);
-            player.cards.push_back(board.deck.takeCard());
+            player.cards.push_back(board.getDeck().takeCard());
             continue;
         }
         handleGenericActions(token, reply);

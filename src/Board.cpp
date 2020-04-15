@@ -24,10 +24,12 @@ void PlayerData::outOfPrison() {
     daysLeftInPrison = 0;
 }
 
-Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersList, Game& game) : field(), deck(), game(game) {
+Board::Board(Game &game) : game(game), field(), deck() {}
+
+Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersList, Game& game) : game(game), field(), deck(*this) {
     players.reserve(playersList.size());
     for (auto [name, token] : playersList) {
-        players.emplace_back(name, token);
+        players.emplace_back(std::string(name), token);
     }
     //TODO: Fill field with tiles
     field[0] = new Start(*this, 0, "Start");
@@ -175,6 +177,27 @@ std::size_t Board::getPlayersNumber() const {
     return players.size();
 }
 
+std::vector<PlayerData> &Board::getPlayers() {
+    return players;
+}
+
+
 const std::vector<PlayerData> &Board::getPlayers() const {
     return players;
+}
+
+CardPool &Board::getDeck() {
+    return deck;
+}
+
+const CardPool &Board::getDeck() const {
+    return deck;
+}
+
+auto Board::getField() -> std::array<FieldTile *,Board::FIELD_SIZE>& {
+    return field;
+}
+
+auto Board::getField() const -> const std::array<FieldTile *,Board::FIELD_SIZE>& {
+    return field;
 }

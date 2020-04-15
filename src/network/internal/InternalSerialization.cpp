@@ -1,9 +1,9 @@
-#include "monopoly.pb.h"
 #include "network/internal/InternalSerialization.h"
 #include "PlayerRequests.h"
 #include "Field.h"
 #include "Cards.h"
 #include "Board.h"
+#include <google/protobuf/port_def.inc>
 namespace Monopoly::Serialization::Internal {
 
     Pb::PlayerRequest serializeRequest(const PlayerRequest& req) {
@@ -46,7 +46,8 @@ namespace Monopoly::Serialization::Internal {
         return std::make_unique<PlayerReplyData>(PlayerAction(ser.action()));
     }
 
-    Pb::FieldTile serializeFieldTile(const FieldTile& tile) {
+    Pb::FieldTile serializeFieldTile(const FieldTile* tilePtr) {
+        const FieldTile& tile = *tilePtr;
         Pb::FieldTile ser;
         ser.set_type(Pb::FieldTile_TileType(tile.type));
         ser.set_position(tile.position);
@@ -193,4 +194,40 @@ namespace Monopoly::Serialization::Internal {
         return ret;
     }
 
+    template<typename T, typename C, typename F>
+    //T - serialized type
+    //C - container of type V
+    //F - serialization function (const V&) -> T&&
+    void addAll(PROTOBUF_NAMESPACE_ID::RepeatedPtrField<T>* field, const C& cont, F conv) {
+        field->Reserve(cont.size());
+        for(const auto& x : cont) {
+            field->Add(conv(x));
+        }
+    }
+
+    Pb::Board serializeBoard(const Board& board) {
+        Pb::Board ser;
+        addAll(ser.mutable_tiles(), board.getField(), serializeFieldTile);
+        addAll(ser.mutable_deck(), board.getDeck().getCards(), [](const auto& card){ return serializeCard(*card); });
+        addAll(ser.mutable_players(), board.getPlayers(), serializePlayerData);
+        return ser;
+    }
+
+    Board deserializeBoard(const Pb::Board& ser, Game& game) {
+        Board ret(game);
+        for(const auto& tileSer : ser.tiles()) {
+            FieldTile *tile = deserializeFieldTile(tileSer, ret);
+            ret.getField()[tile->position] = tile;
+        }
+        auto& cards = ret.getDeck().getCards();
+        cards.reserve(ser.deck_size());
+        for(const auto& cardSer : ser.deck()) {
+            cards.emplace_back(deserializeCard(cardSer, ret));
+        }
+        ret.getPlayers().reserve(ser.players_size());
+        for(const auto& dataSer : ser.players()) {
+            ret.getPlayers().push_back(deserializePlayerData(dataSer, ret));
+        }
+        return ret;
+    }
 }

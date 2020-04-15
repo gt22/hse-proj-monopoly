@@ -16,8 +16,10 @@ public:
 
 class CardPool {
 public:
-    CardPool(); // Тут создаются карточки
+    CardPool(); // Creates uninitialized pool, for deserialization only
+    explicit CardPool(Board& board); // Тут создаются карточки
 
+    std::vector<std::unique_ptr<Card>>& getCards();
     const std::vector<std::unique_ptr<Card>>& getCards() const;
     std::unique_ptr<Card> takeCard();
     void returnCard(std::unique_ptr<Card> card);
