@@ -113,30 +113,35 @@ void makeDefaultRequest(PlayerRequest& r) {
     };
 }
 
-void handleGenericActions(Token token, const FieldTile& tile, const PlayerReply& reply) {
+bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply& reply) {
     if (reply->action == PlayerAction::LOSE) {
+        PlayerData& player = tile.board.getPlayer(token);
+        player.setLoser();
+
         //TODO
-        return;
+        return false;
     }
     if (reply->action == PlayerAction::BUY_BUILDING) {
         //TODO
-        return;
+        return true;
     }
     if (reply->action == PlayerAction::BUY_HOTEL) {
         //TODO
-        return;
+        return true;
     }
     if (reply->action == PlayerAction::MORTGAGE_HOLDINGS) {
         //TODO
-        return;
+        return true;
     }
     if (reply->action == PlayerAction::START_TRADE) {
         //TODO
-        return;
+        return true;
     }
     if(reply->action == PlayerAction::EXIT_GAME) {
         tile.board.isFinished = true;
+        return false;
     }
+    return true;
 }
 
 void Start::onPlayerEntry(Token token) {
@@ -149,7 +154,9 @@ void Start::onPlayerEntry(Token token) {
         if (reply->action == PlayerAction::END_TURN) {
             break;
         }
-        handleGenericActions(token, *this, reply);
+        if (!handleGenericActions(token, *this, reply)) {
+            return;
+        }
     }
 }
 
@@ -205,7 +212,9 @@ void Prison::onPlayerEntry(Token token) {
             player.cardToLeavePrison = false;
             continue;
         }
-        handleGenericActions(token, *this, reply);
+        if (!handleGenericActions(token, *this, reply)) {
+            return;
+        }
     }
 }
 
@@ -264,7 +273,9 @@ void Chance::onPlayerEntry(Token token) {
             cards[num]->apply(player.token);
             continue;
         }
-        handleGenericActions(token, *this, reply);
+        if (!handleGenericActions(token, *this, reply)) {
+            return;
+        }
     }
 }
 
@@ -293,7 +304,9 @@ void PublicTreasury::onPlayerEntry(Token token) {
             cards[num]->apply(player.token);
             continue;
         }
-        handleGenericActions(token, *this, reply);
+        if (!handleGenericActions(token, *this, reply)) {
+            return;
+        }
     }
 }
 
@@ -323,7 +336,9 @@ void IncomeTax::onPlayerEntry(Token token) {
             request.message = "Not enough money :(";
             continue;
         }
-        handleGenericActions(token, *this, reply);
+        if (!handleGenericActions(token, *this, reply)) {
+            return;
+        }
     }
 }
 
@@ -377,7 +392,9 @@ void OwnableTile::onPlayerEntry(Token token) {
             request.message = "Not enough money :(";
             continue;
         }
-        handleGenericActions(token, *this, reply);
+        if (!handleGenericActions(token, *this, reply)) {
+            return;
+        }
     }
 }
 

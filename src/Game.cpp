@@ -20,11 +20,17 @@ void Game::sendMessage(Token token, PlayerMessage mes) {
 
 void Game::runGame() {
     std::size_t curPlayerNum = 0;
+    int numOfAlivePlayers = board.getPlayersNumber();
     while (!board.isFinished) {
         PlayerData& curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
         if (!curPlayer.alive) {
             curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
             continue;
+        }
+        if (numOfAlivePlayers == 1) {
+            sendMessage(curPlayer.token, PlayerMessage("Victory!"));
+            sync();
+            board.isFinished = true;
         }
         if (curPlayer.prisoner) {
             board.field[curPlayer.position]->onPlayerEntry(curPlayer.token);

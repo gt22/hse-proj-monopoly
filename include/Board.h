@@ -33,6 +33,7 @@ struct PlayerData {
 
     int getMoney();
     int addMoney(int newMoney);
+    void setLoser();
 
     void newPosition(std::size_t throwSum);
     void toPrison();

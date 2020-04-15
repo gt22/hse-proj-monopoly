@@ -13,6 +13,11 @@ int PlayerData::addMoney(int newMoney) {
     return money;
 }
 
+void PlayerData::setLoser() {
+    alive = false;
+    //TODO:
+}
+
 void PlayerData::newPosition(std::size_t throwSum) {
     std::size_t newPos = (position + throwSum) % Board::FIELD_SIZE;
     if (newPos < position) {
