@@ -18,7 +18,8 @@ enum class PlayerAction {
     START_TRADE_NEW_FIELD,
     ROLL_DICE,
     END_TURN,
-    EXIT_GAME
+    EXIT_GAME,
+    LOSE
 };
 
 struct PlayerRequest final {
