@@ -1,4 +1,3 @@
-#include "ncursesw/ncurses.h"
 #include <string>
 #include "Player.h"
 #include "View.h"
@@ -228,6 +227,8 @@ PlayerReply NcursesView::processRequest(Player& player, PlayerRequest req) {
             actionNames.push_back("ROLL DICE");
         } else if (req.availableActions[i] == PlayerAction::END_TURN) {
             actionNames.push_back("END TURN");
+        } else if (req.availableActions[i] == PlayerAction::EXIT_GAME) {
+            actionNames.push_back("EXIT GAME");
         }
     }
 
@@ -306,6 +307,8 @@ PlayerReply NcursesView::processRequest(Player& player, PlayerRequest req) {
         // return std::make_unique<StartTradeNewFieldReply>();
     } else if (actionNames[number - 1] == "ROLL_DICE") {
         //return std::make_unique<RollDiceReply>();
+    } else if (actionNames[number - 1] == "EXIT GAME") {
+        return std::make_unique<ExitGameReply>();
     }
     return std::make_unique<EndTurnReply>();
 }
@@ -494,7 +497,7 @@ void NcursesView::writeTileInfo(int pos) {
         mvwprintw(cardWindow, y++, x, "GO TO JAIL");
     }
     /*
-    const Board& board = manager.sendBoard();
+    const Board& board = manager.getBoard();
     std::string name = board.field[pos]->name;
     std::vector<std::string> info = board.field[pos]->writeTileInfo();
     y = tileSizeY * 2 - 1;

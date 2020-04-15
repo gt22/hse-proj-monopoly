@@ -11,7 +11,9 @@ include_directories(include)
 
 find_package(Curses REQUIRED)
 include_directories(${CURSES_INCLUDE_DIR})
-set(CMAKE_CXX_FLAGS "-lncurses")
+add_compile_options("-fsanitize=address")
+add_link_options(-fsanitize=address)
+#set(CMAKE_CXX_FLAGS "-lncurses")
 
 add_executable(hseproj src/main.cpp include/View.h src/View.cpp src/Player.cpp include/Player.h src/Board.cpp include/Board.h src/Manager.cpp include/Manager.h include/Field.h src/Field.cpp include/MonopolyFwd.h src/Game.cpp include/Game.h include/Cards.h include/PlayerRequests.h src/Cards.cpp include/Random.h src/Random.cpp src/PlayerRequesrs.cpp src/Menu.cpp include/Menu.h)
 target_link_libraries(hseproj ${CURSES_LIBRARIES})
@@ -23,7 +25,7 @@ fetch_googletest(
 )
 
 add_library(hseproj-lib "")
-
+target_link_libraries(hseproj-lib ${CURSES_LIBRARIES})
 file(GLOB sources "src/*")
 file(GLOB includes "include/*")
 

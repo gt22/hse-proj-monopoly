@@ -17,7 +17,8 @@ enum class PlayerAction {
     START_TRADE,
     START_TRADE_NEW_FIELD,
     ROLL_DICE,
-    END_TURN
+    END_TURN,
+    EXIT_GAME
 };
 
 struct PlayerRequest final {
@@ -51,6 +52,8 @@ struct BuyPropertyReply : BasicReply<PlayerAction::BUY_PROPERTY> {};
 struct BuyBuildingReply : BasicReply<PlayerAction::BUY_BUILDING> {};
 
 struct EndTurnReply : BasicReply<PlayerAction::END_TURN> {};
+
+struct ExitGameReply : BasicReply<PlayerAction::EXIT_GAME> {};
 
 typedef std::unique_ptr<PlayerReplyData> PlayerReply;
 

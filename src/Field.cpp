@@ -7,6 +7,8 @@
 #include <set>
 #include <cassert>
 
+#include <iostream>
+
 FieldTile::FieldTile(Board& board, int position, std::string name) :
                         board(board), position(position), name(std::move(name)) {}
 
@@ -105,11 +107,13 @@ void makeDefaultRequest(PlayerRequest& r) {
             PlayerAction::BUY_BUILDING,
             PlayerAction::BUY_HOTEL,
             PlayerAction::START_TRADE,
-            PlayerAction::MORTGAGE_HOLDINGS
+            PlayerAction::MORTGAGE_HOLDINGS,
+            PlayerAction::EXIT_GAME
     };
 }
 
-void handleGenericActions(Token token, const PlayerReply& reply) {
+void handleGenericActions(Token token, const FieldTile& tile, const PlayerReply& reply) {
+    std::cerr << "Token: " << static_cast<int>(token) << ", tile:" << tile.position << std::endl;
     if (reply->action == PlayerAction::BUY_BUILDING) {
         //TODO
         return;
@@ -126,6 +130,9 @@ void handleGenericActions(Token token, const PlayerReply& reply) {
         //TODO
         return;
     }
+    if(reply->action == PlayerAction::EXIT_GAME) {
+        tile.board.isFinished = true;
+    }
 }
 
 void Start::onPlayerEntry(Token token) {
@@ -134,10 +141,11 @@ void Start::onPlayerEntry(Token token) {
     while (true) {
         makeDefaultRequest(request);
         PlayerReply reply = board.sendRequest(player.token, request);
+        std::cerr << "Reply: " << static_cast<int>(reply->action) << std::endl;
         if (reply->action == PlayerAction::END_TURN) {
             break;
         }
-        handleGenericActions(token, reply);
+        handleGenericActions(token, *this, reply);
     }
 }
 
@@ -193,7 +201,7 @@ void Prison::onPlayerEntry(Token token) {
             player.cardToLeavePrison = false;
             continue;
         }
-        handleGenericActions(token, reply);
+        handleGenericActions(token, *this, reply);
     }
 }
 
@@ -252,7 +260,7 @@ void Chance::onPlayerEntry(Token token) {
             cards[num]->apply(player.token);
             continue;
         }
-        handleGenericActions(token, reply);
+        handleGenericActions(token, *this, reply);
     }
 }
 
@@ -281,7 +289,7 @@ void PublicTreasury::onPlayerEntry(Token token) {
             cards[num]->apply(player.token);
             continue;
         }
-        handleGenericActions(token, reply);
+        handleGenericActions(token, *this, reply);
     }
 }
 
@@ -311,7 +319,7 @@ void IncomeTax::onPlayerEntry(Token token) {
             request.message = "Not enough money :(";
             continue;
         }
-        handleGenericActions(token, reply);
+        handleGenericActions(token, *this, reply);
     }
 }
 
@@ -365,7 +373,7 @@ void OwnableTile::onPlayerEntry(Token token) {
             request.message = "Not enough money :(";
             continue;
         }
-        handleGenericActions(token, reply);
+        handleGenericActions(token, *this, reply);
     }
 }
 

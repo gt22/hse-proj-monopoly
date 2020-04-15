@@ -110,7 +110,7 @@ void MenuView::addPlayerMenu() {
             mvwprintw(menuWindow, yi, xi, " ");
 }
 
-void MenuView::menuInteraction() {
+MenuAction MenuView::menuInteraction() {
     getmaxyx(stdscr, menuSizeY, menuSizeX);
     std::string buttonsList[NUMBER_OF_BUTTONS] = { "Add player", "Start game", "Exit" };
     char button[15];
@@ -167,10 +167,7 @@ void MenuView::menuInteraction() {
 
                 } else if (i == 1) {
                     clear();
-                    NcursesView view(manager);
-                    view.runGame();
-                    clear();
-                    // view.runGame();
+                    return MenuAction::START_GAME;
                 } else {
                     flag = true;
                 }
@@ -184,7 +181,7 @@ void MenuView::menuInteraction() {
         wattroff(menuWindow, A_STANDOUT);
 
         if (flag)
-            break;
+            return MenuAction::EXIT;
     }
 
     delwin(menuWindow);

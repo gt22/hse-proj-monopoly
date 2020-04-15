@@ -9,16 +9,18 @@ Game::Game(const std::vector<std::pair<std::string_view, Token>> &players, Manag
 }
 
 PlayerReply Game::sendRequest(Token token, PlayerRequest request) {
+    sync();
     return manager.sendRequest(token, std::move(request));
 }
 
 void Game::sendMessage(Token token, PlayerMessage mes) {
+    sync();
     manager.sendMessage(token, std::move(mes));
 }
 
 void Game::runGame() {
     std::size_t curPlayerNum = 0;
-    while (true) {
+    while (!board.isFinished) {
         PlayerData& curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
         if (!curPlayer.alive) {
             curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
@@ -30,9 +32,9 @@ void Game::runGame() {
             continue;
         }
         int firstTrow = rng.nextInt(1, 6), secondTrow = rng.nextInt(1, 6);
-        PlayerMessage message(std::to_string(firstTrow) + " " + std::to_string(secondTrow));
-        sendMessage(curPlayer.token, message);
         curPlayer.lastTrow = firstTrow + secondTrow;
+        sendMessage(curPlayer.token,
+                PlayerMessage(std::to_string(firstTrow) + " " + std::to_string(secondTrow)));
         bool extraTurn = false;
         if (firstTrow == secondTrow) {
             curPlayer.doubleDice++;
@@ -50,10 +52,14 @@ void Game::runGame() {
         if (!extraTurn) {
             curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
         }
-        break;
+        sync();
     }
 }
 
-const Board &Game::sendBoard() {
+const Board &Game::getBoard() {
     return board;
+}
+
+void Game::sync() {
+    manager.sync(board);
 }

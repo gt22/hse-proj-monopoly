@@ -8,8 +8,7 @@
 int main() {
     setlocale(LC_ALL, "");
     Manager manager;
-    MenuView menu(manager);
-    menu.menuInteraction();
+    manager.createMenu();
  //   NcursesView view(manager);
    // view.runGame();
     return 0;

@@ -52,6 +52,6 @@ class AbstractView;
 class MenuView;
 class MonopolyView;
 class NcursesView;
-using ViewHolder = std::shared_ptr<AbstractView>;
+using ViewHolder = std::unique_ptr<AbstractView>;
 
 #endif //MONOPOLYFWD_H

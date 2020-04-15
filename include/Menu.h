@@ -3,11 +3,16 @@
 
 #include "View.h"
 
+enum class MenuAction {
+    START_GAME,
+    EXIT
+};
+
 class MenuView final : public AbstractView {
 public:
     explicit MenuView(Manager& manager);
     ~MenuView() override;
-    void menuInteraction();
+    MenuAction menuInteraction();
     int getPlayersNumber();
     void addPlayerMenu();
 private:

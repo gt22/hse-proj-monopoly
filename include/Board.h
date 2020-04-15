@@ -46,6 +46,8 @@ public:
     std::array<FieldTile *, FIELD_SIZE>  field;
     CardPool deck;
 
+    bool isFinished = false; //TODO: Костыыыыыль
+
     virtual PlayerData& getPlayer(Token token);
     const PlayerData& getPlayer(Token token) const;
     Token getPlayerToken(std::size_t index) const;
