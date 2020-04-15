@@ -26,6 +26,15 @@ public:
    virtual void processMessage(Player& p, PlayerMessage mes) = 0;
 };
 
+class TerminalView : public MonopolyView {
+public:
+    explicit TerminalView(Manager& manager);
+
+    virtual void redraw(const Board& board);
+    virtual PlayerReply processRequest(Player& p, PlayerRequest req) ;
+    virtual void processMessage(Player& p, PlayerMessage mes) ;
+};
+
 class NcursesView final : public MonopolyView {
 public:
     explicit NcursesView(Manager& manager);

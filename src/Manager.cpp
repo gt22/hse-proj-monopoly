@@ -52,8 +52,8 @@ void Manager::sync(const Board& board) {
 
 void Manager::createMenu() {
     view = std::make_shared<ViewHolder>(nullptr);
-    *view = std::make_unique<MenuView>(*this);
-    auto& menu = static_cast<MenuView&>(**view);
+    *view = std::make_unique<TerminalMenu>(*this);
+    auto& menu = static_cast<TerminalMenu&>(**view);
     switch(menu.menuInteraction()) {
         case MenuAction::START_GAME: {
             (*view).reset();

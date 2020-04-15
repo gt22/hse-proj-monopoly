@@ -339,7 +339,7 @@ std::set<PlayerAction> makePropertyMusthave(const OwnableTile& tile, Token token
 
 void OwnableTile::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
-    PlayerData& fieldOwner = board.getPlayer(owner);
+    PlayerData* fieldOwner = owner == Token::FREE_FIELD ? nullptr : &board.getPlayer(owner);
     PlayerRequest request;
     bool taxPaid = false;
 
@@ -360,7 +360,7 @@ void OwnableTile::onPlayerEntry(Token token) {
             int tax = calculateTax(token);
             if (player.getMoney() >= tax) {
                 player.addMoney(-tax);
-                fieldOwner.addMoney(tax);
+                fieldOwner->addMoney(tax);
                 taxPaid = true;
                 continue;
             }
@@ -382,6 +382,7 @@ void OwnableTile::onPlayerEntry(Token token) {
 }
 
 size_t Railway::calculateTax(Token token) {
+    if(owner == Token::FREE_FIELD) return 0;
     return 25 * (1u << board.getPlayer(owner).numberOfRailways);
 }
 
@@ -390,6 +391,7 @@ void Railway::onPurchase(Token token) {
 }
 
 size_t Utility::calculateTax(Token token) {
+    if(owner == Token::FREE_FIELD) return 0;
     int lastThrow = board.getPlayer(token).lastTrow;
     switch(board.getPlayer(owner).numberOfUtilities) {
         case 1: return lastThrow * 4;

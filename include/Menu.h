@@ -23,4 +23,10 @@ private:
     static const int NUMBER_OF_TOKENS = 6;
 };
 
+class TerminalMenu : public AbstractView {
+public:
+    explicit TerminalMenu(Manager& manager);
+    MenuAction menuInteraction();
+};
+
 #endif // MENU_H

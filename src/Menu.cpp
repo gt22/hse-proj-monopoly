@@ -186,3 +186,12 @@ MenuAction MenuView::menuInteraction() {
 
     delwin(menuWindow);
 }
+
+TerminalMenu::TerminalMenu(Manager &manager) : AbstractView(manager) {}
+
+MenuAction TerminalMenu::menuInteraction() {
+    manager.addPlayer(std::make_unique<LocalPlayer>(Token::DOG, manager.view));
+    return MenuAction::START_GAME;
+}
+
+
