@@ -205,3 +205,13 @@ bool Board::isFinished() const {
 int Board::getCurNumOfPlayers() const {
     return numOfAlivePlayers;
 }
+
+Token Board::getWinner() const {
+    for (std::size_t i = 0; i < (*this).getPlayersNumber(); i++) {
+        if (players[i].alive) {
+            return players[i].token;
+        }
+    }
+    //TODO: что вернуть если не нашли.
+    throw 1;
+}

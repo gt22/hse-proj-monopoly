@@ -54,7 +54,7 @@ void Game::runGame() {
         }
         sync();
     }
-    //TODO winner
+    board.sendMessage(board.getWinner(), PlayerMessage("Victory!"));
     sync();
 }
 

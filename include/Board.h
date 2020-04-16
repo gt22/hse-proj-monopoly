@@ -59,6 +59,7 @@ public:
     void decrNumOfOlayers();
     bool isFinished() const;
     int getCurNumOfPlayers() const;
+    Token getWinner() const;
 
 private:
     std::vector<PlayerData> players;
