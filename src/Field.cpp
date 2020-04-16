@@ -117,7 +117,8 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     if (reply->action == PlayerAction::LOSE) {
         PlayerData& player = tile.board.getPlayer(token);
         player.setLoser();
-
+        tile.board.decrNumOfOlayers();
+        tile.board.sendMessage(token, PlayerMessage("lose"));
         //TODO
         return false;
     }
@@ -138,7 +139,10 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         return true;
     }
     if(reply->action == PlayerAction::EXIT_GAME) {
-        tile.board.isFinished = true;
+        tile.board.decrNumOfOlayers();
+        if (tile.board.getCurNumOfPlayers() >= 1) {
+            tile.board.sendMessage(token, PlayerMessage("lose"));
+        }
         return false;
     }
     return true;

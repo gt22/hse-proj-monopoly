@@ -47,7 +47,7 @@ public:
     std::array<FieldTile *, FIELD_SIZE>  field;
     CardPool deck;
 
-    bool isFinished = false; //TODO: Костыыыыыль
+    //bool isFinished = false; //TODO: Костыыыыыль
 
     virtual PlayerData& getPlayer(Token token);
     const PlayerData& getPlayer(Token token) const;
@@ -56,10 +56,14 @@ public:
     virtual PlayerReply sendRequest(Token token, PlayerRequest request) const;
     void sendMessage(Token token, PlayerMessage mes) const;
     std::size_t getPlayersNumber() const;
+    void decrNumOfOlayers();
+    bool isFinished() const;
+    int getCurNumOfPlayers() const;
 
 private:
     std::vector<PlayerData> players;
     Game& game;
+    int numOfAlivePlayers;
 };
 
 #endif //BOARD_H

@@ -43,6 +43,7 @@ Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersLis
     for (auto [name, token] : playersList) {
         players.emplace_back(name, token);
     }
+    numOfAlivePlayers = playersList.size();
     //TODO: Fill field with tiles
     field[0] = new Start(*this, 0, "Start");
 
@@ -191,4 +192,16 @@ std::size_t Board::getPlayersNumber() const {
 
 const std::vector<PlayerData> &Board::getPlayers() const {
     return players;
+}
+
+void Board::decrNumOfOlayers() {
+    numOfAlivePlayers--;
+}
+
+bool Board::isFinished() const {
+    return (numOfAlivePlayers <= 1);
+}
+
+int Board::getCurNumOfPlayers() const {
+    return numOfAlivePlayers;
 }
