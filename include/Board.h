@@ -47,6 +47,8 @@ public:
     std::array<FieldTile *, FIELD_SIZE>  field;
     CardPool deck;
 
+    void sync();
+
     virtual PlayerData& getPlayer(Token token);
     const PlayerData& getPlayer(Token token) const;
     Token getPlayerToken(std::size_t index) const;
@@ -59,6 +61,7 @@ public:
     int getCurNumOfPlayers() const;
     Token getWinner() const;
     FieldTile* getTile(std::size_t pos) const;
+
 
 private:
     std::vector<PlayerData> players;

@@ -219,3 +219,7 @@ Token Board::getWinner() const {
 FieldTile *Board::getTile(std::size_t pos) const {
     return field[pos];
 }
+
+void Board::sync() {
+    game.sync();
+}

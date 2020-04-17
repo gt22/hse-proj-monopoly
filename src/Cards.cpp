@@ -45,6 +45,7 @@ void PayMoney::apply(Token token) {
     while (true) {
         makeDefaultRequest(request);
         PlayerReply reply = board.sendRequest(player.token, request);
+        board.sync();
         request.message = "";
         std::cerr << "Reply: " << static_cast<int>(reply->action) << std::endl;
         if (reply->action == PlayerAction::END_TURN && !payTax) {
@@ -75,6 +76,7 @@ void GetMoneyFromOtherPlayers::apply(Token token) {
         }
         board.sendMessage(board.getPlayers()[i].token, PlayerMessage("You must pay " + std::to_string(amount)
                                                               + " to " + std::string(board.getPlayers()[i].name)));
+        board.sync();
         payMoney->apply(board.getPlayers()[i].token);
         player.addMoney(amount);
     }
