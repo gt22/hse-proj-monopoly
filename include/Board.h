@@ -47,8 +47,6 @@ public:
     std::array<FieldTile *, FIELD_SIZE>  field;
     CardPool deck;
 
-    //bool isFinished = false; //TODO: Костыыыыыль
-
     virtual PlayerData& getPlayer(Token token);
     const PlayerData& getPlayer(Token token) const;
     Token getPlayerToken(std::size_t index) const;
@@ -60,6 +58,7 @@ public:
     bool isFinished() const;
     int getCurNumOfPlayers() const;
     Token getWinner() const;
+    FieldTile* getTile(std::size_t pos) const;
 
 private:
     std::vector<PlayerData> players;

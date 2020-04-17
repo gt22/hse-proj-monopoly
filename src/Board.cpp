@@ -215,3 +215,7 @@ Token Board::getWinner() const {
     //TODO: что вернуть если не нашли.
     throw 1;
 }
+
+FieldTile *Board::getTile(std::size_t pos) const {
+    return field[pos];
+}

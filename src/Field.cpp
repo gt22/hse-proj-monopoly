@@ -141,6 +141,8 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     if(reply->action == PlayerAction::EXIT_GAME) {
         tile.board.decrNumOfOlayers();
         if (tile.board.getCurNumOfPlayers() >= 1) {
+            PlayerData& player = tile.board.getPlayer(token);
+            player.setLoser();
             tile.board.sendMessage(token, PlayerMessage("lose"));
         }
         return false;
@@ -154,6 +156,7 @@ void Start::onPlayerEntry(Token token) {
     while (true) {
         makeDefaultRequest(request);
         PlayerReply reply = board.sendRequest(player.token, request);
+        request.message = "";
         std::cerr << "Reply: " << static_cast<int>(reply->action) << std::endl;
         if (reply->action == PlayerAction::END_TURN) {
             break;
@@ -181,6 +184,7 @@ void Prison::onPlayerEntry(Token token) {
             }
         }
         PlayerReply reply = board.sendRequest(token, request);
+        request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
             if (player.prisoner) {
                 player.daysLeftInPrison--;
@@ -233,8 +237,8 @@ void GoToPrison::onPlayerEntry(Token token) {
         if(player.prisoner) {
             request.availableActions.push_back(PlayerAction::ROLL_DICE);
         }
-
         PlayerReply reply = board.sendRequest(token, request);
+        request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
             break;
         }
@@ -261,6 +265,7 @@ void Chance::onPlayerEntry(Token token) {
         makeDefaultRequest(request);
         addAll(request.availableActions, mustHave);
         PlayerReply reply = board.sendRequest(token, request);
+        request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
             if (mustHave.empty()) {
                 break;
@@ -292,6 +297,7 @@ void PublicTreasury::onPlayerEntry(Token token) {
         makeDefaultRequest(request);
         addAll(request.availableActions, mustHave);
         PlayerReply reply = board.sendRequest(token, request);
+        request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
             if (mustHave.empty()) {
                 break;
@@ -318,12 +324,11 @@ void IncomeTax::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
     PlayerRequest request;
     std::set<PlayerAction> mustHave = { PlayerAction::PAY_TAX };
-
     while (true) {
         makeDefaultRequest(request);
         addAll(request.availableActions, mustHave);
-
         PlayerReply reply = board.sendRequest(token, request);
+        request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
             if (mustHave.empty()) {
                 break;
@@ -368,6 +373,7 @@ void OwnableTile::onPlayerEntry(Token token) {
         addAll(request.availableActions, mustHave);
 
         PlayerReply reply = board.sendRequest(token, request);
+        request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
             if (mustHave.empty()) {
                 break;
