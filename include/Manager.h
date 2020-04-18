@@ -8,21 +8,28 @@
 #include "Menu.h"
 #include <vector>
 #include <memory>
-
+#include <thread>
+#include <future>
 
 class Manager {
 public:
     void addPlayer(std::unique_ptr<Player> player);
-    void createMenu();
+    void run();
     void startGame();
+    bool isGameStarted();
+    const Board& getBoard();
     PlayerReply sendRequest(Token token, PlayerRequest request);
     void sendMessage(Token token, PlayerMessage request);
-    std::shared_ptr<ViewHolder> view;
-    const Board& getBoard();
     void sync(const Board& board);
 private:
+
+    void createView();
     void createGame();
-    std::unique_ptr<Game> game;
+
+    std::thread gameThread;
+
+    std::shared_ptr<SFMLView> view;
+    std::shared_ptr<Game> game;
     std::vector<std::unique_ptr<Player>> players;
 };
 

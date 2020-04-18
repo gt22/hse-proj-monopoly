@@ -45,6 +45,8 @@ class LocalPlayer;
 
 struct PlayerRequest;
 struct PlayerReplyData;
+struct PlayerMessage;
+typedef std::unique_ptr<PlayerReplyData> PlayerReply;
 
 class RandomSource;
 
@@ -53,5 +55,9 @@ class MenuView;
 class MonopolyView;
 class NcursesView;
 using ViewHolder = std::unique_ptr<AbstractView>;
+
+class SFMLView;
+
+class MonopolyThreadManager;
 
 #endif //MONOPOLYFWD_H

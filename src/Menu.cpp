@@ -80,19 +80,19 @@ void MenuView::addPlayerMenu() {
                 }
                 break;
             case '\n':
-                if (i == 0) {
-                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::DOG, manager.view));
-                } else if (i == 1) {
-                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::HAT, manager.view));
-                } else if (i == 2) {
-                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::BOOT, manager.view));
-                } else if (i == 3) {
-                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::CAT, manager.view));
-                } else if (i == 4) {
-                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::CAR, manager.view));
-                } else if (i == 5) {
-                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::SHIP, manager.view));
-                }
+//                if (i == 0) {
+//                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::DOG, manager.view));
+//                } else if (i == 1) {
+//                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::HAT, manager.view));
+//                } else if (i == 2) {
+//                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::BOOT, manager.view));
+//                } else if (i == 3) {
+//                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::CAT, manager.view));
+//                } else if (i == 4) {
+//                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::CAR, manager.view));
+//                } else if (i == 5) {
+//                    manager.addPlayer(std::make_unique<LocalPlayer>(Token::SHIP, manager.view));
+//                }
                 flag = true;
                 break;
         }
@@ -190,7 +190,7 @@ MenuAction MenuView::menuInteraction() {
 TerminalMenu::TerminalMenu(Manager &manager) : AbstractView(manager) {}
 
 MenuAction TerminalMenu::menuInteraction() {
-    manager.addPlayer(std::make_unique<LocalPlayer>(Token::DOG, manager.view));
+//    manager.addPlayer(std::make_unique<LocalPlayer>(Token::DOG, manager.view));
     return MenuAction::START_GAME;
 }
 

@@ -56,6 +56,6 @@ struct EndTurnReply : BasicReply<PlayerAction::END_TURN> {};
 
 struct ExitGameReply : BasicReply<PlayerAction::EXIT_GAME> {};
 
-typedef std::unique_ptr<PlayerReplyData> PlayerReply;
+
 
 #endif //PLAYERREQUESTS_H

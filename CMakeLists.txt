@@ -3,7 +3,6 @@ project(hseproj)
 
 add_compile_options(-Wall)
 add_compile_options(-Wextra)
-add_compile_options(-Werror)
 add_compile_options(-Wno-unused-parameter)
 add_compile_options(-Wno-unused-private-field)
 set(CMAKE_CXX_STANDARD 17)
@@ -15,8 +14,13 @@ add_compile_options("-fsanitize=address")
 add_link_options(-fsanitize=address)
 #set(CMAKE_CXX_FLAGS "-lncurses")
 
-add_executable(hseproj src/main.cpp include/View.h src/View.cpp src/Player.cpp include/Player.h src/Board.cpp include/Board.h src/Manager.cpp include/Manager.h include/Field.h src/Field.cpp include/MonopolyFwd.h src/Game.cpp include/Game.h include/Cards.h include/PlayerRequests.h src/Cards.cpp include/Random.h src/Random.cpp src/PlayerRequesrs.cpp src/Menu.cpp include/Menu.h)
-target_link_libraries(hseproj ${CURSES_LIBRARIES})
+find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
+
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package (Threads REQUIRED)
+
+add_executable(hseproj src/main.cpp include/View.h src/View.cpp src/Player.cpp include/Player.h src/Board.cpp include/Board.h src/Manager.cpp include/Manager.h include/Field.h src/Field.cpp include/MonopolyFwd.h src/Game.cpp include/Game.h include/Cards.h include/PlayerRequests.h src/Cards.cpp include/Random.h src/Random.cpp src/PlayerRequesrs.cpp src/Menu.cpp include/Menu.h include/view/SFMLView.h src/view/SFMLView.cpp include/MonopolyThreadManager.h src/MonopolyThreadManager.cpp include/view/EventManager.h src/view/EventManager.cpp include/view/VectorOps.h)
+target_link_libraries(hseproj ${CURSES_LIBRARIES} Threads::Threads sfml-graphics)
 
 include(cmake/googletest.cmake)
 fetch_googletest(
