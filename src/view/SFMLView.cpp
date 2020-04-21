@@ -3,6 +3,7 @@
 #include "Field.h"
 #include <view/VectorOps.h>
 #include <iostream>
+#include <cassert>
 
 using Vec::transpose;
 
@@ -10,9 +11,21 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
     window.create(sf::VideoMode(800, 600), "Monopoly");
     window.setFramerateLimit(60);
     mainFont.loadFromFile("Ubuntu-R.ttf");
+    //
+    Button btn2("1", { 30, 30 }, 30, sf::Color::Green, sf::Color::Black);
+    btn1 = std::move(btn2);
+    btn1.setFont(mainFont);
+    btn1.setPosition({ 10, 30 });
+    //
     events.addHandler<sf::Event::Closed>([this](){ window.close(); });
     events.addHandler<sf::Event::Resized>([this](auto e) { onResize(e); });
-    events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e){ tmp++; });
+  //  events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e){ tmp++; });
+    events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e){
+        if (this->btn1.isMouseOver(window)) {
+            std::cout << "Pressed " << "\n";
+        }
+    });
+    btn1.drawTo(window);
 
     onResize({window.getSize().x, window.getSize().y});
 
@@ -48,6 +61,7 @@ void SFMLView::mainLoop() {
         }
         window.clear();
         draw();
+        btn1.drawTo(window);
         window.display();
     }
 }
@@ -222,6 +236,8 @@ PlayerReply SFMLView::processRequest(Player &p, PlayerRequest req) {
     while (!requestReply) {
         requestCond.wait(m);
     }
+
+
     auto rep = std::move(requestReply);
     return rep;
 }
