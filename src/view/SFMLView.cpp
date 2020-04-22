@@ -11,22 +11,104 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
     window.create(sf::VideoMode(800, 600), "Monopoly");
     window.setFramerateLimit(60);
     mainFont.loadFromFile("Ubuntu-R.ttf");
-    //
-    Button btn2("1", { 30, 30 }, 30, sf::Color::Green, sf::Color::Black);
+    // text button
+    ButtonText btn2("1", { 30, 30 }, 30, sf::Color::Green, sf::Color::Black);
     btn1 = std::move(btn2);
     btn1.setFont(mainFont);
     btn1.setPosition({ 10, 30 });
     //
+
+    // sprite button
+
+    btnEndTurn.setTexture("images/END_TURN.png");
+    btnEndTurn.setPosition({10, 10});
+    btnEndTurn.setScale({0.7, 0.7});
+
+    btnExitGame.setTexture("images/EXIT_GAME.png");
+    btnExitGame.setPosition({70, 10});
+    btnExitGame.setScale({0.7, 0.7});
+
+    btnPayTax.setTexture("images/PAY_TAX.png");
+    btnPayTax.setPosition({10, 70});
+    btnPayTax.setScale({0.7, 0.7});
+
+    btnRollDice.setTexture("images/ROLL_DICE.png");
+    btnRollDice.setPosition({70, 70});
+    btnRollDice.setScale({0.7, 0.7});
+
+    btnTakeCard.setTexture("images/TAKE_CARD.png");
+    btnTakeCard.setPosition({10, 140});
+    btnTakeCard.setScale({0.7, 0.7});
+
+    btnUseCard.setTexture("images/USE_CARD.png");
+    btnUseCard.setPosition({70, 140});
+    btnUseCard.setScale({0.7, 0.7});
+
+
     events.addHandler<sf::Event::Closed>([this](){ window.close(); });
     events.addHandler<sf::Event::Resized>([this](auto e) { onResize(e); });
-  //  events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e){ tmp++; });
-    events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e){
-        if (this->btn1.isMouseOver(window)) {
-            std::cout << "Pressed " << "\n";
+    events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e) {
+        if (e.button == sf::Mouse::Left) {
+            if (this->btnEndTurn.isMouseOver(window)) {
+                if (this->btnEndTurn.getClickability())
+                    std::cout << "END TURN" << "\n";
+            } else if (this->btnExitGame.isMouseOver(window)) {
+                if (this->btnExitGame.getClickability())
+                    std::cout << "EXIT GAME" << "\n";
+            } else if (this->btnPayTax.isMouseOver(window)) {
+                if (this->btnPayTax.getClickability())
+                    std::cout << "PAY TAX" << "\n";
+            } else if (this->btnRollDice.isMouseOver(window)) {
+                if (this->btnRollDice.getClickability())
+                    std::cout << "ROLL DICE" << "\n";
+            } else if (this->btnTakeCard.isMouseOver(window)) {
+                if (this->btnTakeCard.getClickability())
+                    std::cout << "TAKE CARD" << "\n";
+            } else if (this->btnUseCard.isMouseOver(window)) {
+                if (this->btnUseCard.getClickability())
+                    std::cout << "USE CARD" << "\n";
+            }
+        } else if (e.button == sf::Mouse::Right) {
+            if (this->btnEndTurn.isMouseOver(window)) {
+                if (this->btnEndTurn.getClickability()) {
+                    this->btnEndTurn.makeUnclickable();
+                    std::cout << "MADE UNCLICKABLE" << "\n";
+                }
+            } else if (this->btnExitGame.isMouseOver(window)) {
+                if (this->btnExitGame.getClickability()) {
+                    this->btnExitGame.makeUnclickable();
+                    std::cout << "MADE UNCLICKABLE" << "\n";
+                }
+            } else if (this->btnPayTax.isMouseOver(window)) {
+                if (this->btnPayTax.getClickability()) {
+                    this->btnPayTax.makeUnclickable();
+                    std::cout << "MADE UNCLICKABLE" << "\n";
+                }
+            } else if (this->btnRollDice.isMouseOver(window)) {
+                if (this->btnRollDice.getClickability()) {
+                    this->btnRollDice.makeUnclickable();
+                    std::cout << "MADE UNCLICKABLE" << "\n";
+                }
+            } else if (this->btnTakeCard.isMouseOver(window)) {
+                if (this->btnTakeCard.getClickability()) {
+                    this->btnTakeCard.makeUnclickable();
+                    std::cout << "MADE UNCLICKABLE" << "\n";
+                }
+            } else if (this->btnUseCard.isMouseOver(window)) {
+                if (this->btnUseCard.getClickability()) {
+                    this->btnUseCard.makeUnclickable();
+                    std::cout << "MADE UNCLICKABLE" << "\n";
+                }
+            }
         }
     });
-    btn1.drawTo(window);
 
+    //  events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e){ tmp++; });
+    /*  events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e){
+          if (this->btn1.isMouseOver(window)) {
+              std::cout << "Pressed " << "\n";
+          }
+      });*/
     onResize({window.getSize().x, window.getSize().y});
 
     //TODO: temp
@@ -61,7 +143,12 @@ void SFMLView::mainLoop() {
         }
         window.clear();
         draw();
-        btn1.drawTo(window);
+        btnEndTurn.drawTo(window);
+        btnExitGame.drawTo(window);
+        btnPayTax.drawTo(window);
+        btnRollDice.drawTo(window);
+        btnTakeCard.drawTo(window);
+        btnUseCard.drawTo(window);
         window.display();
     }
 }

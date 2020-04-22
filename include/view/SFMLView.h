@@ -11,6 +11,7 @@
 #include <condition_variable>
 #include <pthread.h>
 #include <thread>
+#include <iostream>
 
 struct ShapeHolder {
 
@@ -18,14 +19,84 @@ struct ShapeHolder {
 
 };
 
-class Button {
+class ButtonImage {
 public:
-    Button() = default;
-    Button(std::string buttonText, sf::Vector2f buttonSize, int charSize, sf::Color bgColor, sf::Color textColor) {
+    ButtonImage() = default;
+    void setTexture(std::string textureName) {
+        if (!buttonTexture.loadFromFile(textureName)) {
+            std::cout << "Load END_TURN failed!\n";
+        }
+        buttonTexture.setSmooth(true);
+        buttonSprite.setTexture(buttonTexture);
+        buttonWidth = buttonSprite.getTexture()->getSize().x * buttonSprite.getScale().x;
+        buttonHeight = buttonSprite.getTexture()->getSize().y * buttonSprite.getScale().y;
+    }
+
+    void setSpriteColor(sf::Color color) {
+        buttonSprite.setColor(color);
+    }
+
+    void setPosition(sf::Vector2f point) {
+        buttonSprite.setPosition(point);
+    }
+
+    void setScale(sf::Vector2f scale) {
+        buttonSprite.setScale(scale);
+        buttonWidth = buttonSprite.getTexture()->getSize().x * buttonSprite.getScale().x;
+        buttonHeight = buttonSprite.getTexture()->getSize().y * buttonSprite.getScale().y;
+    }
+
+    bool getClickability() {
+        return isClickable;
+    }
+
+    void makeUnclickable() {
+        if (!isClickable)
+            return;
+        isClickable = false;
+        setSpriteColor(sf::Color(155, 155, 155));
+    }
+
+    void makeClickable() {
+        if (isClickable)
+            return;
+        isClickable = true;
+        setSpriteColor(sf::Color(255, 255, 255));
+    }
+
+
+    void drawTo(sf::RenderWindow &window) {
+        window.draw(buttonSprite);
+    }
+
+    bool isMouseOver(sf::RenderWindow &window) const {
+        int mouseX = sf::Mouse::getPosition(window).x;
+        int mouseY = sf::Mouse::getPosition(window).y;
+
+        int buttonPosX = buttonSprite.getPosition().x;
+        int buttonPosY = buttonSprite.getPosition().y;
+
+        int buttonxPosWidth = buttonSprite.getPosition().x + buttonWidth;
+        int buttonyPosHeight = buttonSprite.getPosition().y + buttonHeight;
+
+        return mouseX < buttonxPosWidth && mouseX > buttonPosX && mouseY < buttonyPosHeight && mouseY > buttonPosY;
+    }
+
+private:
+    sf::Sprite buttonSprite;
+    sf::Texture buttonTexture;
+    int buttonWidth;
+    int buttonHeight;
+    bool isClickable = true;
+};
+
+class ButtonText {
+public:
+    ButtonText() = default;
+    ButtonText(std::string buttonText, sf::Vector2f buttonSize, int charSize, sf::Color bgColor, sf::Color textColor) {
         button.setSize(buttonSize);
         button.setFillColor(bgColor);
 
-        // Get these for later use:
         buttonWidth = buttonSize.x;
         buttonHeight = buttonSize.y;
 
@@ -111,8 +182,13 @@ private:
     std::condition_variable requestCond;
 
     // временный ужас
-    Button btn1;
-
+    ButtonText btn1;
+    ButtonImage btnEndTurn;
+    ButtonImage btnExitGame;
+    ButtonImage btnPayTax;
+    ButtonImage btnRollDice;
+    ButtonImage btnTakeCard;
+    ButtonImage btnUseCard;
     //TODO: какой ужас, это же глобальные переменные
     PlayerReply requestReply;
     std::optional<PlayerRequest> curRequest;
