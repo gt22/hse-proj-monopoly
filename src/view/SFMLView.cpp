@@ -318,12 +318,37 @@ void SFMLView::redraw(const Board &board) {
 
 PlayerReply SFMLView::processRequest(Player &p, PlayerRequest req) {
     std::unique_lock m(requestMutex);
+
     assert(!curRequest.has_value());
     curRequest = std::move(req);
+
+    btnUseCard.makeUnclickable();
+    btnTakeCard.makeUnclickable();
+    btnRollDice.makeUnclickable();
+    btnPayTax.makeClickable();
+    btnExitGame.makeClickable();
+    btnEndTurn.makeClickable();
+
+   /* for (std::size_t i = 0; i < req.availableActions.size(); i++) {
+        if (req.availableActions[i] == PlayerAction::PAY_TAX) {
+            btnPayTax.makeUnclickable();
+        } else if (req.availableActions[i] == PlayerAction::USE_CARD) {
+            btnUseCard.makeUnclickable();
+        } else if (req.availableActions[i] == PlayerAction::TAKE_CARD) {
+            btnTakeCard.makeUnclickable();
+        } else if (req.availableActions[i] == PlayerAction::ROLL_DICE) {
+            btnRollDice.makeUnclickable();
+        } else if (req.availableActions[i] == PlayerAction::EXIT_GAME) {
+            btnExitGame.makeUnclickable();
+        } else if (req.availableActions[i] == PlayerAction::END_TURN) {
+            btnEndTurn.makeUnclickable();
+        }
+    }
+*/
+        //
     while (!requestReply) {
         requestCond.wait(m);
     }
-
 
     auto rep = std::move(requestReply);
     return rep;
