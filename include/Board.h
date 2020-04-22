@@ -25,6 +25,9 @@ struct PlayerData {
     int daysLeftInPrison = 0; //TODO: придумать нормальное имя
     size_t numberOfRailways = 0;
     size_t numberOfUtilities = 0;
+
+    int numberOfHouses = 0;
+    int numberOfHotels = 0;
     int lastTrow = 0;
     bool prisoner = false;
     bool alive = true;
@@ -35,7 +38,7 @@ struct PlayerData {
     int addMoney(int newMoney);
     void setLoser();
 
-    void newPosition(std::size_t throwSum);
+    void newPosition(int throwSum);
     void toPrison();
     void outOfPrison();
 };

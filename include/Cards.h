@@ -5,6 +5,10 @@
 #include <string>
 #include <vector>
 #include <memory>
+
+static constexpr int HOUSE_REPAIR_COST = 25;
+static constexpr int HOTEL_REPAIR_COST = 100;
+
 class Card {
 public:
     Card(Board& board, std::string text);
@@ -31,7 +35,9 @@ class PayMoney : public Card {
 public:
     PayMoney(Board& board, std::string text = "");
     void apply(Token token) override;
+    int countPlayerTax(const PlayerData &playerData) const;
     int amount = 50;
+    bool count_tax = false;
 };
 
 class GetMoneyFromOtherPlayers : public Card {
@@ -41,11 +47,22 @@ public:
     int amount = 50;
 };
 
+class PayMoneyToOtherPlayers : public Card {
+public:
+    PayMoneyToOtherPlayers(Board& board, std::string text = "");
+    void apply(Token token) override;
+    int amount = 50;
+};
+
+
 class Teleport : public Card {
 public:
     Teleport(Board& board, std::string text = "");
     void apply(Token token) override;
     int amount = 50;
+    int new_position;
+    int delta_pos = -3;
+    bool fl = false;
 };
 
 class TeleportToPrison : public Card {

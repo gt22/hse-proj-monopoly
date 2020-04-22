@@ -18,12 +18,12 @@ void PlayerData::setLoser() {
     //TODO:
 }
 
-void PlayerData::newPosition(std::size_t throwSum) {
-    std::size_t newPos = (position + throwSum) % Board::FIELD_SIZE;
+void PlayerData::newPosition(int throwSum) {
+    std::size_t newPos = (position + throwSum + Board::FIELD_SIZE) % Board::FIELD_SIZE;
     if (newPos < position) {
         (*this).addMoney(START_SUM);
     }
-    position = (position + throwSum) % Board::FIELD_SIZE;
+    position = (position + throwSum + Board::FIELD_SIZE) % Board::FIELD_SIZE;
 }
 
 void PlayerData::toPrison() {
