@@ -17,7 +17,7 @@ public:
     void run();
     void startGame();
     bool isGameStarted();
-    const Board& getBoard();
+    Board& getBoard();
     PlayerReply sendRequest(Token token, PlayerRequest request);
     void sendMessage(Token token, PlayerMessage request);
     void sync(const Board& board);

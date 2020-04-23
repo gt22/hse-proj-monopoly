@@ -22,7 +22,7 @@ struct ShapeHolder {
 class ButtonImage {
 public:
     ButtonImage() = default;
-    void setTexture(std::string textureName) {
+    void setTexture(const std::string& textureName) {
         if (!buttonTexture.loadFromFile(textureName)) {
             std::cout << "Load END_TURN failed!\n";
         }
@@ -48,6 +48,14 @@ public:
 
     bool getClickability() {
         return isClickable;
+    }
+
+    void setClickability(bool b) {
+        if(b) makeClickable(); else makeUnclickable();
+    }
+
+    void toggleClickability() {
+        setClickability(!getClickability());
     }
 
     void makeUnclickable() {
@@ -168,6 +176,7 @@ private:
 
     void drawField(const Board& board);
     void drawPlayers(const Board& board);
+    void drawMoney(const Board& board);
     void draw();
 
     int tmp = 0;
@@ -182,6 +191,7 @@ private:
     std::condition_variable requestCond;
 
     // временный ужас
+    Token curTurnBy;
     ButtonText btn1;
     ButtonImage btnEndTurn;
     ButtonImage btnExitGame;

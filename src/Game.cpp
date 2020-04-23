@@ -56,7 +56,8 @@ void Game::runGame() {
     }
 }
 
-const Board &Game::getBoard() {
+//TODO should be const, non-const only for debug
+Board& Game::getBoard() {
     return board;
 }
 

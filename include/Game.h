@@ -15,7 +15,7 @@ public:
     void runGame();
     PlayerReply sendRequest(Token token, PlayerRequest request);
     void sendMessage(Token token, PlayerMessage mes);
-    const Board& getBoard();
+    Board& getBoard();
     void sync();
 
 private:
