@@ -8,7 +8,11 @@
 #include <array>
 #include <vector>
 
+static constexpr int START_POS = 0;
+static constexpr int RIGA_RAILWAY_POS = 5;
 static constexpr int PRISON_POS = 10;
+static constexpr int MAYAKOVSKY_SQUARE = 24;
+static constexpr int ARBAT_POS = 39;
 
 struct PlayerData {
     PlayerData(std::string_view name, Token token);

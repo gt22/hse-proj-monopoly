@@ -159,6 +159,26 @@ void TeleportToPrison::apply(Token token) {
     player.toPrison();
 }
 
+void GetMoney::setAmount(int val) {
+    amount = val;
+}
+
+void PayMoney::setAmount(int val) {
+    amount = val;
+}
+
+void GetMoneyFromOtherPlayers::setAmount(int val) {
+    amount = val;
+}
+
+void PayMoneyToOtherPlayers::setAmount(int val) {
+    amount = val;
+}
+
+void Teleport::setAmount(int val) {
+    amount = val;
+}
+
 CardPool::CardPool() {
     //pool.push_back(std::make_unique(...))
 }

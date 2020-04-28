@@ -24,28 +24,69 @@ GoToPrison::GoToPrison(Board &board, int position, std::string name)
 Chance::Chance(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {
     cards.resize(16);
+    cards[0] = new Teleport(board);
+    cards[0]->setPos(ARBAT_POS);
+
+    cards[1] = new Teleport(board);
+    cards[1]->setPos(RIGA_RAILWAY_POS);
+
+    cards[2] = new GetMoney(board);
+    cards[2]->setAmount(150);
+
+    cards[3] = new Teleport(board);
+    cards[3]->setPos(MAYAKOVSKY_SQUARE);
     //TODO: fill vector cards
 }
 
 PublicTreasury::PublicTreasury(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {
     cards.resize(16);
+
     cards[0] = new LeftPrisonForFree(board);
+
     cards[1] = new PayMoney(board, "");//50
+    cards[1]->setAmount(50);
+
     cards[2] = new GetMoney(board, "Holiday pay! Get 100");//100
+    cards[2]->setAmount(100);
+
     cards[3] = new GetMoney(board, "");//100
+    cards[3]->setAmount(100);
+
     cards[4] = new PayMoney(board, "");//50
+    cards[4]->setAmount(50);
+
     cards[5] = new GetMoney(board, "");//20
+    cards[5]->setAmount(20);
+
     cards[6] = new GetMoney(board, "");//100
+    cards[6]->setAmount(100);
+
     cards[7] = new TeleportToPrison(board, "");
+
     cards[8] = new GetMoney(board, "");//25
+    cards[8]->setAmount(25);
+
     cards[9] = new GetMoneyFromOtherPlayers(board, "");//10
+    cards[9]->setAmount(10);
+
     cards[10] = new GetMoney(board, "");//100
+    cards[10]->setAmount(100);
+
     cards[11] = new GetMoney(board, "");//50
+    cards[11]->setAmount(50);
+
     cards[12] = new GetMoney(board, "");//10
+    cards[12]->setAmount(10);
+
     cards[13] = new PayMoney(board, "");//30*buildings + 115*hotels
+    cards[13]->setFlag(true);
+
     cards[14] = new Teleport(board, "");//to start
+    cards[14]->setPos(START_POS);
+
     cards[15] = new GetMoney(board, "");//200
+    cards[15]->setAmount(200);
     //TODO: fill vector cards
 }
 
