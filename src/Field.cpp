@@ -35,6 +35,25 @@ Chance::Chance(Board &board, int position, std::string name)
 
     cards[3] = new Teleport(board);
     cards[3]->setPos(MAYAKOVSKY_SQUARE);
+
+    //TODO: cards[4]
+
+    cards[5] = new TeleportToPrison(board);
+
+    cards[6] = new Teleport(board);
+    cards[6]->setPos(START_POS);
+
+    cards[7] = new GetMoney(board);
+    cards[7]->setAmount(50);
+
+    cards[8] = new PayMoney(board);
+    cards[8]->setFlag(true);
+
+    cards[9] = new LeftPrisonForFree(board);
+
+    cards[10] = new Teleport(board);
+    cards[10]->setPos(POLYANKA_POS);
+
     //TODO: fill vector cards
 }
 
@@ -407,16 +426,23 @@ void OwnableTile::onPlayerEntry(Token token) {
     PlayerData* fieldOwner = owner == Token::FREE_FIELD ? nullptr : &board.getPlayer(owner);
     PlayerRequest request;
     bool taxPaid = false;
+    bool buyRoperty = false;
+    if (owner == Token::FREE_FIELD) {
+        buyRoperty = true;
+    } else if (owner != token) {
+        taxPaid = true;
+    }
 
     while (true) {
-        std::set<PlayerAction> mustHave = makePropertyMusthave(*this, token, taxPaid);
+
+        //std::set<PlayerAction> mustHave = makePropertyMusthave(*this, token, taxPaid);
         makeDefaultRequest(request);
-        addAll(request.availableActions, mustHave);
+        //addAll(request.availableActions, mustHave);
 
         PlayerReply reply = board.sendRequest(token, request);
         request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
-            if (mustHave.empty()) {
+            if (!buyRoperty && !taxPaid) {
                 break;
             }
             request.message = "You can't finish turn";
@@ -437,11 +463,15 @@ void OwnableTile::onPlayerEntry(Token token) {
             if (player.money >= cost) {
                 player.money -= cost;
                 onPurchase(token);
+                buyRoperty = true;
                 owner = token;
                 continue;
             }
             request.message = "Not enough money :(";
             continue;
+        }
+        if (reply->action == PlayerAction::START_TRADE_NEW_FIELD) {
+            buyRoperty = true;
         }
         if (!handleGenericActions(token, *this, reply)) {
             return;
