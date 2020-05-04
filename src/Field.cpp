@@ -37,6 +37,9 @@ Chance::Chance(Board &board, int position, std::string name)
     cards[3]->setPos(MAYAKOVSKY_SQUARE);
 
     //TODO: cards[4]
+    cards[4] = new Teleport(board);
+    cards[4]->setPos(MAYAKOVSKY_SQUARE);
+    //TODO: cards[4]
 
     cards[5] = new TeleportToPrison(board);
 
@@ -54,7 +57,22 @@ Chance::Chance(Board &board, int position, std::string name)
     cards[10] = new Teleport(board);
     cards[10]->setPos(POLYANKA_POS);
 
-    //TODO: fill vector cards
+    //TODO: fill vector cards!!!
+    cards[11] = new GetMoney(board, "");//50
+    cards[11]->setAmount(50);
+
+    cards[12] = new GetMoney(board, "");//10
+    cards[12]->setAmount(10);
+
+    cards[13] = new PayMoney(board, "");//30*buildings + 115*hotels
+    cards[13]->setFlag(true);
+
+    cards[14] = new Teleport(board, "");//to start
+    cards[14]->setPos(START_POS);
+
+    cards[15] = new GetMoney(board, "");//200
+    cards[15]->setAmount(200);
+    //TODO: fill vector cards!!!
 }
 
 PublicTreasury::PublicTreasury(Board &board, int position, std::string name)
@@ -339,7 +357,11 @@ void Chance::onPlayerEntry(Token token) {
             std::size_t num = firstThrow + secondThrow + thirdThrow - 3;
             board.sendMessage(token, PlayerMessage(std::to_string(firstThrow) + " " + std::to_string(secondThrow)
                                                         + " " + std::to_string(thirdThrow) + "\n" + cards[num]->text));
-            cards[num]->apply(player.token);
+            try {
+                cards[num]->apply(player.token);
+            } catch (...) {
+                throw std::out_of_range("card num " + std::to_string(num));
+            }
             continue;
         }
         if (!handleGenericActions(token, *this, reply)) {
@@ -371,7 +393,11 @@ void PublicTreasury::onPlayerEntry(Token token) {
             std::size_t num = firstThrow + secondThrow + thirdThrow - 3;
             board.sendMessage(token, PlayerMessage(std::to_string(firstThrow) + " " + std::to_string(secondThrow)
                                                    + " " + std::to_string(thirdThrow) + "\n" + cards[num]->text));
-            cards[num]->apply(player.token);
+            try {
+                cards[num]->apply(player.token);
+            } catch (...) {
+                throw std::out_of_range("card num " + std::to_string(num));
+            }
             continue;
         }
         if (!handleGenericActions(token, *this, reply)) {
