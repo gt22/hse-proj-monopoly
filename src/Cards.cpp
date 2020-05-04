@@ -55,7 +55,6 @@ void PayMoney::apply(Token token) {
         PlayerReply reply = board.sendRequest(player.token, request);
         board.sync();
         request.message = "";
-        std::cerr << "Reply: " << static_cast<int>(reply->action) << std::endl;
         if (reply->action == PlayerAction::END_TURN && !payTax) {
             request.message = "You can't finish turn now";
             continue;
@@ -112,7 +111,6 @@ void PayMoneyToOtherPlayers::apply(Token token) {
         PlayerReply reply = board.sendRequest(player.token, request);
         board.sync();
         request.message = "";
-        std::cerr << "Reply: " << static_cast<int>(reply->action) << std::endl;
         if (reply->action == PlayerAction::END_TURN && !payTax) {
             request.message = "You can't finish turn now";
             continue;

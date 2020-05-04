@@ -235,7 +235,6 @@ void Start::onPlayerEntry(Token token) {
         makeDefaultRequest(request);
         PlayerReply reply = board.sendRequest(player.token, request);
         request.message = "";
-        std::cerr << "Reply: " << static_cast<int>(reply->action) << std::endl;
         if (reply->action == PlayerAction::END_TURN) {
             break;
         }

@@ -199,7 +199,7 @@ void Board::decrNumOfOlayers() {
 }
 
 bool Board::isFinished() const {
-    return (numOfAlivePlayers <= 1);
+    return (numOfAlivePlayers <= 1) || terminated;
 }
 
 int Board::getCurNumOfPlayers() const {
@@ -222,4 +222,8 @@ FieldTile *Board::getTile(std::size_t pos) const {
 
 void Board::sync() {
     game.sync();
+}
+
+void Board::terminate() {
+    terminated = true;
 }

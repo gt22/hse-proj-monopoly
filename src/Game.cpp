@@ -10,7 +10,9 @@ Game::Game(const std::vector<std::pair<std::string_view, Token>> &players, Manag
 
 PlayerReply Game::sendRequest(Token token, PlayerRequest request) {
     sync();
-    return manager.sendRequest(token, std::move(request));
+    PlayerReply rep = manager.sendRequest(token, std::move(request));
+    if(rep->action == PlayerAction::EXIT_GAME) getBoard().terminate();
+    return rep;
 }
 
 void Game::sendMessage(Token token, PlayerMessage mes) {

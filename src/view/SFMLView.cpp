@@ -175,6 +175,10 @@ SFMLView::~SFMLView() {
     windowMutex.lock();
     shouldClose = true;
     windowMutex.unlock();
+    requestMutex.lock();
+    curReply = std::make_unique<ExitGameReply>();
+    requestCond.notify_all();
+    requestMutex.unlock();
 }
 
 

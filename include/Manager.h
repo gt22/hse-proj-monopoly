@@ -13,6 +13,7 @@
 
 class Manager {
 public:
+    ~Manager();
     void addPlayer(std::unique_ptr<Player> player);
     void run();
     void startGame();

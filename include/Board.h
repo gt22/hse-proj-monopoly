@@ -66,6 +66,7 @@ public:
     std::size_t getPlayersNumber() const;
     void decrNumOfOlayers();
     bool isFinished() const;
+    void terminate();
     int getCurNumOfPlayers() const;
     Token getWinner() const;
     FieldTile* getTile(std::size_t pos) const;
@@ -75,6 +76,7 @@ private:
     std::vector<PlayerData> players;
     Game& game;
     int numOfAlivePlayers;
+    bool terminated;
 };
 
 #endif //BOARD_H

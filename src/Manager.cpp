@@ -71,5 +71,12 @@ bool Manager::isGameStarted() {
     return bool(game);
 }
 
+Manager::~Manager() {
+    view.reset();
+    if(gameThread.joinable()) {
+        gameThread.join();
+    }
+}
+
 
 
