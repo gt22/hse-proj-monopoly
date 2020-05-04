@@ -8,7 +8,12 @@
 #include <array>
 #include <vector>
 
+static constexpr int START_POS = 0;
+static constexpr int RIGA_RAILWAY_POS = 5;
 static constexpr int PRISON_POS = 10;
+static constexpr int POLYANKA_POS = 11;
+static constexpr int MAYAKOVSKY_SQUARE = 24;
+static constexpr int ARBAT_POS = 39;
 
 struct PlayerData {
     PlayerData(std::string_view name, Token token);
@@ -25,6 +30,9 @@ struct PlayerData {
     int daysLeftInPrison = 0; //TODO: придумать нормальное имя
     size_t numberOfRailways = 0;
     size_t numberOfUtilities = 0;
+
+    int numberOfHouses = 0;
+    int numberOfHotels = 0;
     int lastTrow = 0;
     bool prisoner = false;
     bool alive = true;
@@ -33,8 +41,9 @@ struct PlayerData {
 
     int getMoney();
     int addMoney(int newMoney);
+    void setLoser();
 
-    void newPosition(std::size_t throwSum);
+    void newPosition(int throwSum);
     void toPrison();
     void outOfPrison();
 };
@@ -46,7 +55,7 @@ public:
     std::array<FieldTile *, FIELD_SIZE>  field;
     CardPool deck;
 
-    bool isFinished = false; //TODO: Костыыыыыль
+    void sync();
 
     virtual PlayerData& getPlayer(Token token);
     const PlayerData& getPlayer(Token token) const;
@@ -55,10 +64,17 @@ public:
     virtual PlayerReply sendRequest(Token token, PlayerRequest request) const;
     void sendMessage(Token token, PlayerMessage mes) const;
     std::size_t getPlayersNumber() const;
+    void decrNumOfOlayers();
+    bool isFinished() const;
+    int getCurNumOfPlayers() const;
+    Token getWinner() const;
+    FieldTile* getTile(std::size_t pos) const;
+
 
 private:
     std::vector<PlayerData> players;
     Game& game;
+    int numOfAlivePlayers;
 };
 
 #endif //BOARD_H

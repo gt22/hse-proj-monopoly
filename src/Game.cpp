@@ -20,7 +20,7 @@ void Game::sendMessage(Token token, PlayerMessage mes) {
 
 void Game::runGame() {
     std::size_t curPlayerNum = 0;
-    while (!board.isFinished) {
+    while (!board.isFinished()) {
         PlayerData& curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
         if (!curPlayer.alive) {
             curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
@@ -54,6 +54,8 @@ void Game::runGame() {
         }
         sync();
     }
+    board.sendMessage(board.getWinner(), PlayerMessage("Victory!"));
+    sync();
 }
 
 //TODO should be const, non-const only for debug

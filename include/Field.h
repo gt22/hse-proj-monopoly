@@ -2,6 +2,7 @@
 #define FIELD_H
 
 #include "MonopolyFwd.h"
+#include "PlayerRequests.h"
 #include <string>
 #include <vector>
 
@@ -131,5 +132,8 @@ public:
     FreeParking(Board& board, int position, std::string name);
     std::vector<std::string> writeTileInfo() override;
 };
+
+void makeDefaultRequest(PlayerRequest& r);
+bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply& reply);
 
 #endif //FIELD_H

@@ -185,6 +185,7 @@ MenuAction MenuView::menuInteraction() {
     }
 
     delwin(menuWindow);
+    return MenuAction::EXIT;///чтобы  компилилось
 }
 
 TerminalMenu::TerminalMenu(Manager &manager) : AbstractView(manager) {}

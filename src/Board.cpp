@@ -13,12 +13,17 @@ int PlayerData::addMoney(int newMoney) {
     return money;
 }
 
-void PlayerData::newPosition(std::size_t throwSum) {
-    std::size_t newPos = (position + throwSum) % Board::FIELD_SIZE;
+void PlayerData::setLoser() {
+    alive = false;
+    //TODO:
+}
+
+void PlayerData::newPosition(int throwSum) {
+    std::size_t newPos = (position + throwSum + Board::FIELD_SIZE) % Board::FIELD_SIZE;
     if (newPos < position) {
         (*this).addMoney(START_SUM);
     }
-    position = (position + throwSum) % Board::FIELD_SIZE;
+    position = (position + throwSum + Board::FIELD_SIZE) % Board::FIELD_SIZE;
 }
 
 void PlayerData::toPrison() {
@@ -38,6 +43,7 @@ Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersLis
     for (auto [name, token] : playersList) {
         players.emplace_back(name, token);
     }
+    numOfAlivePlayers = playersList.size();
     //TODO: Fill field with tiles
     field[0] = new Start(*this, 0, "Start");
 
@@ -186,4 +192,34 @@ std::size_t Board::getPlayersNumber() const {
 
 const std::vector<PlayerData> &Board::getPlayers() const {
     return players;
+}
+
+void Board::decrNumOfOlayers() {
+    numOfAlivePlayers--;
+}
+
+bool Board::isFinished() const {
+    return (numOfAlivePlayers <= 1);
+}
+
+int Board::getCurNumOfPlayers() const {
+    return numOfAlivePlayers;
+}
+
+Token Board::getWinner() const {
+    for (std::size_t i = 0; i < (*this).getPlayersNumber(); i++) {
+        if (players[i].alive) {
+            return players[i].token;
+        }
+    }
+    //TODO: что вернуть если не нашли.
+    throw 1;
+}
+
+FieldTile *Board::getTile(std::size_t pos) const {
+    return field[pos];
+}
+
+void Board::sync() {
+    game.sync();
 }

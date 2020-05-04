@@ -24,28 +24,106 @@ GoToPrison::GoToPrison(Board &board, int position, std::string name)
 Chance::Chance(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {
     cards.resize(16);
-    //TODO: fill vector cards
+    cards[0] = new Teleport(board);
+    cards[0]->setPos(ARBAT_POS);
+
+    cards[1] = new Teleport(board);
+    cards[1]->setPos(RIGA_RAILWAY_POS);
+
+    cards[2] = new GetMoney(board);
+    cards[2]->setAmount(150);
+
+    cards[3] = new Teleport(board);
+    cards[3]->setPos(MAYAKOVSKY_SQUARE);
+
+    //TODO: cards[4]
+    cards[4] = new Teleport(board);
+    cards[4]->setPos(MAYAKOVSKY_SQUARE);
+    //TODO: cards[4]
+
+    cards[5] = new TeleportToPrison(board);
+
+    cards[6] = new Teleport(board);
+    cards[6]->setPos(START_POS);
+
+    cards[7] = new GetMoney(board);
+    cards[7]->setAmount(50);
+
+    cards[8] = new PayMoney(board);
+    cards[8]->setFlag(true);
+
+    cards[9] = new LeftPrisonForFree(board);
+
+    cards[10] = new Teleport(board);
+    cards[10]->setPos(POLYANKA_POS);
+
+    //TODO: fill vector cards!!!
+    cards[11] = new GetMoney(board, "");//50
+    cards[11]->setAmount(50);
+
+    cards[12] = new GetMoney(board, "");//10
+    cards[12]->setAmount(10);
+
+    cards[13] = new PayMoney(board, "");//30*buildings + 115*hotels
+    cards[13]->setFlag(true);
+
+    cards[14] = new Teleport(board, "");//to start
+    cards[14]->setPos(START_POS);
+
+    cards[15] = new GetMoney(board, "");//200
+    cards[15]->setAmount(200);
+    //TODO: fill vector cards!!!
 }
 
 PublicTreasury::PublicTreasury(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {
     cards.resize(16);
+
     cards[0] = new LeftPrisonForFree(board);
+
     cards[1] = new PayMoney(board, "");//50
+    cards[1]->setAmount(50);
+
     cards[2] = new GetMoney(board, "Holiday pay! Get 100");//100
+    cards[2]->setAmount(100);
+
     cards[3] = new GetMoney(board, "");//100
+    cards[3]->setAmount(100);
+
     cards[4] = new PayMoney(board, "");//50
+    cards[4]->setAmount(50);
+
     cards[5] = new GetMoney(board, "");//20
+    cards[5]->setAmount(20);
+
     cards[6] = new GetMoney(board, "");//100
+    cards[6]->setAmount(100);
+
     cards[7] = new TeleportToPrison(board, "");
+
     cards[8] = new GetMoney(board, "");//25
+    cards[8]->setAmount(25);
+
     cards[9] = new GetMoneyFromOtherPlayers(board, "");//10
+    cards[9]->setAmount(10);
+
     cards[10] = new GetMoney(board, "");//100
+    cards[10]->setAmount(100);
+
     cards[11] = new GetMoney(board, "");//50
+    cards[11]->setAmount(50);
+
     cards[12] = new GetMoney(board, "");//10
+    cards[12]->setAmount(10);
+
     cards[13] = new PayMoney(board, "");//30*buildings + 115*hotels
+    cards[13]->setFlag(true);
+
     cards[14] = new Teleport(board, "");//to start
+    cards[14]->setPos(START_POS);
+
     cards[15] = new GetMoney(board, "");//200
+    cards[15]->setAmount(200);
     //TODO: fill vector cards
 }
 
@@ -113,30 +191,41 @@ void makeDefaultRequest(PlayerRequest& r) {
     };
 }
 
-void handleGenericActions(Token token, const FieldTile& tile, const PlayerReply& reply) {
+bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply& reply) {
     if (reply->action == PlayerAction::LOSE) {
+        PlayerData& player = tile.board.getPlayer(token);
+        player.setLoser();
+        tile.board.decrNumOfOlayers();
+        tile.board.sendMessage(token, PlayerMessage("lose"));
         //TODO
-        return;
+        return false;
     }
     if (reply->action == PlayerAction::BUY_BUILDING) {
         //TODO
-        return;
+        return true;
     }
     if (reply->action == PlayerAction::BUY_HOTEL) {
         //TODO
-        return;
+        return true;
     }
     if (reply->action == PlayerAction::MORTGAGE_HOLDINGS) {
         //TODO
-        return;
+        return true;
     }
     if (reply->action == PlayerAction::START_TRADE) {
         //TODO
-        return;
+        return true;
     }
     if(reply->action == PlayerAction::EXIT_GAME) {
-        tile.board.isFinished = true;
+        tile.board.decrNumOfOlayers();
+        if (tile.board.getCurNumOfPlayers() >= 1) {
+            PlayerData& player = tile.board.getPlayer(token);
+            player.setLoser();
+            tile.board.sendMessage(token, PlayerMessage("lose"));
+        }
+        return false;
     }
+    return true;
 }
 
 void Start::onPlayerEntry(Token token) {
@@ -145,11 +234,14 @@ void Start::onPlayerEntry(Token token) {
     while (true) {
         makeDefaultRequest(request);
         PlayerReply reply = board.sendRequest(player.token, request);
+        request.message = "";
         std::cerr << "Reply: " << static_cast<int>(reply->action) << std::endl;
         if (reply->action == PlayerAction::END_TURN) {
             break;
         }
-        handleGenericActions(token, *this, reply);
+        if (!handleGenericActions(token, *this, reply)) {
+            return;
+        }
     }
 }
 
@@ -170,6 +262,7 @@ void Prison::onPlayerEntry(Token token) {
             }
         }
         PlayerReply reply = board.sendRequest(token, request);
+        request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
             if (player.prisoner) {
                 player.daysLeftInPrison--;
@@ -205,7 +298,9 @@ void Prison::onPlayerEntry(Token token) {
             player.cardToLeavePrison = false;
             continue;
         }
-        handleGenericActions(token, *this, reply);
+        if (!handleGenericActions(token, *this, reply)) {
+            return;
+        }
     }
 }
 
@@ -220,8 +315,8 @@ void GoToPrison::onPlayerEntry(Token token) {
         if(player.prisoner) {
             request.availableActions.push_back(PlayerAction::ROLL_DICE);
         }
-
         PlayerReply reply = board.sendRequest(token, request);
+        request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
             break;
         }
@@ -248,6 +343,7 @@ void Chance::onPlayerEntry(Token token) {
         makeDefaultRequest(request);
         addAll(request.availableActions, mustHave);
         PlayerReply reply = board.sendRequest(token, request);
+        request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
             if (mustHave.empty()) {
                 break;
@@ -261,10 +357,16 @@ void Chance::onPlayerEntry(Token token) {
             std::size_t num = firstThrow + secondThrow + thirdThrow - 3;
             board.sendMessage(token, PlayerMessage(std::to_string(firstThrow) + " " + std::to_string(secondThrow)
                                                         + " " + std::to_string(thirdThrow) + "\n" + cards[num]->text));
-            cards[num]->apply(player.token);
+            try {
+                cards[num]->apply(player.token);
+            } catch (...) {
+                throw std::out_of_range("card num " + std::to_string(num));
+            }
             continue;
         }
-        handleGenericActions(token, *this, reply);
+        if (!handleGenericActions(token, *this, reply)) {
+            return;
+        }
     }
 }
 
@@ -277,6 +379,7 @@ void PublicTreasury::onPlayerEntry(Token token) {
         makeDefaultRequest(request);
         addAll(request.availableActions, mustHave);
         PlayerReply reply = board.sendRequest(token, request);
+        request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
             if (mustHave.empty()) {
                 break;
@@ -290,10 +393,16 @@ void PublicTreasury::onPlayerEntry(Token token) {
             std::size_t num = firstThrow + secondThrow + thirdThrow - 3;
             board.sendMessage(token, PlayerMessage(std::to_string(firstThrow) + " " + std::to_string(secondThrow)
                                                    + " " + std::to_string(thirdThrow) + "\n" + cards[num]->text));
-            cards[num]->apply(player.token);
+            try {
+                cards[num]->apply(player.token);
+            } catch (...) {
+                throw std::out_of_range("card num " + std::to_string(num));
+            }
             continue;
         }
-        handleGenericActions(token, *this, reply);
+        if (!handleGenericActions(token, *this, reply)) {
+            return;
+        }
     }
 }
 
@@ -301,12 +410,11 @@ void IncomeTax::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
     PlayerRequest request;
     std::set<PlayerAction> mustHave = { PlayerAction::PAY_TAX };
-
     while (true) {
         makeDefaultRequest(request);
         addAll(request.availableActions, mustHave);
-
         PlayerReply reply = board.sendRequest(token, request);
+        request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
             if (mustHave.empty()) {
                 break;
@@ -323,7 +431,9 @@ void IncomeTax::onPlayerEntry(Token token) {
             request.message = "Not enough money :(";
             continue;
         }
-        handleGenericActions(token, *this, reply);
+        if (!handleGenericActions(token, *this, reply)) {
+            return;
+        }
     }
 }
 
@@ -342,15 +452,23 @@ void OwnableTile::onPlayerEntry(Token token) {
     PlayerData* fieldOwner = owner == Token::FREE_FIELD ? nullptr : &board.getPlayer(owner);
     PlayerRequest request;
     bool taxPaid = false;
+    bool buyRoperty = false;
+    if (owner == Token::FREE_FIELD) {
+        buyRoperty = true;
+    } else if (owner != token) {
+        taxPaid = true;
+    }
 
     while (true) {
-        std::set<PlayerAction> mustHave = makePropertyMusthave(*this, token, taxPaid);
+
+        //std::set<PlayerAction> mustHave = makePropertyMusthave(*this, token, taxPaid);
         makeDefaultRequest(request);
-        addAll(request.availableActions, mustHave);
+        //addAll(request.availableActions, mustHave);
 
         PlayerReply reply = board.sendRequest(token, request);
+        request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
-            if (mustHave.empty()) {
+            if (!buyRoperty && !taxPaid) {
                 break;
             }
             request.message = "You can't finish turn";
@@ -371,13 +489,19 @@ void OwnableTile::onPlayerEntry(Token token) {
             if (player.money >= cost) {
                 player.money -= cost;
                 onPurchase(token);
+                buyRoperty = true;
                 owner = token;
                 continue;
             }
             request.message = "Not enough money :(";
             continue;
         }
-        handleGenericActions(token, *this, reply);
+        if (reply->action == PlayerAction::START_TRADE_NEW_FIELD) {
+            buyRoperty = true;
+        }
+        if (!handleGenericActions(token, *this, reply)) {
+            return;
+        }
     }
 }
 
