@@ -164,6 +164,58 @@ private:
     int buttonHeight;
 };
 
+class MessageBox {
+public:
+    MessageBox() = default;
+    void setBoxSettings(sf::Vector2f buttonSize, sf::Color bgColor) {
+        button.setSize(buttonSize);
+        button.setFillColor(bgColor);
+
+        buttonWidth = buttonSize.x;
+        buttonHeight = buttonSize.y;
+    }
+
+    void setText(std::string buttonText) {
+        text.setString(buttonText);
+    }
+
+    void setTextSettings(sf::Font &fonts, int charSize, sf::Color textColor) {
+        text.setFont(fonts);
+        text.setCharacterSize(charSize);
+        text.setFillColor(textColor);
+    }
+
+    void setBackColor(sf::Color color) {
+        button.setFillColor(color);
+    }
+
+    void setTextColor(sf::Color color) {
+        text.setFillColor(color);
+    }
+
+    void setPosition(sf::Vector2f point) {
+        button.setPosition(point);
+
+        // Center text on button:
+        float xPos = (point.x + buttonWidth / 2) - (text.getLocalBounds().width / 2);
+        float yPos = (point.y + buttonHeight / 2.2) - (text.getLocalBounds().height / 2);
+        text.setPosition(xPos, yPos);
+    }
+
+    void drawTo(sf::RenderWindow &window) {
+        window.draw(button);
+        window.draw(text);
+    }
+
+
+private:
+    sf::RectangleShape button;
+    sf::Text text;
+
+    int buttonWidth;
+    int buttonHeight;
+};
+
 class SFMLView {
 public:
     SFMLView(Manager& manager);
@@ -194,6 +246,8 @@ private:
     BoardModel model;
 
     // временный ужас
+    MessageBox box;
+
     Token curTurnBy;
     ButtonText btn1;
     ButtonImage btnEndTurn;

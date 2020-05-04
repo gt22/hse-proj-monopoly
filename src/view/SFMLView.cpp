@@ -53,6 +53,11 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
     window.create(sf::VideoMode(800, 600), "Monopoly");
     window.setFramerateLimit(60);
     mainFont.loadFromFile("Ubuntu-R.ttf");
+
+    box.setBoxSettings({30, 30}, sf::Color::Black);
+    box.setPosition({400, 400});
+    box.setTextSettings(mainFont, 15, sf::Color::White);
+
     // text button
     ButtonText btn2("1", {30, 30}, 30, sf::Color::Green, sf::Color::Black);
     btn1 = std::move(btn2);
@@ -89,6 +94,23 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
 
     events.addHandler<sf::Event::Closed>([this]() { window.close(); });
     events.addHandler<sf::Event::Resized>([this](auto e) { onResize(e); });
+    events.addHandler<sf::Event::MouseMoved>([this](sf::Event::MouseMoveEvent e) {
+        if (this->btnEndTurn.isMouseOver(window)) {
+            box.setText("By pressing this button you will finish your turn");
+        } else if (this->btnExitGame.isMouseOver(window)) {
+            box.setText("By pressing this button you will exit the game");
+        } else if (this->btnRollDice.isMouseOver(window)) {
+            box.setText("By pressing this button you will roll dice");
+        } else if (this->btnTakeCard.isMouseOver(window)) {
+            box.setText("By pressing this button you will take card");
+        } else if (this->btnUseCard.isMouseOver(window)) {
+            box.setText("By pressing this button you will use card");
+        } else if (this->btnPayTax.isMouseOver(window)) {
+            box.setText("By pressing this button you will pay tax");
+        } else {
+            box.setText("");
+        }
+    });
     events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e) {
         if (e.button == sf::Mouse::Left) {
             if (this->btnEndTurn.isMouseOver(window)) {
@@ -199,6 +221,7 @@ void SFMLView::mainLoop() {
         btnRollDice.drawTo(window);
         btnTakeCard.drawTo(window);
         btnUseCard.drawTo(window);
+        box.drawTo(window);
         window.display();
     }
 }
