@@ -164,6 +164,7 @@ private:
     int buttonHeight;
 };
 
+
 class SFMLView {
 public:
     SFMLView(Manager& manager);
@@ -200,6 +201,8 @@ private:
     PlayerReply curReply;
 
     // временный ужас
+    sf::Text box;
+
     Token curTurnBy;
     ButtonText btn1;
     ButtonImage btnEndTurn;
