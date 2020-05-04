@@ -30,10 +30,6 @@ void SpriteButton::setSpriteColor(sf::Color color) {
 }
 
 void SpriteButton::draw(sf::RenderWindow& window) {
-    buttonSprite.setOrigin(getOrigin());
-    buttonSprite.setPosition(getPosition());
-    buttonSprite.setRotation(getRotation());
-    buttonSprite.setScale(getScale());
     setSpriteColor(isActive() ? sf::Color::White : sf::Color(155, 155, 155));
     window.draw(buttonSprite);
 }
@@ -41,8 +37,23 @@ void SpriteButton::draw(sf::RenderWindow& window) {
 bool SpriteButton::isValidTarget(sf::Event::MouseButtonEvent mouse) const {
     auto[bx, by] = buttonSprite.getPosition();
     auto[bx_, by_, bw, bh] = buttonSprite.getLocalBounds();
-    return bx <= mouse.x && mouse.x <= bx + bw &&
-           by <= mouse.y  && mouse.y <= by + bh;
+    auto[button, x, y] = mouse;
+    return bx <= x && x <= bx + bw &&
+           by <= y  && y <= by + bh;
+}
+
+sf::Vector2f SpriteButton::getSize() {
+    normalize();
+    auto [w, h] = buttonSprite.getTexture()->getSize();
+    auto [sw, sh] = buttonSprite.getScale();
+    return sf::Vector2f(w * sw, h * sh);
+}
+
+void SpriteButton::normalize() {
+    buttonSprite.setOrigin(getOrigin());
+    buttonSprite.setPosition(getPosition());
+    buttonSprite.setRotation(getRotation());
+    buttonSprite.setScale(getScale());
 }
 
 
@@ -67,6 +78,12 @@ bool ButtonManager::handle(sf::Event::MouseButtonEvent e) {
         }
     }
     return false;
+}
+
+void ButtonManager::draw(sf::RenderWindow& window) const {
+    for (const auto& [btn, handler] : buttons) {
+        btn->draw(window);
+    }
 }
 
 

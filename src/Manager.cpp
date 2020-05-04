@@ -72,7 +72,7 @@ bool Manager::isGameStarted() {
 }
 
 Manager::~Manager() {
-    view.reset();
+    view->dispose();
     if(gameThread.joinable()) {
         gameThread.join();
     }

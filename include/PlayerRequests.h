@@ -31,8 +31,8 @@ struct PlayerRequest final {
 };
 
 struct PlayerMessage final {
-    explicit PlayerMessage(std::string_view message);
-    std::string_view message;
+    explicit PlayerMessage(std::string message);
+    std::string message;
 };
 
 struct PlayerReplyData {

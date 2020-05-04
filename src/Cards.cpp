@@ -8,7 +8,7 @@
 
 Card::Card(Board &board, std::string text) : board(board), text(std::move(text)) {}
 
-LeftPrisonForFree::LeftPrisonForFree(Board &board, std::string text)
+LeavePrisonForFree::LeavePrisonForFree(Board &board, std::string text)
                  : Card(board, std::move(text)) {}
 
 GetMoney::GetMoney(Board &board, std::string text)
@@ -30,7 +30,7 @@ Teleport::Teleport(Board &board, std::string text)
 TeleportToPrison::TeleportToPrison(Board &board, std::string text)
                 : Card(board, std::move(text)) {}
 
-void LeftPrisonForFree::apply(Token token) {
+void LeavePrisonForFree::apply(Token token) {
     PlayerData& player = board.getPlayer(token);
     player.cardToLeavePrison = true;
 }
@@ -47,7 +47,7 @@ void PayMoney::apply(Token token) {
     bool payTax = false;
     request.availableActions.push_back(PlayerAction::PAY_TAX);
     int tmp = amount;
-    if (count_tax) {
+    if (countTax) {
         amount = countPlayerTax(player);
     }
     while (true) {
@@ -145,9 +145,9 @@ void PayMoneyToOtherPlayers::apply(Token token) {
 void Teleport::apply(Token token) {
     PlayerData& player = board.getPlayer(token);
     if (fl) {
-        player.newPosition(delta_pos);
+        player.newPosition(deltaPos);
     } else {
-        player.newPosition(new_position - (int)player.position);
+        player.newPosition(newPosition - (int)player.position);
     }
     player.addMoney(amount);
 }

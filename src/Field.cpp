@@ -52,7 +52,7 @@ Chance::Chance(Board &board, int position, std::string name)
     cards[8] = new PayMoney(board);
     cards[8]->setFlag(true);
 
-    cards[9] = new LeftPrisonForFree(board);
+    cards[9] = new LeavePrisonForFree(board);
 
     cards[10] = new Teleport(board);
     cards[10]->setPos(POLYANKA_POS);
@@ -79,7 +79,7 @@ PublicTreasury::PublicTreasury(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {
     cards.resize(16);
 
-    cards[0] = new LeftPrisonForFree(board);
+    cards[0] = new LeavePrisonForFree(board);
 
     cards[1] = new PayMoney(board, "");//50
     cards[1]->setAmount(50);

@@ -2,7 +2,7 @@
 #define EVENTMANAGER_H
 
 #include <unordered_map>
-#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 
 class EventManager {
 public:

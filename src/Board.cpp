@@ -1,4 +1,6 @@
 #include "Board.h"
+
+#include <utility>
 #include "Field.h"
 #include "Game.h"
 
@@ -179,11 +181,11 @@ Token Board::getPlayerToken(std::size_t index) const {
 }
 
 PlayerReply Board::sendRequest(Token token, PlayerRequest request) const {
-    return game.sendRequest(token, request);
+    return game.sendRequest(token, std::move(request));
 }
 
 void Board::sendMessage(Token token, PlayerMessage mes) const {
-    game.sendMessage(token, mes);
+    game.sendMessage(token, std::move(mes));
 }
 
 std::size_t Board::getPlayersNumber() const {

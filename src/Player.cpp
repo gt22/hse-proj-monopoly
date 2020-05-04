@@ -15,7 +15,7 @@ PlayerReply LocalPlayer::sendRequest(PlayerRequest request) {
 }
 
 void LocalPlayer::sendMessage(PlayerMessage request) {
-    gameView().processMessage(*this, request);
+    gameView().processMessage(*this, std::move(request));
 }
 
 void LocalPlayer::sync(const Board &board) {

@@ -5,9 +5,12 @@
 #include "EventManager.h"
 #include "Board.h"
 #include "BoardModel.h"
+#include "ButtonManager.h"
+#include "TooltipManager.h"
 #include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
+
 //#include <pthread/pthread.h>
+
 #include <mutex>
 #include <condition_variable>
 #include <pthread.h>
@@ -167,8 +170,8 @@ private:
 
 class SFMLView {
 public:
-    SFMLView(Manager& manager);
-    ~SFMLView();
+    explicit SFMLView(Manager& manager);
+    void dispose();
     void mainLoop();
 
     void redraw(const Board& board);
@@ -180,16 +183,29 @@ private:
     void drawField(const BoardModel& board);
     void drawPlayers(const BoardModel& board);
     void drawMoney(const BoardModel& board);
+    void drawMessage();
     void draw();
     void handleRequest();
     void makeReply(PlayerReply rep);
     BoardModel getModel();
+
+    void addActionButton(PlayerAction action, const std::string& texture,
+                         std::string tooltip, const std::function<void()>& handler);
+
+    template<typename T>
+    auto makeReplyGenerator() {
+        return [this]() { makeReply(std::make_unique<T>()); };
+    }
 
     int tmp = 0;
 
     Manager& manager;
 
     EventManager events;
+    ButtonManager buttons;
+    TooltipManager tooltips;
+
+    std::unordered_map<PlayerAction, SpriteButton&> actionButtons;
     ShapeHolder shapes;
     sf::RenderWindow window;
     sf::Font mainFont;
@@ -202,6 +218,7 @@ private:
 
     // временный ужас
     sf::Text box;
+    sf::Text message;
 
     Token curTurnBy;
     ButtonText btn1;

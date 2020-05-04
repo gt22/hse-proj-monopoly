@@ -75,8 +75,8 @@ public:
 private:
     std::vector<PlayerData> players;
     Game& game;
-    int numOfAlivePlayers;
-    bool terminated;
+    int numOfAlivePlayers = 0;
+    bool terminated = false;
 };
 
 #endif //BOARD_H

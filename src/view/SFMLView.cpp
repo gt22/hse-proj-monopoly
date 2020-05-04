@@ -57,6 +57,9 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
     box.setFont(mainFont);
     box.setCharacterSize(15);
     box.setFillColor(sf::Color::White);
+    message.setFont(mainFont);
+    message.setCharacterSize(20);
+    message.setFillColor(sf::Color::White);
 
     // text button
     ButtonText btn2("1", {30, 30}, 30, sf::Color::Green, sf::Color::Black);
@@ -67,89 +70,40 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
 
     // sprite button
 
-    btnEndTurn.setTexture("images/END_TURN.png");
-    btnEndTurn.setPosition({10, 10});
-    btnEndTurn.setScale({0.7, 0.7});
-
-    btnExitGame.setTexture("images/EXIT_GAME.png");
-    btnExitGame.setPosition({70, 10});
-    btnExitGame.setScale({0.7, 0.7});
-
-    btnPayTax.setTexture("images/PAY_TAX.png");
-    btnPayTax.setPosition({10, 70});
-    btnPayTax.setScale({0.7, 0.7});
-
-    btnRollDice.setTexture("images/ROLL_DICE.png");
-    btnRollDice.setPosition({70, 70});
-    btnRollDice.setScale({0.7, 0.7});
-
-    btnTakeCard.setTexture("images/TAKE_CARD.png");
-    btnTakeCard.setPosition({10, 140});
-    btnTakeCard.setScale({0.7, 0.7});
-
-    btnUseCard.setTexture("images/USE_CARD.png");
-    btnUseCard.setPosition({70, 140});
-    btnUseCard.setScale({0.7, 0.7});
+    addActionButton(PlayerAction::END_TURN,
+                    "images/END_TURN.png",
+                    "By pressing this button you will finish your turn",
+                    makeReplyGenerator<EndTurnReply>());
+    addActionButton(PlayerAction::EXIT_GAME,
+                    "images/EXIT_GAME.png",
+                    "By pressing this button you will exit the game",
+                    makeReplyGenerator<ExitGameReply>());
+    addActionButton(PlayerAction::PAY_TAX,
+                    "images/PAY_TAX.png",
+                    "By pressing this button you will roll dice",
+                    makeReplyGenerator<PayTaxReply>());
+    addActionButton(PlayerAction::ROLL_DICE,
+                    "images/ROLL_DICE.png",
+                    "By pressing this button you will take card",
+                    makeReplyGenerator<RollDiceReply>());
+    addActionButton(PlayerAction::TAKE_CARD,
+                    "images/TAKE_CARD.png",
+                    "By pressing this button you will use card",
+                    makeReplyGenerator<TakeCardReply>());
+    addActionButton(PlayerAction::USE_CARD,
+                    "images/USE_CARD.png",
+                    "By pressing this button you will pay tax",
+                    makeReplyGenerator<UseCardReply>());
 
 
     events.addHandler<sf::Event::Closed>([this]() { window.close(); });
     events.addHandler<sf::Event::Resized>([this](auto e) { onResize(e); });
     events.addHandler<sf::Event::MouseMoved>([this](sf::Event::MouseMoveEvent e) {
-        if (this->btnEndTurn.isMouseOver(window)) {
-            box.setString("By pressing this button you will finish your turn");
-        } else if (this->btnExitGame.isMouseOver(window)) {
-            box.setString("By pressing this button you will exit the game");
-        } else if (this->btnRollDice.isMouseOver(window)) {
-            box.setString("By pressing this button you will roll dice");
-        } else if (this->btnTakeCard.isMouseOver(window)) {
-            box.setString("By pressing this button you will take card");
-        } else if (this->btnUseCard.isMouseOver(window)) {
-            box.setString("By pressing this button you will use card");
-        } else if (this->btnPayTax.isMouseOver(window)) {
-            box.setString("By pressing this button you will pay tax");
-        } else {
-            box.setString("");
-        }
+        box.setString(std::string(this->tooltips.getTooltip(e)));
         box.setPosition(sf::Vector2f(20, window.getSize().y - box.getLocalBounds().height * 2));
     });
     events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e) {
-        if (e.button == sf::Mouse::Left) {
-            if (this->btnEndTurn.isMouseOver(window)) {
-                if (this->btnEndTurn.getClickability()) {
-                    makeReply(std::make_unique<EndTurnReply>());
-                }
-            } else if (this->btnExitGame.isMouseOver(window)) {
-                if (this->btnExitGame.getClickability())
-                    makeReply(std::make_unique<ExitGameReply>());
-            } else if (this->btnPayTax.isMouseOver(window)) {
-                if (this->btnPayTax.getClickability())
-                    makeReply(std::make_unique<PayTaxReply>());
-            } else if (this->btnRollDice.isMouseOver(window)) {
-                if (this->btnRollDice.getClickability())
-                    makeReply(std::make_unique<RollDiceReply>());
-            } else if (this->btnTakeCard.isMouseOver(window)) {
-                if (this->btnTakeCard.getClickability())
-                    makeReply(std::make_unique<TakeCardReply>());
-            } else if (this->btnUseCard.isMouseOver(window)) {
-                if (this->btnUseCard.getClickability())
-                    makeReply(std::make_unique<UseCardReply>());
-            }
-        } else if (e.button == sf::Mouse::Right) {
-            if (this->btnEndTurn.isMouseOver(window)) {
-                this->btnEndTurn.toggleClickability();
-            } else if (this->btnExitGame.isMouseOver(window)) {
-                this->btnExitGame.toggleClickability();
-            } else if (this->btnPayTax.isMouseOver(window)) {
-                this->btnPayTax.toggleClickability();
-            } else if (this->btnRollDice.isMouseOver(window)) {
-                this->btnRollDice.toggleClickability();
-            } else if (this->btnTakeCard.isMouseOver(window)) {
-                this->btnTakeCard.toggleClickability();
-            } else if (this->btnUseCard.isMouseOver(window)) {
-                this->btnUseCard.toggleClickability();
-            }
-        }
-        redraw(this->manager.getBoard());
+        buttons.handle(e);
     });
 
     //  events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e){ tmp++; });
@@ -171,7 +125,7 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
     manager.startGame();
 }
 
-SFMLView::~SFMLView() {
+void SFMLView::dispose() {
     windowMutex.lock();
     shouldClose = true;
     windowMutex.unlock();
@@ -198,12 +152,7 @@ void SFMLView::mainLoop() {
         }
         window.clear();
         draw();
-        btnEndTurn.drawTo(window);
-        btnExitGame.drawTo(window);
-        btnPayTax.drawTo(window);
-        btnRollDice.drawTo(window);
-        btnTakeCard.drawTo(window);
-        btnUseCard.drawTo(window);
+        buttons.draw(window);
         window.draw(box);
         window.display();
     }
@@ -390,11 +339,21 @@ void SFMLView::drawPlayers(const BoardModel &board) {
     }
 }
 
+void SFMLView::drawMessage() {
+    std::lock_guard g(requestMutex);
+    const auto& baseRect = shapes.fieldRects[0];
+    message.setCharacterSize(15);
+    message.setPosition(baseRect.getPosition() + baseRect.getPoint(1) + sf::Vector2f(5, -message.getLocalBounds().height * 2));
+    window.draw(message);
+}
+
+
 void SFMLView::draw() {
     BoardModel m = getModel();
     drawField(m);
     drawPlayers(m);
     drawMoney(m);
+    drawMessage();
 }
 
 void SFMLView::redraw(const Board &board) {
@@ -411,13 +370,18 @@ PlayerReply SFMLView::processRequest(Player &p, PlayerRequest req) {
 }
 
 void SFMLView::processMessage(Player &p, PlayerMessage mes) {
-
+    std::lock_guard g(requestMutex);
+    message.setString(mes.message);
 }
 
+
 void SFMLView::onResize(sf::Event::SizeEvent e) {
+    auto[m, M] = e;
+    if(m > M) std::swap(m, M);
+
     window.setView(sf::View(sf::FloatRect(0, 0, e.width, e.height)));
-    const size_t side = (40 * e.width) / 800;
-    const size_t longSide = (50 * e.width) / 800;
+    const size_t side = (40 * m) / 600;
+    const size_t longSide = (50 * m) / 600;
     const auto ss = static_cast<float>(side);
     const auto ls = static_cast<float>(longSide);
     const size_t longSideDiff = longSide - side;
@@ -476,6 +440,9 @@ void SFMLView::onResize(sf::Event::SizeEvent e) {
         }
 
     }
+
+    const auto& baseRect = shapes.fieldRects[0];
+    message.setPosition(baseRect.getPosition() + baseRect.getPoint(1) + sf::Vector2f(5, -message.getLocalBounds().height * 2));
 }
 
 void SFMLView::drawMoney(const BoardModel &board) {
@@ -510,30 +477,19 @@ void SFMLView::handleRequest() {
         req = std::move(curRequest.value());
         curRequest.reset();
     }
-    btnEndTurn.makeUnclickable();
-    btnExitGame.makeUnclickable();
-    btnPayTax.makeUnclickable();
-    btnRollDice.makeUnclickable();
-    btnTakeCard.makeUnclickable();
-    btnUseCard.makeUnclickable();
+    for (auto& [act, btn] : actionButtons) {
+        btn.deactivate();
+    }
     for(auto action : req.availableActions) {
-        switch(action) {
-            case PlayerAction::END_TURN: btnEndTurn.makeClickable(); break;
-            case PlayerAction::EXIT_GAME: btnExitGame.makeClickable(); break;
-            case PlayerAction::PAY_TAX: btnPayTax.makeClickable(); break;
-            case PlayerAction::ROLL_DICE: btnRollDice.makeClickable(); break;
-            case PlayerAction::TAKE_CARD: btnTakeCard.makeClickable(); break;
-            case PlayerAction::USE_CARD: btnUseCard.makeClickable(); break;
-            default: break;
+        if(actionButtons.count(action)) {
+            actionButtons.at(action).activate();
         }
     }
 }
 
 BoardModel SFMLView::getModel() {
-    boardMutex.lock();
-    BoardModel m = model;
-    boardMutex.unlock();
-    return m;
+    std::lock_guard g(boardMutex);
+    return model; //copy
 }
 
 void SFMLView::makeReply(PlayerReply rep) {
@@ -541,3 +497,21 @@ void SFMLView::makeReply(PlayerReply rep) {
     curReply = std::move(rep);
     requestCond.notify_all();
 }
+
+void SFMLView::addActionButton(PlayerAction action,
+                               const std::string& texture,
+                               std::string tooltip,
+                               const std::function<void()>& handler) {
+    auto btn = std::make_unique<SpriteButton>();
+    size_t i = actionButtons.size();
+    btn->setPosition(static_cast<float>(10 + 60 * (i % 2)), static_cast<float>(10 + 60 * (i / 2)));
+    btn->setScale({0.7f, 0.7f});
+    btn->setTexture(texture);
+    actionButtons.emplace(action, *btn);
+    auto[x, y] = btn->getPosition();
+    auto[w, h] = btn->getSize();
+    tooltips.addTooltip({std::move(tooltip), x, y, w, h});
+    buttons.addButton(std::move(btn), [handler](auto e) { handler(); return true; });
+}
+
+
