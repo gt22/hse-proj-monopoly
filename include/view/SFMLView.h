@@ -1,9 +1,10 @@
-#ifndef HSEPROJ_SFMLVIEW_H
-#define HSEPROJ_SFMLVIEW_H
+#ifndef SFMLVIEW_H
+#define SFMLVIEW_H
 #include "MonopolyFwd.h"
 #include "PlayerRequests.h"
 #include "EventManager.h"
 #include "Board.h"
+#include "BoardModel.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 //#include <pthread/pthread.h>
@@ -12,6 +13,7 @@
 #include <pthread.h>
 #include <thread>
 #include <iostream>
+
 
 struct ShapeHolder {
 
@@ -174,10 +176,11 @@ public:
 private:
     void onResize(sf::Event::SizeEvent e);
 
-    void drawField(const Board& board);
-    void drawPlayers(const Board& board);
-    void drawMoney(const Board& board);
+    void drawField(const BoardModel& board);
+    void drawPlayers(const BoardModel& board);
+    void drawMoney(const BoardModel& board);
     void draw();
+    BoardModel getModel();
 
     int tmp = 0;
 
@@ -187,8 +190,8 @@ private:
     ShapeHolder shapes;
     sf::RenderWindow window;
     sf::Font mainFont;
-    std::mutex requestMutex, windowMutex;
-    std::condition_variable requestCond;
+    std::mutex boardMutex, windowMutex;
+    BoardModel model;
 
     // временный ужас
     Token curTurnBy;
@@ -199,11 +202,7 @@ private:
     ButtonImage btnRollDice;
     ButtonImage btnTakeCard;
     ButtonImage btnUseCard;
-    //TODO: какой ужас, это же глобальные переменные
-    PlayerReply requestReply;
-    std::optional<PlayerRequest> curRequest;
-    std::string_view curMessage;
     bool shouldClose = false;
 };
 
-#endif //HSEPROJ_SFMLVIEW_H
+#endif //SFMLVIEW_H

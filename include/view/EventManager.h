@@ -1,5 +1,5 @@
-#ifndef HSEPROJ_EVENTMANAGER_H
-#define HSEPROJ_EVENTMANAGER_H
+#ifndef EVENTMANAGER_H
+#define EVENTMANAGER_H
 
 #include <unordered_map>
 #include <SFML/Window.hpp>
@@ -40,4 +40,4 @@ private:
     std::unordered_map<sf::Event::EventType, std::vector<EventHandler>> handlers;
 };
 
-#endif //HSEPROJ_EVENTMANAGER_H
+#endif //EVENTMANAGER_H
