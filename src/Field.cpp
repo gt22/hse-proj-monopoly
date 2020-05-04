@@ -228,7 +228,20 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         return false;
     }
     if (reply->action == PlayerAction::BUY_BACK_PROPERTY) {
-        //TODO
+        //TODO:send request for number of field
+        int index = 11;
+        if (tile.board.field[index]->isMortgaged && tile.board.field[index]->getOwner() == token) {
+            PlayerData& player = tile.board.getPlayer(token);
+            if ((double)player.getMoney() >= 1.1 * (double)tile.getMortgageCost()) {
+                player.addMoney(-1.1 * (double)tile.getMortgageCost());
+                player.numberOfMortgagedProperty--;
+                tile.board.field[index]->isMortgaged = false;
+            } else {
+                tile.board.sendMessage(token, PlayerMessage("You don't have enough money :("));
+            }
+        } else {
+            tile.board.sendMessage(token, PlayerMessage("You can't buy back this field tile"));
+        }
         return true;
     }
     return true;

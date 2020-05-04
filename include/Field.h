@@ -27,11 +27,14 @@ public:
     Board& board;
     int position;
     std::string name;
+    bool isMortgaged = false;
     virtual void onPlayerPass(Token token);
     virtual void onPlayerEntry(Token token);
     virtual std::vector<std::string> writeTileInfo();
     virtual void setMortgageCost(int val = 0) = 0;
     virtual bool MortgageTile(Token token) = 0;
+    virtual Token getOwner() const {return Token::FREE_FIELD; }
+    virtual int getMortgageCost() const { return 0; }
 };
 
 class OwnableTile : public FieldTile {
@@ -44,8 +47,9 @@ public:
     void setMortgageCost(int val = 0) override { mortgageCost = val; }
     bool MortgageTile(Token token) override;
     virtual std::vector<std::string> writeTileInfo() override;
+    Token getOwner() const override {return owner; }
+    int getMortgageCost() const override { return mortgageCost; }
     int mortgageCost = 0;
-    bool isMortgaged = false;
     int cost;
     int costOfParking = 0;
     Color color;
