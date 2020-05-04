@@ -180,6 +180,8 @@ private:
     void drawPlayers(const BoardModel& board);
     void drawMoney(const BoardModel& board);
     void draw();
+    void handleRequest();
+    void makeReply(PlayerReply rep);
     BoardModel getModel();
 
     int tmp = 0;
@@ -190,8 +192,12 @@ private:
     ShapeHolder shapes;
     sf::RenderWindow window;
     sf::Font mainFont;
-    std::mutex boardMutex, windowMutex;
+    std::mutex boardMutex, windowMutex, requestMutex;
+    std::condition_variable requestCond;
     BoardModel model;
+
+    std::optional<PlayerRequest> curRequest;
+    PlayerReply curReply;
 
     // временный ужас
     Token curTurnBy;

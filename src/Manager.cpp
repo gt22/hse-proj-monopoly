@@ -54,7 +54,7 @@ void Manager::startGame() {
     gameThread = std::thread([this](){
         createGame();
         sync(game->getBoard());
-//        game->runGame();
+        game->runGame();
     });
 }
 

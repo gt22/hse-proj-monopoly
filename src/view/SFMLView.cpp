@@ -93,46 +93,23 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
         if (e.button == sf::Mouse::Left) {
             if (this->btnEndTurn.isMouseOver(window)) {
                 if (this->btnEndTurn.getClickability()) {
-                    this->manager.getBoard().getPlayer(curTurnBy).newPosition(rand() % 6 + 1);
-                    switch (curTurnBy) {
-
-                        case Token::DOG:
-                            curTurnBy = Token::HAT;
-                            break;
-                        case Token::HAT:
-                            curTurnBy = Token::BOOT;
-                            break;
-                        case Token::BOOT:
-                            curTurnBy = Token::CAT;
-                            break;
-                        case Token::CAT:
-                            curTurnBy = Token::CAR;
-                            break;
-                        case Token::CAR:
-                            curTurnBy = Token::SHIP;
-                            break;
-                        case Token::SHIP:
-                            curTurnBy = Token::DOG;
-                            break;
-                        case Token::FREE_FIELD:
-                            assert(false);
-                    }
+                    makeReply(std::make_unique<EndTurnReply>());
                 }
             } else if (this->btnExitGame.isMouseOver(window)) {
                 if (this->btnExitGame.getClickability())
-                    std::cout << "EXIT GAME" << "\n";
+                    makeReply(std::make_unique<ExitGameReply>());
             } else if (this->btnPayTax.isMouseOver(window)) {
                 if (this->btnPayTax.getClickability())
-                    std::cout << "PAY TAX" << "\n";
+                    makeReply(std::make_unique<PayTaxReply>());
             } else if (this->btnRollDice.isMouseOver(window)) {
                 if (this->btnRollDice.getClickability())
-                    std::cout << "ROLL DICE" << "\n";
+                    makeReply(std::make_unique<RollDiceReply>());
             } else if (this->btnTakeCard.isMouseOver(window)) {
                 if (this->btnTakeCard.getClickability())
-                    std::cout << "TAKE CARD" << "\n";
+                    makeReply(std::make_unique<TakeCardReply>());
             } else if (this->btnUseCard.isMouseOver(window)) {
                 if (this->btnUseCard.getClickability())
-                    std::cout << "USE CARD" << "\n";
+                    makeReply(std::make_unique<UseCardReply>());
             }
         } else if (e.button == sf::Mouse::Right) {
             if (this->btnEndTurn.isMouseOver(window)) {
@@ -187,6 +164,7 @@ void SFMLView::mainLoop() {
                 break;
             }
         }
+        handleRequest();
         sf::Event e{};
         while (window.pollEvent(e)) {
             events.handleEvent(e);
@@ -397,32 +375,11 @@ void SFMLView::redraw(const Board &board) {
 }
 
 PlayerReply SFMLView::processRequest(Player &p, PlayerRequest req) {
-
-    btnUseCard.makeUnclickable();
-    btnTakeCard.makeUnclickable();
-    btnRollDice.makeUnclickable();
-    btnPayTax.makeClickable();
-    btnExitGame.makeClickable();
-    btnEndTurn.makeClickable();
-
-    /* for (std::size_t i = 0; i < req.availableActions.size(); i++) {
-         if (req.availableActions[i] == PlayerAction::PAY_TAX) {
-             btnPayTax.makeUnclickable();
-         } else if (req.availableActions[i] == PlayerAction::USE_CARD) {
-             btnUseCard.makeUnclickable();
-         } else if (req.availableActions[i] == PlayerAction::TAKE_CARD) {
-             btnTakeCard.makeUnclickable();
-         } else if (req.availableActions[i] == PlayerAction::ROLL_DICE) {
-             btnRollDice.makeUnclickable();
-         } else if (req.availableActions[i] == PlayerAction::EXIT_GAME) {
-             btnExitGame.makeUnclickable();
-         } else if (req.availableActions[i] == PlayerAction::END_TURN) {
-             btnEndTurn.makeUnclickable();
-         }
-     }
- */
-    //
-    return std::make_unique<EndTurnReply>();
+    std::unique_lock g(requestMutex);
+    curRequest = std::move(req);
+    requestCond.wait(g, [this]() { return bool(this->curReply); });
+    assert(curReply);
+    return std::move(curReply);
 }
 
 void SFMLView::processMessage(Player &p, PlayerMessage mes) {
@@ -517,9 +474,42 @@ void SFMLView::drawMoney(const BoardModel &board) {
     window.draw(money);
 }
 
+void SFMLView::handleRequest() {
+    PlayerRequest req;
+    {
+        std::lock_guard g(requestMutex);
+        if(!curRequest.has_value()) return;
+        req = std::move(curRequest.value());
+        curRequest.reset();
+    }
+    btnEndTurn.makeUnclickable();
+    btnExitGame.makeUnclickable();
+    btnPayTax.makeUnclickable();
+    btnRollDice.makeUnclickable();
+    btnTakeCard.makeUnclickable();
+    btnUseCard.makeUnclickable();
+    for(auto action : req.availableActions) {
+        switch(action) {
+            case PlayerAction::END_TURN: btnEndTurn.makeClickable(); break;
+            case PlayerAction::EXIT_GAME: btnExitGame.makeClickable(); break;
+            case PlayerAction::PAY_TAX: btnPayTax.makeClickable(); break;
+            case PlayerAction::ROLL_DICE: btnRollDice.makeClickable(); break;
+            case PlayerAction::TAKE_CARD: btnTakeCard.makeClickable(); break;
+            case PlayerAction::USE_CARD: btnUseCard.makeClickable(); break;
+            default: break;
+        }
+    }
+}
+
 BoardModel SFMLView::getModel() {
     boardMutex.lock();
     BoardModel m = model;
     boardMutex.unlock();
     return m;
+}
+
+void SFMLView::makeReply(PlayerReply rep) {
+    std::lock_guard g(requestMutex);
+    curReply = std::move(rep);
+    requestCond.notify_all();
 }
