@@ -93,9 +93,10 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
         if (e.button == sf::Mouse::Left) {
             if (this->btnEndTurn.isMouseOver(window)) {
                 if (this->btnEndTurn.getClickability()) {
-                    this->manager.getBoard().getPlayer(curTurnBy).newPosition(rand() % 6 + 1);
+                }
+            } else if (this->btnExitGame.isMouseOver(window)) {
+                if (this->btnExitGame.getClickability())
                     switch (curTurnBy) {
-
                         case Token::DOG:
                             curTurnBy = Token::HAT;
                             break;
@@ -117,16 +118,15 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                         case Token::FREE_FIELD:
                             assert(false);
                     }
-                }
-            } else if (this->btnExitGame.isMouseOver(window)) {
-                if (this->btnExitGame.getClickability())
-                    std::cout << "EXIT GAME" << "\n";
             } else if (this->btnPayTax.isMouseOver(window)) {
-                if (this->btnPayTax.getClickability())
-                    std::cout << "PAY TAX" << "\n";
+                if (this->btnPayTax.getClickability()) {
+                    static int m = 300;
+                    this->manager.getBoard().getPlayer(curTurnBy).money -= m;
+                    m += 50;
+                }
             } else if (this->btnRollDice.isMouseOver(window)) {
                 if (this->btnRollDice.getClickability())
-                    std::cout << "ROLL DICE" << "\n";
+                    this->manager.getBoard().getPlayer(curTurnBy).newPosition(rand() % 6 + 1);
             } else if (this->btnTakeCard.isMouseOver(window)) {
                 if (this->btnTakeCard.getClickability())
                     std::cout << "TAKE CARD" << "\n";
