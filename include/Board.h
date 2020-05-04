@@ -33,6 +33,7 @@ struct PlayerData {
 
     int numberOfHouses = 0;
     int numberOfHotels = 0;
+    int numberOfMortgagedProperty = 0;
     int lastTrow = 0;
     bool prisoner = false;
     bool alive = true;
@@ -70,6 +71,7 @@ public:
     Token getWinner() const;
     FieldTile* getTile(std::size_t pos) const;
 
+    std::map<Token, TokenForMortgage> getMortgageToken;
 
 private:
     std::vector<PlayerData> players;

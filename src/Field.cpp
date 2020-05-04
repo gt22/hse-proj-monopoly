@@ -137,7 +137,7 @@ OwnableTile::OwnableTile(Board &board, int position, std::string name, int cost,
         : FieldTile(board, position, std::move(name)), cost(cost), color(color) {}
 
 Railway::Railway(Board &board, int position, std::string name, int cost, Color color)
-        : OwnableTile(board, position, std::move(name), cost, color) {}
+        : OwnableTile(board, position, std::move(name), cost, color) { mortgageCost = 100; }
 
 Street::Street(Board &board, int position, std::string name, int cost, Color color, int costPerHouse)
         : OwnableTile(board, position, std::move(name), cost, color), costPerHouse(costPerHouse) {}
@@ -158,7 +158,7 @@ void Street::onPlayerEntry(Token token) {
 }
 
 Utility::Utility(Board &board, int position, std::string name, int cost, Color color)
-        : OwnableTile(board, position, std::move(name), cost, color) {}
+        : OwnableTile(board, position, std::move(name), cost, color) { mortgageCost = 75; }
 
 void FieldTile::onPlayerPass(Token) {}
 
@@ -209,7 +209,9 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         return true;
     }
     if (reply->action == PlayerAction::MORTGAGE_HOLDINGS) {
-        //TODO
+        //TODO:send request for number of field
+        //get field tile
+        //field tile ->
         return true;
     }
     if (reply->action == PlayerAction::START_TRADE) {
@@ -225,6 +227,10 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         }
         return false;
     }
+    if (reply->action == PlayerAction::BUY_BACK_PROPERTY) {
+        //TODO
+        return true;
+    }
     return true;
 }
 
@@ -233,6 +239,9 @@ void Start::onPlayerEntry(Token token) {
     PlayerRequest request;
     while (true) {
         makeDefaultRequest(request);
+        if (player.numberOfMortgagedProperty != 0) {
+            request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
+        }
         PlayerReply reply = board.sendRequest(player.token, request);
         request.message = "";
         std::cerr << "Reply: " << static_cast<int>(reply->action) << std::endl;
@@ -252,6 +261,12 @@ void Prison::onPlayerEntry(Token token) {
     bool diceUsed = false;
     while (true) {
         makeDefaultRequest(request);
+        if (player.numberOfMortgagedProperty != 0) {
+            request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
+        }
+        if (player.numberOfMortgagedProperty != 0) {
+            request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
+        }
         if (board.getPlayer(token).prisoner) {
             request.availableActions.push_back(PlayerAction::PAY_TAX);
             if(!diceUsed) {
@@ -341,6 +356,9 @@ void Chance::onPlayerEntry(Token token) {
     std::set<PlayerAction> mustHave = { PlayerAction::TAKE_CARD };
     while (true) {
         makeDefaultRequest(request);
+        if (player.numberOfMortgagedProperty != 0) {
+            request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
+        }
         addAll(request.availableActions, mustHave);
         PlayerReply reply = board.sendRequest(token, request);
         request.message = "";
@@ -377,6 +395,9 @@ void PublicTreasury::onPlayerEntry(Token token) {
     std::set<PlayerAction> mustHave = { PlayerAction::TAKE_CARD };
     while (true) {
         makeDefaultRequest(request);
+        if (player.numberOfMortgagedProperty != 0) {
+            request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
+        }
         addAll(request.availableActions, mustHave);
         PlayerReply reply = board.sendRequest(token, request);
         request.message = "";
@@ -412,6 +433,9 @@ void IncomeTax::onPlayerEntry(Token token) {
     std::set<PlayerAction> mustHave = { PlayerAction::PAY_TAX };
     while (true) {
         makeDefaultRequest(request);
+        if (player.numberOfMortgagedProperty != 0) {
+            request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
+        }
         addAll(request.availableActions, mustHave);
         PlayerReply reply = board.sendRequest(token, request);
         request.message = "";
@@ -455,16 +479,14 @@ void OwnableTile::onPlayerEntry(Token token) {
     bool buyRoperty = false;
     if (owner == Token::FREE_FIELD) {
         buyRoperty = true;
-    } else if (owner != token) {
+    } else if (owner != token || isMortgaged) {
         taxPaid = true;
     }
-
     while (true) {
-
-        //std::set<PlayerAction> mustHave = makePropertyMusthave(*this, token, taxPaid);
         makeDefaultRequest(request);
-        //addAll(request.availableActions, mustHave);
-
+        if (player.numberOfMortgagedProperty != 0) {
+            request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
+        }
         PlayerReply reply = board.sendRequest(token, request);
         request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
@@ -475,6 +497,10 @@ void OwnableTile::onPlayerEntry(Token token) {
             continue;
         }
         if (reply->action == PlayerAction::PAY_TO_OTHER_PLAYER) {
+            if (taxPaid) {
+                request.message = "You don't have to pay tax";
+                continue;
+            }
             int tax = calculateTax(token);
             if (player.getMoney() >= tax) {
                 player.addMoney(-tax);
@@ -486,6 +512,14 @@ void OwnableTile::onPlayerEntry(Token token) {
             continue;
         }
         if (reply->action == PlayerAction::BUY_PROPERTY) {
+            if (owner == token) {
+                request.message = "You've already bought this field :)";
+                continue;
+            }
+            if (owner != Token::FREE_FIELD) {
+                request.message = "This field is not free";
+                continue;
+            }
             if (player.money >= cost) {
                 player.money -= cost;
                 onPurchase(token);
@@ -536,6 +570,17 @@ std::vector<std::string> FieldTile::writeTileInfo() {
 std::vector<std::string> OwnableTile::writeTileInfo() {
     std::vector<std::string> info;
     return info;
+}
+
+bool OwnableTile::MortgageTile(Token token) {
+    if (this->board.getMortgageToken.count(owner) != 0 && owner == token) {
+        isMortgaged = true;
+        PlayerData& player = board.getPlayer(token);
+        player.addMoney(mortgageCost);
+        player.numberOfMortgagedProperty++;
+        return true;
+    }
+    return false;
 }
 
 std::vector<std::string> Start::writeTileInfo() {
@@ -620,6 +665,7 @@ std::vector<std::string> Utility::writeTileInfo() {
     info.push_back(item);
     return info;
 }
+
 
 std::vector<std::string> Prison::writeTileInfo() {
     std::vector<std::string> info;

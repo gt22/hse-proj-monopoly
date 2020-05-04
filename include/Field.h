@@ -30,6 +30,8 @@ public:
     virtual void onPlayerPass(Token token);
     virtual void onPlayerEntry(Token token);
     virtual std::vector<std::string> writeTileInfo();
+    virtual void setMortgageCost(int val = 0) = 0;
+    virtual bool MortgageTile(Token token) = 0;
 };
 
 class OwnableTile : public FieldTile {
@@ -39,7 +41,11 @@ public:
     virtual size_t calculateTax(Token token) = 0;
     virtual void onPurchase(Token token) = 0;
     void onPlayerEntry(Token token) override;
+    void setMortgageCost(int val = 0) override { mortgageCost = val; }
+    bool MortgageTile(Token token) override;
     virtual std::vector<std::string> writeTileInfo() override;
+    int mortgageCost = 0;
+    bool isMortgaged = false;
     int cost;
     int costOfParking = 0;
     Color color;
@@ -83,6 +89,8 @@ public:
     std::vector<std::string> writeTileInfo() override;
     void onPlayerPass(Token token) override;
     void onPlayerEntry(Token token) override;
+    void setMortgageCost(int val = 0) override { };
+    bool MortgageTile(Token token) override { return false; };
 };
 
 class Prison final : public FieldTile {
@@ -90,6 +98,9 @@ public:
     Prison(Board& board, int position, std::string name);
     std::vector<std::string> writeTileInfo() override;
     void onPlayerEntry(Token token) override;
+    void setMortgageCost(int val = 0) override { };
+    bool MortgageTile(Token token) override { return false; };
+
     int tax = 50;
 };
 
@@ -99,6 +110,8 @@ public:
     GoToPrison(Board& board, int position, std::string name);
     std::vector<std::string> writeTileInfo() override;
     void onPlayerEntry(Token token) override;
+    void setMortgageCost(int val = 0) override { };
+    bool MortgageTile(Token token) override { return false; };
 };
 
 class Chance final : public FieldTile {
@@ -106,6 +119,8 @@ public:
     Chance(Board& board, int position, std::string name);
     std::vector<std::string> writeTileInfo() override;
     void onPlayerEntry(Token token) override;
+    void setMortgageCost(int val = 0) override { };
+    bool MortgageTile(Token token) override { return false; };
 
     std::vector<Card*> cards;
 };
@@ -115,6 +130,9 @@ public:
     PublicTreasury(Board& board, int position, std::string name);
     void onPlayerEntry(Token token) override;
     std::vector<std::string> writeTileInfo() override;
+    void setMortgageCost(int val = 0) override { };
+    bool MortgageTile(Token token) override { return false; };
+
     std::vector<Card*> cards;
 };
 
@@ -124,6 +142,8 @@ public:
             int tax);
     std::vector<std::string> writeTileInfo() override;
     void onPlayerEntry(Token token) override;
+    void setMortgageCost(int val = 0) override { };
+    bool MortgageTile(Token token) override { return false; };
 
 private:
     int tax;
@@ -133,6 +153,8 @@ class FreeParking final : public FieldTile {
 public:
     FreeParking(Board& board, int position, std::string name);
     std::vector<std::string> writeTileInfo() override;
+    void setMortgageCost(int val = 0) override { };
+    bool MortgageTile(Token token) override { return false; };
 };
 
 void makeDefaultRequest(PlayerRequest& r);

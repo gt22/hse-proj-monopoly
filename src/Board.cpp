@@ -152,6 +152,14 @@ Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersLis
 
     field[39] = new Street(*this, 39, "Arbat street",
             400, Color::COL8, 200);
+
+
+    getMortgageToken[Token::DOG] = TokenForMortgage::DOG_M;
+    getMortgageToken[Token::CAR] = TokenForMortgage::CAR_M;
+    getMortgageToken[Token::HAT] = TokenForMortgage::HAT_M;
+    getMortgageToken[Token::BOOT] = TokenForMortgage::BOOT_M;
+    getMortgageToken[Token::CAT] = TokenForMortgage::CAT_M;
+    getMortgageToken[Token::SHIP] = TokenForMortgage::SHIP_M;
 }
 
 PlayerData& Board::getPlayer(Token token) {
