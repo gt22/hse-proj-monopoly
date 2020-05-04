@@ -49,110 +49,138 @@ Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersLis
 
     field[1] = new Street(*this, 1, "Zhitnaya street",
             60, Color::COL1, 50);
+    field[1]->setMortgageCost(30);
 
     field[2] = new PublicTreasury(*this, 2, "Public treasury");
 
+
     field[3] = new Street(*this, 3, "Nagatinskaya street",
             60, Color::COL1, 50);
+    field[3]->setMortgageCost(30);
 
     field[4] = new IncomeTax(*this, 4, "Income tax", 200);
 
     field[5] = new Railway(*this, 5, "Riga railway",
             200, Color::COL1);
+    field[5]->setMortgageCost(100);
 
     field[6] = new Street(*this, 6, "Varshavskoe highway",
             100, Color::COL2, 50);
+    field[6]->setMortgageCost(50);
 
     field[7] = new Chance(*this, 7, "Chance");
 
     field[8] = new Street(*this, 8, "Ogareva street",
             100, Color::COL2, 50);
+    field[8]->setMortgageCost(50);
 
     field[9] = new Street(*this, 9, "the 1st Park street",
             120, Color::COL2, 50);
+    field[9]->setMortgageCost(60);
 
     field[10] = new Prison(*this, 10, "Prison");
 
     field[11] = new Street(*this, 11, "Polyanka street",
             140, Color::COL3, 100);
+    field[11]->setMortgageCost(70);
 
     field[12] = new Utility(*this, 12, "Electric station",
             150, Color::COL1);
+    field[12]->setMortgageCost(75);
 
     field[13] = new Street(*this, 13, "Sretenka",
             140, Color::COL3, 100);
+    field[13]->setMortgageCost(70);
 
     field[14] = new Street(*this, 14, "Rostov embankment",
             160, Color::COL3, 100);
+    field[14]->setMortgageCost(80);
 
     field[15] = new Railway(*this, 15, "Kursk railway",
             200, Color::COL1);
+    field[15]->setMortgageCost(100);
 
     field[16] = new Street(*this, 16, "Ryazansky prospect",
             180, Color::COL4, 100);
+    field[16]->setMortgageCost(90);
 
     field[17] = new PublicTreasury(*this, 17, "Public treasury");
 
     field[18] = new Street(*this, 18, "Vavilov street",
             180, Color::COL4, 100);
+    field[18]->setMortgageCost(90);
 
     field[19] = new Street(*this, 19, "Rublevka",
             200, Color::COL4, 100);
+    field[19]->setMortgageCost(100);
 
     field[20] = new FreeParking(*this, 20, "Free parking");
 
     field[21] = new Street(*this, 21, "Tverskaya street",
             220, Color::COL5, 150);
+    field[21]->setMortgageCost(110);
 
     field[22] = new Chance(*this, 22, "Chance");
 
     field[23] = new Street(*this, 23, "Pushkinskaya street",
             220, Color::COL5, 150);
+    field[23]->setMortgageCost(110);
 
     field[24] = new Street(*this, 24, "Mayakovsky square",
             240, Color::COL5, 150);
+    field[24]->setMortgageCost(120);
 
     field[25] = new Railway(*this, 25, "Kazan railway",
             200, Color::COL1);
+    field[25]->setMortgageCost(100);
 
     field[26] = new Street(*this, 26, "Georgian Val street",
             260, Color::COL6, 150);
+    field[26]->setMortgageCost(130);
 
     field[27] = new Street(*this, 27, "Tchaikovsky street",
             260, Color::COL6, 150);
+    field[27]->setMortgageCost(130);
 
     field[28] = new Utility(*this, 28, "Water supply",
             150, Color::COL1);
+    field[28]->setMortgageCost(75);
 
     field[29] = new Street(*this, 29, "Smolensk square",
             280, Color::COL6, 150);
+    field[29]->setMortgageCost(140);
 
     field[30] = new GoToPrison(*this, 30, "Go to prison");
 
     field[31] = new Street(*this, 31, "Shchusev street",
             300, Color::COL7, 200);
+    field[31]->setMortgageCost(150);
 
     field[32] = new Street(*this, 32, "Gogolevsky boulevard",
             300, Color::COL7, 200);
+    field[32]->setMortgageCost(150);
 
     field[33] = new PublicTreasury(*this, 33, "Public treasury");
 
     field[34] = new Street(*this, 34, "Kutuzovsky prospect",
             320, Color::COL7, 200);
+    field[34]->setMortgageCost(160);
 
     field[35] = new Railway(*this, 35, "Leningrad railway",
             200, Color::COL1);
+    field[35]->setMortgageCost(100);
 
     field[36] = new Chance(*this, 36, "Chance");
 
     field[37] = new Street(*this, 37, "Malaya Bronnaya",
             350, Color::COL8, 200);
+    field[37]->setMortgageCost(175);
 
     field[38] = new IncomeTax(*this, 38, "Income tax", 100);
 
     field[39] = new Street(*this, 39, "Arbat street",
             400, Color::COL8, 200);
-
+    field[39]->setMortgageCost(200);
 
     getMortgageToken[Token::DOG] = TokenForMortgage::DOG_M;
     getMortgageToken[Token::CAR] = TokenForMortgage::CAR_M;
