@@ -42,7 +42,7 @@ struct PlayerData {
 class Board {
 public:
     Board(const std::vector<std::pair<std::string_view, Token>>& players, Game& game);
-    static constexpr int FIELD_SIZE = 40;
+    static constexpr size_t FIELD_SIZE = 40;
     std::array<FieldTile *, FIELD_SIZE>  field;
     CardPool deck;
 

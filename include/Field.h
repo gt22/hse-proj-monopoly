@@ -123,8 +123,6 @@ public:
             int tax);
     std::vector<std::string> writeTileInfo() override;
     void onPlayerEntry(Token token) override;
-
-private:
     int tax;
 };
 

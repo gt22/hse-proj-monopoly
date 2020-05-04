@@ -149,6 +149,7 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                 this->btnUseCard.toggleClickability();
             }
         }
+        redraw(this->manager.getBoard());
     });
 
     //  events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e){ tmp++; });
@@ -206,9 +207,9 @@ bool doesFit(const sf::Text &t, float width) {
     return t.getLocalBounds().width < width;
 }
 
-void SFMLView::drawField(const Board &board) {
+void SFMLView::drawField(const BoardModel &board) {
     for (const auto &fieldTile : board.field) {
-        int i = fieldTile->position;
+        int i = fieldTile.position;
         const auto &viewTile = shapes.fieldRects[i];
         bool isSide = (i / 10) % 2 == 0;
         auto[x, y] = viewTile.getPosition();
@@ -216,22 +217,22 @@ void SFMLView::drawField(const Board &board) {
         const float shift = (w / 4);
         window.draw(viewTile);
 
-        if(auto street = dynamic_cast<Street*>(fieldTile); street) {
+        if(fieldTile.color.has_value()) {
             const float size = w / 6;
-            sf::RectangleShape ownerRect(sf::Vector2f(size, h));
-            ownerRect.setFillColor(getColor(street->color));
-            if(!isSide) ownerRect.rotate(90);
+            sf::RectangleShape colorRect(sf::Vector2f(size, h));
+            colorRect.setFillColor(getColor(fieldTile.color.value()));
+            if(!isSide) colorRect.rotate(90);
             switch(i / 10) {
-                case 0: ownerRect.setPosition(viewTile.getPosition() + sf::Vector2f(w - size, 0)); break;
-                case 1: ownerRect.setPosition(viewTile.getPosition() + sf::Vector2f(h, w - size)); break;
-                case 2: ownerRect.setPosition(viewTile.getPosition()); break;
-                case 3: ownerRect.setPosition(viewTile.getPosition() + sf::Vector2f(h, 0));
+                case 0: colorRect.setPosition(viewTile.getPosition() + sf::Vector2f(w - size, 0)); break;
+                case 1: colorRect.setPosition(viewTile.getPosition() + sf::Vector2f(h, w - size)); break;
+                case 2: colorRect.setPosition(viewTile.getPosition()); break;
+                case 3: colorRect.setPosition(viewTile.getPosition() + sf::Vector2f(h, 0));
             }
-            window.draw(ownerRect);
+            window.draw(colorRect);
         }
 
-        std::string s = fieldTile->name;
-        sf::Text name(fieldTile->name, mainFont);
+        std::string s = std::string(fieldTile.name);
+        sf::Text name(s, mainFont);
         int fsize = 11;
         name.setCharacterSize(fsize);
         while (!doesFit(name, h * 0.8f)) {
@@ -288,8 +289,8 @@ void moveTo(sf::Shape &s, const sf::RectangleShape &to) {
     s.move(x + w / 2, y + h / 2);
 }
 
-void SFMLView::drawPlayers(const Board &board) {
-    for (const auto &player : board.getPlayers()) {
+void SFMLView::drawPlayers(const BoardModel &board) {
+    for (const auto &player : board.players) {
         int i = player.position;
         int row = i / 10;
         float k = 6;
@@ -384,21 +385,18 @@ void SFMLView::drawPlayers(const Board &board) {
 }
 
 void SFMLView::draw() {
-    const Board &board = manager.getBoard();
-    drawField(board);
-    drawPlayers(board);
-    drawMoney(board);
+    BoardModel m = getModel();
+    drawField(m);
+    drawPlayers(m);
+    drawMoney(m);
 }
 
 void SFMLView::redraw(const Board &board) {
-    //NO-OP
+    std::lock_guard g(boardMutex);
+    model.update(board);
 }
 
 PlayerReply SFMLView::processRequest(Player &p, PlayerRequest req) {
-    std::unique_lock m(requestMutex);
-
-    assert(!curRequest.has_value());
-    curRequest = std::move(req);
 
     btnUseCard.makeUnclickable();
     btnTakeCard.makeUnclickable();
@@ -424,17 +422,11 @@ PlayerReply SFMLView::processRequest(Player &p, PlayerRequest req) {
      }
  */
     //
-    while (!requestReply) {
-        requestCond.wait(m);
-    }
-
-    auto rep = std::move(requestReply);
-    return rep;
+    return std::make_unique<EndTurnReply>();
 }
 
 void SFMLView::processMessage(Player &p, PlayerMessage mes) {
-    std::lock_guard m(requestMutex);
-    curMessage = mes.message;
+
 }
 
 void SFMLView::onResize(sf::Event::SizeEvent e) {
@@ -501,12 +493,12 @@ void SFMLView::onResize(sf::Event::SizeEvent e) {
     }
 }
 
-void SFMLView::drawMoney(const Board &board) {
+void SFMLView::drawMoney(const BoardModel &board) {
     auto [W, H] = window.getSize();
     sf::Text money("Money:", mainFont);
     std::vector<std::pair<sf::Text, Token>> moneyTexts;
     float maxW = money.getLocalBounds().width, maxH = money.getLocalBounds().height;
-    for(const auto& player : board.getPlayers()) {
+    for(const auto& player : board.players) {
         moneyTexts.emplace_back(sf::Text(" - " + std::to_string(player.money), mainFont), player.token);
         maxW = std::max(maxW, moneyTexts.back().first.getLocalBounds().width);
         maxH = std::max(maxH, moneyTexts.back().first.getLocalBounds().height);
@@ -523,4 +515,11 @@ void SFMLView::drawMoney(const Board &board) {
         window.draw(p);
     }
     window.draw(money);
+}
+
+BoardModel SFMLView::getModel() {
+    boardMutex.lock();
+    BoardModel m = model;
+    boardMutex.unlock();
+    return m;
 }

@@ -1,5 +1,5 @@
-#ifndef HSEPROJ_MONOPOLYTHREADMANAGER_H
-#define HSEPROJ_MONOPOLYTHREADMANAGER_H
+#ifndef MONOPOLYTHREADMANAGER_H
+#define MONOPOLYTHREADMANAGER_H
 #include <thread>
 #include "view/SFMLView.h"
 #include "unordered_map"
@@ -22,4 +22,4 @@ private:
     std::unordered_map<Token, std::unique_ptr<Player>> players;
 };
 
-#endif //HSEPROJ_MONOPOLYTHREADMANAGER_H
+#endif //MONOPOLYTHREADMANAGER_H
