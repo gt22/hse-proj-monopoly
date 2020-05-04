@@ -210,6 +210,15 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     }
     if (reply->action == PlayerAction::MORTGAGE_HOLDINGS) {
         //TODO:send request for number of field
+        int index = 11;
+        if (!tile.board.field[index]->isMortgaged && tile.board.field[index]->getOwner() == token) {
+            PlayerData& player = tile.board.getPlayer(token);
+            player.addMoney(tile.getMortgageCost());
+            player.numberOfMortgagedProperty++;
+            tile.board.field[index]->isMortgaged = true;
+        } else {
+            tile.board.sendMessage(token, PlayerMessage("You can't mortgage this field tile"));
+        }
         //get field tile
         //field tile ->
         return true;
