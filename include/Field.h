@@ -17,7 +17,8 @@ enum class Color : std::size_t {
     COL5,
     COL6,
     COL7,
-    COL8
+    COL8,
+    NO_COL
 };
 
 class FieldTile {
@@ -33,8 +34,11 @@ public:
     virtual std::vector<std::string> writeTileInfo();
     virtual void setMortgageCost(int val = 0) = 0;
     virtual bool MortgageTile(Token token) = 0;
-    virtual Token getOwner() const {return Token::FREE_FIELD; }
+    virtual Token getOwner() const { return Token::FREE_FIELD; }
+    virtual Color getColor() const { return Color::NO_COL; }
     virtual int getMortgageCost() const { return 0; }
+    virtual int getNumberOfHouses() const { return 0; }
+    virtual int getNumberOfHotels() const { return 0; }
 };
 
 class OwnableTile : public FieldTile {
@@ -51,9 +55,9 @@ public:
     int getMortgageCost() const override { return mortgageCost; }
     int mortgageCost = 0;
     int cost;
-    int costOfParking = 0;
     Color color;
     Token owner = Token::FREE_FIELD; //TODO: как обозначить отсутствие владельца
+    int costOfParking = 0;
 };
 
 class Railway final : public OwnableTile {
@@ -68,13 +72,17 @@ public:
 class Street final : public OwnableTile {
 public:
     Street(Board& board, int position, std::string name,
-           int cost, Color color, int costPerHouse);
+           int cost, Color color, int costPerHouse, int costPerHotel = 0);
     size_t calculateTax(Token token) override;
     void onPurchase(Token token) override;
     void onPlayerEntry(Token token) override;
     std::vector<std::string> writeTileInfo() override;
+    int getNumberOfHouses() const override { return numberOfHouses; }
+    int getNumberOfHotels() const override { return numberOfHotels; }
     int numberOfHouses = 0;
-    int costPerHouse;
+    int numberOfHotels = 0;
+    int costPerHouse = 0;
+    int costPerHotel = 0;
     int tax;
 };
 

@@ -259,3 +259,10 @@ FieldTile *Board::getTile(std::size_t pos) const {
 void Board::sync() {
     game.sync();
 }
+
+FieldTile *Board::getFieldTile(int ind) {
+    if (ind < 0 || ind > FIELD_SIZE) {
+        throw std::out_of_range("no field " + std::to_string(ind));
+    }
+    return field[ind];
+}

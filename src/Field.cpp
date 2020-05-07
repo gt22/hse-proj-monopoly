@@ -139,8 +139,10 @@ OwnableTile::OwnableTile(Board &board, int position, std::string name, int cost,
 Railway::Railway(Board &board, int position, std::string name, int cost, Color color)
         : OwnableTile(board, position, std::move(name), cost, color) { mortgageCost = 100; }
 
-Street::Street(Board &board, int position, std::string name, int cost, Color color, int costPerHouse)
-        : OwnableTile(board, position, std::move(name), cost, color), costPerHouse(costPerHouse) {}
+Street::Street(Board &board, int position, std::string name, int cost, Color color,
+                    int costPerHouse, int costPerHotel)
+        : OwnableTile(board, position, std::move(name), cost, color),
+                costPerHouse(costPerHouse), costPerHotel(costPerHotel) {}
 
 size_t Street::calculateTax(Token token) {
     // TODO
@@ -201,10 +203,20 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         return false;
     }
     if (reply->action == PlayerAction::BUY_BUILDING) {
+        //TODO:send request for number of field
+        //int index = 11;
         //TODO
         return true;
     }
     if (reply->action == PlayerAction::BUY_HOTEL) {
+        //TODO:send request for number of field
+        int index = 11;
+        auto chosenField = tile.board.getFieldTile(index);
+        if (token != chosenField->getOwner() || chosenField->getColor() == Color::NO_COL || chosenField->isMortgaged ||
+                chosenField->getNumberOfHouses() < 4 || chosenField->getNumberOfHotels() > 0) {
+            tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"));
+            return true;
+        }
         //TODO
         return true;
     }
