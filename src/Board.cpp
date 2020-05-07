@@ -266,3 +266,16 @@ FieldTile *Board::getFieldTile(int ind) {
     }
     return field[ind];
 }
+
+bool Board::checkAllFieldsOfCurColor(Token token, int ind) const {
+    if (ind < 0 || ind > FIELD_SIZE) {
+        throw std::out_of_range("no field " + std::to_string(ind));
+    }
+    for (std::size_t i = 0; i < FIELD_SIZE; i++) {
+        if (field[i]->getColor() == field[ind]->getColor() &&
+            field[i]->getOwner() != field[ind]->getOwner()) {
+            return false;
+        }
+    }
+    return true;
+}

@@ -71,6 +71,7 @@ public:
     int getCurNumOfPlayers() const;
     Token getWinner() const;
     FieldTile* getTile(std::size_t pos) const;
+    bool checkAllFieldsOfCurColor(Token token, int ind) const;
 
     std::map<Token, TokenForMortgage> getMortgageToken;
 

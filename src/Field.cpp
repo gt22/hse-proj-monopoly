@@ -204,7 +204,17 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     }
     if (reply->action == PlayerAction::BUY_BUILDING) {
         //TODO:send request for number of field
-        //int index = 11;
+        int index = 11;
+        auto chosenField = tile.board.getFieldTile(index);
+        if (token != chosenField->getOwner() || chosenField->getColor() == Color::NO_COL || chosenField->isMortgaged ||
+            chosenField->getNumberOfHouses() < 4 || chosenField->getNumberOfHotels() > 0) {
+            tile.board.sendMessage(token, PlayerMessage("You can't build house on this field tile"));
+            return true;
+        }
+        if (!tile.board.checkAllFieldsOfCurColor(token, index)) {
+            tile.board.sendMessage(token, PlayerMessage("You can't build house on this field tile"));
+            return true;
+        }
         //TODO
         return true;
     }
@@ -214,6 +224,10 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         auto chosenField = tile.board.getFieldTile(index);
         if (token != chosenField->getOwner() || chosenField->getColor() == Color::NO_COL || chosenField->isMortgaged ||
                 chosenField->getNumberOfHouses() < 4 || chosenField->getNumberOfHotels() > 0) {
+            tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"));
+            return true;
+        }
+        if (!tile.board.checkAllFieldsOfCurColor(token, index)) {
             tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"));
             return true;
         }
