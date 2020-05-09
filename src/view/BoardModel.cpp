@@ -37,4 +37,5 @@ void BoardModel::update(const Board& board) {
     for (size_t i = 0; i < players.size(); ++i) {
         players[i].update(board.getPlayers()[i]);
     }
+    curPlayer = board.getPlayerToken(board.getPlayerIndex());
 }

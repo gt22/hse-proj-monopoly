@@ -71,12 +71,17 @@ public:
     Token getWinner() const;
     FieldTile* getTile(std::size_t pos) const;
 
+    // Sasha was here
+    std::size_t getPlayerIndex() const;
+    void setPlayerIndex(std::size_t num);
 
 private:
     std::vector<PlayerData> players;
     Game& game;
     int numOfAlivePlayers = 0;
     bool terminated = false;
+
+    std::size_t index;
 };
 
 #endif //BOARD_H

@@ -61,13 +61,6 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
     message.setCharacterSize(20);
     message.setFillColor(sf::Color::White);
 
-    // text button
-    ButtonText btn2("1", {30, 30}, 30, sf::Color::Green, sf::Color::Black);
-    btn1 = std::move(btn2);
-    btn1.setFont(mainFont);
-    btn1.setPosition({10, 30});
-    //
-
     // sprite button
 
     addActionButton(PlayerAction::END_TURN,
@@ -80,19 +73,19 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     makeReplyGenerator<ExitGameReply>());
     addActionButton(PlayerAction::PAY_TAX,
                     "images/PAY_TAX.png",
-                    "By pressing this button you will roll dice",
+                    "By pressing this button you will pay tax",
                     makeReplyGenerator<PayTaxReply>());
     addActionButton(PlayerAction::ROLL_DICE,
                     "images/ROLL_DICE.png",
-                    "By pressing this button you will take card",
+                    "By pressing this button you will roll dice",
                     makeReplyGenerator<RollDiceReply>());
     addActionButton(PlayerAction::TAKE_CARD,
                     "images/TAKE_CARD.png",
-                    "By pressing this button you will use card",
+                    "By pressing this button you will take card",
                     makeReplyGenerator<TakeCardReply>());
     addActionButton(PlayerAction::USE_CARD,
                     "images/USE_CARD.png",
-                    "By pressing this button you will pay tax",
+                    "By pressing this button you will use card",
                     makeReplyGenerator<UseCardReply>());
 
 
@@ -106,12 +99,6 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
         buttons.handle(e);
     });
 
-    //  events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e){ tmp++; });
-    /*  events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e){
-          if (this->btn1.isMouseOver(window)) {
-              std::cout << "Pressed " << "\n";
-          }
-      });*/
     onResize({window.getSize().x, window.getSize().y});
 
     //TODO: temp
@@ -245,6 +232,7 @@ void moveTo(sf::Shape &s, const sf::RectangleShape &to) {
 }
 
 void SFMLView::drawPlayers(const BoardModel &board) {
+    curTurnBy = board.curPlayer;
     for (const auto &player : board.players) {
         int i = player.position;
         int row = i / 10;
@@ -477,6 +465,7 @@ void SFMLView::handleRequest() {
         req = std::move(curRequest.value());
         curRequest.reset();
     }
+   // curTurnBy =
     for (auto& [act, btn] : actionButtons) {
         btn.deactivate();
     }

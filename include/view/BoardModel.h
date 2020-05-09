@@ -34,6 +34,7 @@ struct BoardModel {
     constexpr static size_t FIELD_SIZE = Board::FIELD_SIZE;
     std::array<FieldTileModel, FIELD_SIZE> field;
     std::vector<PlayerModel> players;
+    Token curPlayer;
 
     void update(const Board& board);
 

@@ -221,13 +221,6 @@ private:
     sf::Text message;
 
     Token curTurnBy;
-    ButtonText btn1;
-    ButtonImage btnEndTurn;
-    ButtonImage btnExitGame;
-    ButtonImage btnPayTax;
-    ButtonImage btnRollDice;
-    ButtonImage btnTakeCard;
-    ButtonImage btnUseCard;
     bool shouldClose = false;
 };
 
