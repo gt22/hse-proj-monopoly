@@ -520,10 +520,11 @@ void OwnableTile::onPlayerEntry(Token token) {
     PlayerRequest request;
     bool taxPaid = false;
     bool buyRoperty = false;
-    if (owner == Token::FREE_FIELD) {
-        buyRoperty = true;
-    } else if (owner != token || isMortgaged) {
+    if (owner == token || isMortgaged || owner == Token::FREE_FIELD) {
         taxPaid = true;
+    }
+    if (owner != Token::FREE_FIELD) {
+        buyRoperty = true;
     }
     while (true) {
         makeDefaultRequest(request);
@@ -533,7 +534,7 @@ void OwnableTile::onPlayerEntry(Token token) {
         PlayerReply reply = board.sendRequest(token, request);
         request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
-            if (!buyRoperty && !taxPaid) {
+            if (buyRoperty && taxPaid) {
                 break;
             }
             request.message = "You can't finish turn";

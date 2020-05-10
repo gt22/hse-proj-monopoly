@@ -58,7 +58,6 @@ public:
     Color color;
     Token owner = Token::FREE_FIELD; //TODO: как обозначить отсутствие владельца
     int costOfParking = 0;
-    int tax;
 };
 
 class Railway final : public OwnableTile {
