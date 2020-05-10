@@ -75,6 +75,18 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     "images/PAY_TAX.png",
                     "By pressing this button you will pay tax",
                     makeReplyGenerator<PayTaxReply>());
+    addActionButton(PlayerAction::BUY_PROPERTY,
+                    "images/BUY_PROPERTY.png",
+                    "By pressing this button you will buy this property",
+                    makeReplyGenerator<BuyPropertyReply>());
+    addActionButton(PlayerAction::BUY_BUILDING,
+                    "images/BUY_BUILDING.png",
+                    "By pressing this button you will buy building",
+                    makeReplyGenerator<BuyBuildingReply>());
+    addActionButton(PlayerAction::BUY_HOTEL,
+                    "images/BUY_HOTEL.png",
+                    "By pressing this button you will buy hotel",
+                    makeReplyGenerator<BuyHotelReply>());
     addActionButton(PlayerAction::ROLL_DICE,
                     "images/ROLL_DICE.png",
                     "By pressing this button you will roll dice",
@@ -87,6 +99,10 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     "images/USE_CARD.png",
                     "By pressing this button you will use card",
                     makeReplyGenerator<UseCardReply>());
+    addActionButton(PlayerAction::START_TRADE,
+                    "images/START_TRADE.png",
+                    "By pressing this button you will start trade",
+                    makeReplyGenerator<StartTradeReply>());
 
 
     events.addHandler<sf::Event::Closed>([this]() { window.close(); });
@@ -470,10 +486,43 @@ void SFMLView::handleRequest() {
         btn.deactivate();
     }
     for(auto action : req.availableActions) {
+        std::cout << "ACTIVE: ";
+        switch(action) {
+            case PlayerAction::PAY_TAX:
+                std::cout << "PAY_TAX"; break;
+            case PlayerAction::BUY_PROPERTY:
+                std::cout << "BUY_PROPERTY"; break;
+            case PlayerAction::BUY_BUILDING:
+                std::cout << "BUY_BUILDING"; break;
+            case PlayerAction::BUY_HOTEL:
+                std::cout << "BUY_HOTEL"; break;
+            case PlayerAction::USE_CARD:
+                std::cout << "USE_CARD"; break;
+            case PlayerAction::PAY_TO_OTHER_PLAYER:
+                std::cout << "PAY_TO_OTHER_PLAYER"; break;
+            case PlayerAction::TAKE_CARD:
+                std::cout << "TAKE_CARD"; break;
+            case PlayerAction::MORTGAGE_HOLDINGS:
+                std::cout << "MORTGAGE_HOLDINGS"; break;
+            case PlayerAction::START_TRADE:
+                std::cout << "START_TRADE"; break;
+            case PlayerAction::START_TRADE_NEW_FIELD:
+                std::cout << "START_TRADE_NEW_FIELD"; break;
+            case PlayerAction::ROLL_DICE:
+                std::cout << "ROLL_DICE"; break;
+            case PlayerAction::END_TURN:
+                std::cout << "END_TURN"; break;
+            case PlayerAction::EXIT_GAME:
+                std::cout << "EXIT_GAME"; break;
+            case PlayerAction::LOSE:
+                std::cout << "LOSE"; break;
+        }
+        std::cout << std::endl;
         if(actionButtons.count(action)) {
             actionButtons.at(action).activate();
         }
     }
+    std::cout << "_____________________________\n";
 }
 
 BoardModel SFMLView::getModel() {

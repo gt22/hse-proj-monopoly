@@ -229,3 +229,11 @@ void Board::sync() {
 void Board::terminate() {
     terminated = true;
 }
+
+std::size_t Board::getPlayerIndex() const {
+    return index;
+}
+
+void Board::setPlayerIndex(std::size_t num) {
+    index = num;
+}

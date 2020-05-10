@@ -54,6 +54,8 @@ struct BuyPropertyReply : BasicReply<PlayerAction::BUY_PROPERTY> {};
 
 struct BuyBuildingReply : BasicReply<PlayerAction::BUY_BUILDING> {};
 
+struct BuyHotelReply : BasicReply<PlayerAction::BUY_HOTEL> {};
+
 struct EndTurnReply : BasicReply<PlayerAction::END_TURN> {};
 
 struct ExitGameReply : BasicReply<PlayerAction::EXIT_GAME> {};
@@ -61,6 +63,8 @@ struct ExitGameReply : BasicReply<PlayerAction::EXIT_GAME> {};
 struct TakeCardReply : BasicReply<PlayerAction::TAKE_CARD> {};
 
 struct UseCardReply : BasicReply<PlayerAction::USE_CARD> {};
+
+struct StartTradeReply : BasicReply<PlayerAction::START_TRADE> {};
 
 
 
