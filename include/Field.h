@@ -39,6 +39,10 @@ public:
     virtual int getMortgageCost() const { return 0; }
     virtual int getNumberOfHouses() const { return 0; }
     virtual int getNumberOfHotels() const { return 0; }
+    virtual int getHouseCost() const { return 0; }
+    virtual int getHotelCost() const { return 0; }
+    virtual void addHouse() { }
+    virtual void addHotel() { }
 };
 
 class OwnableTile : public FieldTile {
@@ -79,6 +83,10 @@ public:
     std::vector<std::string> writeTileInfo() override;
     int getNumberOfHouses() const override { return numberOfHouses; }
     int getNumberOfHotels() const override { return numberOfHotels; }
+    int getHotelCost() const override { return costPerHotel; }
+    int getHouseCost() const override { return costPerHouse; }
+    void addHouse() override { numberOfHouses++; }
+    void addHotel() override { numberOfHotels++; }
     void setTaxes(int tax0, int tax1, int tax2, int tax3, int tax4, int tax5) override;
     int numberOfHouses = 0;
     int numberOfHotels = 0;
@@ -177,6 +185,6 @@ public:
 };
 
 void makeDefaultRequest(PlayerRequest& r);
-bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply& reply);
+bool handleGenericActions(Token token, FieldTile& tile, const PlayerReply& reply);
 
 #endif //FIELD_H

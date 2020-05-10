@@ -279,3 +279,46 @@ bool Board::checkAllFieldsOfCurColor(Token token, int ind) const {
     }
     return true;
 }
+
+int countPrevForColor(int ind, const Board& board) {
+    if (ind < 0 || ind > board.FIELD_SIZE) {
+        throw std::out_of_range("no field " + std::to_string(ind));
+    }
+    int cnt = 0;
+    for (int i = ind; i >= 0; i--) {
+        if (board.field[i]->getColor() == board.field[ind]->getColor()) {
+            cnt++;
+        }
+    }
+    return cnt;
+}
+
+bool checkHousesNumForHotel(int ind, const Board& board) {
+    for (std::size_t i = 0; i < board.FIELD_SIZE; i++) {
+        if (board.field[i]->getColor() == board.field[ind]->getColor() &&
+                (board.field[i]->getNumberOfHouses() != 4 || board.field[i]->getNumberOfHotels() != 0)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool checkPrevHotel(int ind, const Board& board) {
+    int i = ind - 1;
+    while (i >= 0) {
+        if (board.field[i]->getColor() == board.field[ind]->getColor()
+            && board.field[i]->getNumberOfHotels() == 1) {
+            return true;
+        }
+        i--;
+    }
+    return false;
+}
+
+bool checkPrevForHotel(int ind, const Board& board) {
+    int pos = countPrevForColor(ind, board);
+    if (pos == 0) {
+        return checkHousesNumForHotel(ind, board);
+    }
+    return checkPrevHotel(ind, board);
+}

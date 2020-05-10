@@ -195,7 +195,7 @@ void makeDefaultRequest(PlayerRequest& r) {
     };
 }
 
-bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply& reply) {
+bool handleGenericActions(Token token, FieldTile& tile, const PlayerReply& reply) {
     if (reply->action == PlayerAction::LOSE) {
         PlayerData& player = tile.board.getPlayer(token);
         player.setLoser();
@@ -233,7 +233,18 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
             tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"));
             return true;
         }
-        //TODO
+        if (!checkPrevForHotel(index, tile.board)) {
+            tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"));
+            return true;
+        }
+        PlayerData& player = tile.board.getPlayer(token);
+        if (player.getMoney() >= tile.getHotelCost()) {
+            player.addMoney(-tile.getHotelCost());
+            player.numberOfHotels++;
+            tile.addHotel();
+        } else {
+            tile.board.sendMessage(token, PlayerMessage("You don't have enough money :("));
+        }
         return true;
     }
     if (reply->action == PlayerAction::MORTGAGE_HOLDINGS) {
@@ -252,6 +263,8 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         return true;
     }
     if (reply->action == PlayerAction::START_TRADE) {
+        //TODO:send request for number/token of player
+
         //TODO
         return true;
     }
