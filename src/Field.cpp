@@ -565,10 +565,13 @@ void OwnableTile::onPlayerEntry(Token token) {
         if (!buyProperty) {
             request.availableActions.push_back(PlayerAction::BUY_PROPERTY);
         }
+        if (!taxPaid) {
+            request.availableActions.push_back(PlayerAction::PAY_TO_OTHER_PLAYER);
+        }
         PlayerReply reply = board.sendRequest(token, request);
         request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
-            if (buyProperty && taxPaid) {
+            if (buyProperty || taxPaid) {
                 break;
             }
             request.message = "You can't finish turn";
