@@ -33,6 +33,7 @@ struct PlayerData {
 
     int numberOfHouses = 0;
     int numberOfHotels = 0;
+    int numberOfMortgagedProperty = 0;
     int lastTrow = 0;
     bool prisoner = false;
     bool alive = true;
@@ -59,6 +60,7 @@ public:
 
     virtual PlayerData& getPlayer(Token token);
     const PlayerData& getPlayer(Token token) const;
+    FieldTile *getFieldTile(int ind);
     Token getPlayerToken(std::size_t index) const;
     const std::vector<PlayerData>& getPlayers() const;
     virtual PlayerReply sendRequest(Token token, PlayerRequest request) const;
@@ -70,10 +72,11 @@ public:
     int getCurNumOfPlayers() const;
     Token getWinner() const;
     FieldTile* getTile(std::size_t pos) const;
+    bool checkAllFieldsOfCurColor(Token token, int ind) const;
 
-    // Sasha was here
     std::size_t getPlayerIndex() const;
     void setPlayerIndex(std::size_t num);
+    std::map<Token, TokenForMortgage> getMortgageToken;
 
 private:
     std::vector<PlayerData> players;
@@ -83,5 +86,13 @@ private:
 
     std::size_t index;
 };
+
+bool checkPrevForHotel(int ind, const Board& board);
+bool checkPrevForHouse(int ind, const Board& board);
+int countPrevForColor(int ind, const Board& board);
+bool checkHousesNumForHotel(int ind, const Board& board);
+bool checkHousesNumForHouse(int ind, const Board& board);
+bool checkPrevHotel(int ind, const Board& board);
+bool checkPrevHouse(int ind, const Board& board);
 
 #endif //BOARD_H
