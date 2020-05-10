@@ -51,7 +51,7 @@ void PayMoney::apply(Token token) {
         amount = countPlayerTax(player);
     }
     while (true) {
-        makeDefaultRequest(request);
+        makeDefaultRequest(request, token, board);
         PlayerReply reply = board.sendRequest(player.token, request);
         board.sync();
         request.message = "";
@@ -107,7 +107,7 @@ void PayMoneyToOtherPlayers::apply(Token token) {
     int tmp = amount;
     amount = board.getCurNumOfPlayers() * tmp;
     while (true) {
-        makeDefaultRequest(request);
+        makeDefaultRequest(request, token, board);
         PlayerReply reply = board.sendRequest(player.token, request);
         board.sync();
         request.message = "";

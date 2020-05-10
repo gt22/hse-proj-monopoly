@@ -20,6 +20,9 @@ enum class PlayerAction {
     ROLL_DICE,
     END_TURN,
     EXIT_GAME,
+    SELL_HOUSE,
+    SELL_FIELD,
+    SELL_HOTEL,
     LOSE
 };
 

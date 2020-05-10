@@ -182,7 +182,7 @@ void addAll(std::vector<T>& vec, const C& cont) {
     std::copy(cont.begin(), cont.end(), std::back_inserter(vec));
 }
 
-void makeDefaultRequest(PlayerRequest& r) {
+void makeDefaultRequest(PlayerRequest& r, Token token, const Board& board) {
     //TODO: New allocation each time... Maybe rewrite as clear, reserve & many push_backs?
     r.availableActions = {
             PlayerAction::LOSE,
@@ -190,9 +190,19 @@ void makeDefaultRequest(PlayerRequest& r) {
             PlayerAction::BUY_BUILDING,
             PlayerAction::BUY_HOTEL,
             PlayerAction::START_TRADE,
-            PlayerAction::MORTGAGE_HOLDINGS,
             PlayerAction::EXIT_GAME
     };
+    const PlayerData& player = board.getPlayer(token);
+    if (player.numberOfHotels > 0) {
+        r.availableActions.push_back(PlayerAction::SELL_HOTEL);
+    }
+    if (player.numberOfHouses > 0 && player.numberOfHouses != player.numberOfHotels * 4) {
+        r.availableActions.push_back(PlayerAction::SELL_HOUSE);
+    }
+    if (board.checkFieldWithoutBuildings(token)) {
+        r.availableActions.push_back(PlayerAction::SELL_FIELD);
+        r.availableActions.push_back(PlayerAction::MORTGAGE_HOLDINGS);
+    }
 }
 
 bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply& reply) {
@@ -261,6 +271,10 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     if (reply->action == PlayerAction::MORTGAGE_HOLDINGS) {
         //TODO:send request for number of field
         int index = 11;
+        if (tile.board.field[index]->getNumberOfHouses() != 0 && tile.board.field[index]->getNumberOfHotels() != 0) {
+            tile.board.sendMessage(token, PlayerMessage("You can't mortgage this field tile"));
+            return true;
+        }
         if (!tile.board.field[index]->isMortgaged && tile.board.field[index]->getOwner() == token) {
             PlayerData& player = tile.board.getPlayer(token);
             player.addMoney(tile.getMortgageCost());
@@ -314,7 +328,7 @@ void Start::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
     PlayerRequest request;
     while (true) {
-        makeDefaultRequest(request);
+        makeDefaultRequest(request, token, board);
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
@@ -335,7 +349,7 @@ void Prison::onPlayerEntry(Token token) {
     PlayerRequest request;
     bool diceUsed = false;
     while (true) {
-        makeDefaultRequest(request);
+        makeDefaultRequest(request, token, board);
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
@@ -430,7 +444,7 @@ void Chance::onPlayerEntry(Token token) {
     PlayerRequest request;
     std::set<PlayerAction> mustHave = { PlayerAction::TAKE_CARD };
     while (true) {
-        makeDefaultRequest(request);
+        makeDefaultRequest(request, token, board);
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
@@ -469,7 +483,7 @@ void PublicTreasury::onPlayerEntry(Token token) {
     PlayerRequest request;
     std::set<PlayerAction> mustHave = { PlayerAction::TAKE_CARD };
     while (true) {
-        makeDefaultRequest(request);
+        makeDefaultRequest(request, token, board);
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
@@ -507,7 +521,7 @@ void IncomeTax::onPlayerEntry(Token token) {
     PlayerRequest request;
     std::set<PlayerAction> mustHave = { PlayerAction::PAY_TAX };
     while (true) {
-        makeDefaultRequest(request);
+        makeDefaultRequest(request, token, board);
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
@@ -559,7 +573,7 @@ void OwnableTile::onPlayerEntry(Token token) {
         buyProperty = true;
     }
     while (true) {
-        makeDefaultRequest(request);
+        makeDefaultRequest(request, token, board);
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }

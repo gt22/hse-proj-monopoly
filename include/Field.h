@@ -185,7 +185,7 @@ public:
     bool MortgageTile(Token token) override { return false; };
 };
 
-void makeDefaultRequest(PlayerRequest& r);
+void makeDefaultRequest(PlayerRequest& r, Token token, const Board& board);
 bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply& reply);
 
 #endif //FIELD_H

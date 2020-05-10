@@ -317,6 +317,19 @@ bool Board::checkAllFieldsOfCurColor(Token token, int ind) const {
     return true;
 }
 
+bool Board::checkFieldWithoutBuildings(Token token) const {
+    if (token == Token::FREE_FIELD) {
+        throw std::invalid_argument("owner = FREE_FIELD");
+    }
+    for (std::size_t i = 0; i < FIELD_SIZE; i++) {
+        if (field[i]->getOwner() == token && field[i]->getNumberOfHotels() == 0 &&
+            field[i]->getNumberOfHouses() == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 int countPrevForColor(int ind, const Board& board) {
     if (ind < 0 || ind > (int)board.FIELD_SIZE) {
         throw std::out_of_range("no field " + std::to_string(ind));
