@@ -154,11 +154,6 @@ void Street::onPurchase(Token token) {
     return;
 }
 
-void Street::onPlayerEntry(Token token) {
-    // TODO
-    return;
-}
-
 Utility::Utility(Board &board, int position, std::string name, int cost, Color color)
         : OwnableTile(board, position, std::move(name), cost, color) { mortgageCost = 75; }
 

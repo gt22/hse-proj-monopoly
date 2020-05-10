@@ -58,6 +58,7 @@ public:
     Color color;
     Token owner = Token::FREE_FIELD; //TODO: как обозначить отсутствие владельца
     int costOfParking = 0;
+    int tax;
 };
 
 class Railway final : public OwnableTile {
@@ -75,7 +76,6 @@ public:
            int cost, Color color, int costPerHouse, int costPerHotel = 0);
     size_t calculateTax(Token token) override;
     void onPurchase(Token token) override;
-    void onPlayerEntry(Token token) override;
     std::vector<std::string> writeTileInfo() override;
     int getNumberOfHouses() const override { return numberOfHouses; }
     int getNumberOfHotels() const override { return numberOfHotels; }
@@ -83,7 +83,6 @@ public:
     int numberOfHotels = 0;
     int costPerHouse = 0;
     int costPerHotel = 0;
-    int tax;
 };
 
 class Utility final : public OwnableTile {
