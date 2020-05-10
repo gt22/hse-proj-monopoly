@@ -555,7 +555,7 @@ void OwnableTile::onPlayerEntry(Token token) {
     if (owner == token || isMortgaged || owner == Token::FREE_FIELD) {
         taxPaid = true;
     }
-    if (owner != Token::FREE_FIELD) {
+    if (owner != Token::FREE_FIELD && owner != token) {
         buyProperty = true;
     }
     while (true) {
@@ -572,19 +572,22 @@ void OwnableTile::onPlayerEntry(Token token) {
         PlayerReply reply = board.sendRequest(token, request);
         request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
-            if (buyProperty || taxPaid) {
+            std::cout << "PlayerAction::END_TURN\n";
+            if (buyProperty && taxPaid) {
                 break;
             }
             request.message = "You can't finish turn";
             continue;
         }
         if (reply->action == PlayerAction::PAY_TO_OTHER_PLAYER) {
+            std::cout << "PlayerAction::PAY_TO_OTHER_PLAYER\n";
             if (taxPaid) {
                 request.message = "You don't have to pay tax";
                 continue;
             }
             tax = calculateTax(owner);
             if (player.getMoney() >= tax) {
+                std::cout << "paying tax \n";
                 player.addMoney(-tax);
                 fieldOwner->addMoney(tax);
                 taxPaid = true;

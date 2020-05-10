@@ -43,6 +43,7 @@ public:
     virtual int getHotelCost() const { return 0; }
     virtual void addHouse() { }
     virtual void addHotel() { }
+    virtual void setTaxes(int tax0, int tax1, int tax2, int tax3, int tax4, int tax5) { }
 };
 
 class OwnableTile : public FieldTile {
@@ -55,7 +56,6 @@ public:
     void setMortgageCost(int val = 0) override { mortgageCost = val; }
     bool MortgageTile(Token token) override;
     virtual std::vector<std::string> writeTileInfo() override;
-    virtual void setTaxes(int tax0, int tax1, int tax2, int tax3, int tax4, int tax5) { };
     Token getOwner() const override {return owner; }
     int getMortgageCost() const override { return mortgageCost; }
     int mortgageCost = 0;
