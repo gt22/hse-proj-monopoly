@@ -550,22 +550,25 @@ void OwnableTile::onPlayerEntry(Token token) {
     PlayerData* fieldOwner = owner == Token::FREE_FIELD ? nullptr : &board.getPlayer(owner);
     PlayerRequest request;
     bool taxPaid = false;
-    bool buyRoperty = false;
+    bool buyProperty = false;
     if (owner == token || isMortgaged || owner == Token::FREE_FIELD) {
         taxPaid = true;
     }
     if (owner != Token::FREE_FIELD) {
-        buyRoperty = true;
+        buyProperty = true;
     }
     while (true) {
         makeDefaultRequest(request);
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
+        if (!buyProperty) {
+            request.availableActions.push_back(PlayerAction::BUY_PROPERTY);
+        }
         PlayerReply reply = board.sendRequest(token, request);
         request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
-            if (buyRoperty && taxPaid) {
+            if (buyProperty && taxPaid) {
                 break;
             }
             request.message = "You can't finish turn";
@@ -598,7 +601,7 @@ void OwnableTile::onPlayerEntry(Token token) {
             if (player.money >= cost) {
                 player.money -= cost;
                 onPurchase(token);
-                buyRoperty = true;
+                buyProperty = true;
                 owner = token;
                 continue;
             }
@@ -606,7 +609,7 @@ void OwnableTile::onPlayerEntry(Token token) {
             continue;
         }
         if (reply->action == PlayerAction::START_TRADE_NEW_FIELD) {
-            buyRoperty = true;
+            buyProperty = true;
         }
         if (!handleGenericActions(token, *this, reply)) {
             return;
