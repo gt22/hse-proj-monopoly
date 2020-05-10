@@ -145,8 +145,15 @@ Street::Street(Board &board, int position, std::string name, int cost, Color col
                 costPerHouse(costPerHouse), costPerHotel(costPerHotel) {}
 
 size_t Street::calculateTax(Token token) {
-    // TODO
-    return 0;
+    switch (numberOfHouses + numberOfHotels) {
+        case 0: return startTax;
+        case 1: return taxOneHouse;
+        case 2: return taxTwoHouses;
+        case 3: return taxThreeHouses;
+        case 4: return taxFourHouses;
+        case 5: return taxHotel;
+    }
+    throw std::domain_error("too many buildings");
 }
 
 void Street::onPurchase(Token token) {
@@ -662,6 +669,15 @@ std::vector<std::string> Street::writeTileInfo() {
     //item = "HOTEL PRICE: " + std::to_string(costPerHotel);
     //info.push_back(item);
     return info;
+}
+
+void Street::setTaxes(int tax0, int tax1, int tax2, int tax3, int tax4, int tax5) {
+    startTax = tax0;
+    taxOneHouse = tax1;
+    taxTwoHouses = tax3;
+    taxThreeHouses = tax3;
+    taxFourHouses = tax4;
+    taxHotel = tax5;
 }
 
 std::vector<std::string> Railway::writeTileInfo() {

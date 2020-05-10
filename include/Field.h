@@ -51,6 +51,7 @@ public:
     void setMortgageCost(int val = 0) override { mortgageCost = val; }
     bool MortgageTile(Token token) override;
     virtual std::vector<std::string> writeTileInfo() override;
+    virtual void setTaxes(int tax0, int tax1, int tax2, int tax3, int tax4, int tax5) { };
     Token getOwner() const override {return owner; }
     int getMortgageCost() const override { return mortgageCost; }
     int mortgageCost = 0;
@@ -78,10 +79,18 @@ public:
     std::vector<std::string> writeTileInfo() override;
     int getNumberOfHouses() const override { return numberOfHouses; }
     int getNumberOfHotels() const override { return numberOfHotels; }
+    void setTaxes(int tax0, int tax1, int tax2, int tax3, int tax4, int tax5) override;
     int numberOfHouses = 0;
     int numberOfHotels = 0;
     int costPerHouse = 0;
     int costPerHotel = 0;
+
+    int startTax;
+    int taxOneHouse;
+    int taxTwoHouses;
+    int taxThreeHouses;
+    int taxFourHouses;
+    int taxHotel;
 };
 
 class Utility final : public OwnableTile {
