@@ -69,6 +69,8 @@ struct UseCardReply : BasicReply<PlayerAction::USE_CARD> {};
 
 struct StartTradeReply : BasicReply<PlayerAction::START_TRADE> {};
 
+struct MortgageHoldingsReply : BasicReply<PlayerAction::MORTGAGE_HOLDINGS> {};
+
 
 
 #endif //PLAYERREQUESTS_H

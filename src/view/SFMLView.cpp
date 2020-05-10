@@ -110,6 +110,10 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     "images/START_TRADE.png",
                     "By pressing this button you will start trade",
                     makeReplyGenerator<StartTradeReply>());
+    addActionButton(PlayerAction::MORTGAGE_HOLDINGS,
+                    "images/MORTGAGE_HOLDINGS.png",
+                    "By pressing this button you will get mortgage",
+                    makeReplyGenerator<MortgageHoldingsReply>());
 
 
     events.addHandler<sf::Event::Closed>([this]() { window.close(); });
