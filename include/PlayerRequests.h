@@ -51,6 +51,8 @@ struct RollDiceReply : BasicReply<PlayerAction::ROLL_DICE> {};
 
 struct PayTaxReply : BasicReply<PlayerAction::PAY_TAX> {};
 
+struct PayToOtherPlayersReply : BasicReply<PlayerAction::PAY_TO_OTHER_PLAYER> {};
+
 struct BuyPropertyReply : BasicReply<PlayerAction::BUY_PROPERTY> {};
 
 struct BuyBuildingReply : BasicReply<PlayerAction::BUY_BUILDING> {};

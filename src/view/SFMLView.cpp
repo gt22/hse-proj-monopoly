@@ -81,7 +81,7 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
     addActionButton(PlayerAction::PAY_TO_OTHER_PLAYER,
                     "images/PAY_TO_OTHER_PLAYER.png",
                     "By pressing this button you will pay money to other player",
-                    makeReplyGenerator<PayTaxReply>());
+                    makeReplyGenerator<PayToOtherPlayersReply>());
     addActionButton(PlayerAction::BUY_PROPERTY,
                     "images/BUY_PROPERTY.png",
                     "By pressing this button you will buy this property",
