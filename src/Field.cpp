@@ -581,7 +581,7 @@ void OwnableTile::onPlayerEntry(Token token) {
                 request.message = "You don't have to pay tax";
                 continue;
             }
-            int tax = calculateTax(token);
+            tax = calculateTax(owner);
             if (player.getMoney() >= tax) {
                 player.addMoney(-tax);
                 fieldOwner->addMoney(tax);
