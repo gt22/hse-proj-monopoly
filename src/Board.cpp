@@ -275,14 +275,14 @@ void Board::setPlayerIndex(std::size_t num) {
 }
 
 FieldTile *Board::getFieldTile(int ind) {
-    if (ind < 0 || ind > FIELD_SIZE) {
+    if (ind < 0 || ind > (int)FIELD_SIZE) {
         throw std::out_of_range("no field " + std::to_string(ind));
     }
     return field[ind];
 }
 
 bool Board::checkAllFieldsOfCurColor(Token token, int ind) const {
-    if (ind < 0 || ind > FIELD_SIZE) {
+    if (ind < 0 || ind > (int)FIELD_SIZE) {
         throw std::out_of_range("no field " + std::to_string(ind));
     }
     for (std::size_t i = 0; i < FIELD_SIZE; i++) {
@@ -295,7 +295,7 @@ bool Board::checkAllFieldsOfCurColor(Token token, int ind) const {
 }
 
 int countPrevForColor(int ind, const Board& board) {
-    if (ind < 0 || ind > board.FIELD_SIZE) {
+    if (ind < 0 || ind > (int)board.FIELD_SIZE) {
         throw std::out_of_range("no field " + std::to_string(ind));
     }
     int cnt = 0;
