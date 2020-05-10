@@ -2,7 +2,9 @@
 #define FIELD_H
 
 #include "MonopolyFwd.h"
+#include "PlayerRequests.h"
 #include <string>
+#include <vector>
 
 static constexpr int PRISON_FINE = 50;
 static constexpr int START_SUM = 200;
@@ -15,7 +17,8 @@ enum class Color : std::size_t {
     COL5,
     COL6,
     COL7,
-    COL8
+    COL8,
+    NO_COL
 };
 
 enum class TileType : std::size_t {
@@ -26,6 +29,7 @@ enum class TileType : std::size_t {
     CHANCE = 4,
     INCOME_TAX = 5,
     FREE_PARKING = 6,
+    PUBLIC_TREASURY = 7,
     UNINITIALIZED = 1000
 };
 
@@ -45,8 +49,30 @@ public:
     TileType type = TileType::UNINITIALIZED;
     uint32_t position = 0;
     std::string name;
+    bool isMortgaged = false;
     virtual void onPlayerPass(Token token);
     virtual void onPlayerEntry(Token token);
+    virtual std::vector<std::string> writeTileInfo();
+    virtual void setMortgageCost(int val = 0) = 0;
+    virtual bool MortgageTile(Token token) = 0;
+    virtual Token getOwner() const { return Token::FREE_FIELD; }
+    virtual Color getColor() const { return Color::NO_COL; }
+    virtual uint32_t getMortgageCost() const { return 0; }
+    virtual uint32_t getNumberOfHouses() const { return 0; }
+    virtual uint32_t getNumberOfHotels() const { return 0; }
+    virtual uint32_t getHouseCost() const { return 0; }
+    virtual uint32_t getHotelCost() const { return 0; }
+    virtual void addHouse() { }
+    virtual void addHotel() { }
+};
+
+struct Taxes {
+    uint32_t startTax = 0;
+    uint32_t taxOneHouse = 0;
+    uint32_t taxTwoHouses = 0;
+    uint32_t taxThreeHouses = 0;
+    uint32_t taxFourHouses = 0;
+    uint32_t taxHotel = 0;
 };
 
 class OwnableTile : public FieldTile {
@@ -62,6 +88,13 @@ public:
     uint32_t costOfParking = 0;
     Color color = Color::COL1;
     Token owner = Token::FREE_FIELD;
+    void setMortgageCost(int val = 0) override { mortgageCost = val; }
+    bool MortgageTile(Token token) override;
+    virtual std::vector<std::string> writeTileInfo() override;
+    virtual void setTaxes(Taxes taxes) { };
+    Token getOwner() const override {return owner; }
+    uint32_t getMortgageCost() const override { return mortgageCost; }
+    int mortgageCost = 0;
 };
 
 class Railway final : public OwnableTile {
@@ -71,18 +104,31 @@ public:
             int cost, Color color);
     uint32_t calculateTax(Token token) override;
     void onPurchase(Token token) override;
+    std::vector<std::string> writeTileInfo() override;
 };
 
 class Street final : public OwnableTile {
 public:
     explicit Street(Board& board);
     Street(Board& board, int position, std::string name,
-           int cost, Color color, int costPerHouse);
+        int cost, Color color, int costPerHouse, int costPerHotel = 0);
     uint32_t calculateTax(Token token) override;
-    void onPurchase(Token token) override;
     void onPlayerEntry(Token token) override;
+    void onPurchase(Token token) override;
+    std::vector<std::string> writeTileInfo() override;
+    uint32_t getNumberOfHouses() const override { return numberOfHouses; }
+    uint32_t getNumberOfHotels() const override { return numberOfHotels; }
+    uint32_t getHotelCost() const override { return costPerHotel; }
+    uint32_t getHouseCost() const override { return costPerHouse; }
+    void addHouse() override { numberOfHouses++; }
+    void addHotel() override { numberOfHotels++; }
+    void setTaxes(Taxes taxes) override;
     uint32_t numberOfHouses = 0;
+    uint32_t numberOfHotels = 0;
     uint32_t costPerHouse = 0;
+    uint32_t costPerHotel = 0;
+
+    Taxes taxes;
 };
 
 class Utility final : public OwnableTile {
@@ -90,6 +136,7 @@ public:
     explicit Utility(Board& board);
     Utility(Board& board, int position, std::string name,
             int cost, Color color);
+    std::vector<std::string> writeTileInfo() override;
     uint32_t calculateTax(Token token) override;
     void onPurchase(Token token) override;
 };
@@ -98,16 +145,22 @@ class Start final : public FieldTile {
 public:
     explicit Start(Board& board);
     Start(Board& board, int position, std::string name);
+    std::vector<std::string> writeTileInfo() override;
     void onPlayerPass(Token token) override;
     void onPlayerEntry(Token token) override;
+    void setMortgageCost(int val = 0) override { };
+    bool MortgageTile(Token token) override { return false; };
 };
 
 class Prison final : public FieldTile {
 public:
     explicit Prison(Board& board);
     Prison(Board& board, int position, std::string name);
+    std::vector<std::string> writeTileInfo() override;
     void onPlayerEntry(Token token) override;
-    const static int TAX = 50;
+    const static int TAX;
+    void setMortgageCost(int val = 0) override { };
+    bool MortgageTile(Token token) override { return false; };
 };
 
 //Considered harmful
@@ -115,14 +168,34 @@ class GoToPrison final : public FieldTile {
 public:
     explicit GoToPrison(Board& board);
     GoToPrison(Board& board, int position, std::string name);
+    std::vector<std::string> writeTileInfo() override;
     void onPlayerEntry(Token token) override;
+    void setMortgageCost(int val = 0) override { };
+    bool MortgageTile(Token token) override { return false; };
 };
 
 class Chance final : public FieldTile {
 public:
     explicit Chance(Board& board);
     Chance(Board& board, int position, std::string name);
+    std::vector<std::string> writeTileInfo() override;
     void onPlayerEntry(Token token) override;
+    void setMortgageCost(int val = 0) override { };
+    bool MortgageTile(Token token) override { return false; };
+
+    std::vector<Card*> cards;
+};
+
+class PublicTreasury final : public FieldTile {
+public:
+    explicit PublicTreasury(Board& board);
+    PublicTreasury(Board& board, int position, std::string name);
+    void onPlayerEntry(Token token) override;
+    std::vector<std::string> writeTileInfo() override;
+    void setMortgageCost(int val = 0) override { };
+    bool MortgageTile(Token token) override { return false; };
+
+    std::vector<Card*> cards;
 };
 
 class IncomeTax final : public FieldTile {
@@ -130,14 +203,23 @@ public:
     explicit IncomeTax(Board& board);
     IncomeTax(Board& board, int position, std::string name,
             uint32_t tax);
-    void onPlayerEntry(Token token) override;
     uint32_t tax = 0;
+    std::vector<std::string> writeTileInfo() override;
+    void onPlayerEntry(Token token) override;
+    void setMortgageCost(int val = 0) override { };
+    bool MortgageTile(Token token) override { return false; };
 };
 
 class FreeParking final : public FieldTile {
 public:
     explicit FreeParking(Board& board);
     FreeParking(Board& board, int position, std::string name);
+    std::vector<std::string> writeTileInfo() override;
+    void setMortgageCost(int val = 0) override { };
+    bool MortgageTile(Token token) override { return false; };
 };
+
+void makeDefaultRequest(PlayerRequest& r);
+bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply& reply);
 
 #endif //FIELD_H

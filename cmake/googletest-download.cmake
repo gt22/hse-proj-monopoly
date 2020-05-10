@@ -13,6 +13,8 @@ ExternalProject_Add(
         https://github.com/google/googletest.git
         GIT_TAG
         release-1.10.0
+        GIT_SHALLOW 1
+        GIT_PROGRESS 1
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""

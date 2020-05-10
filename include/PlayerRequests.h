@@ -17,7 +17,10 @@ enum class PlayerAction : std::size_t {
     MORTGAGE_HOLDINGS = 8,
     START_TRADE = 9,
     START_TRADE_NEW_FIELD = 10,
-    ROLL_DICE = 11
+    ROLL_DICE = 11,
+    BUY_BACK_PROPERTY = 12,
+    EXIT_GAME = 13,
+    LOSE = 14
 };
 
 struct PlayerRequest final {
@@ -44,6 +47,20 @@ struct BasicReply : PlayerReplyData {
     BasicReply() : PlayerReplyData(ACTION) {}
 };
 
-//TODO: разобраться с сабклассами.
+struct RollDiceReply : BasicReply<PlayerAction::ROLL_DICE> {};
+
+struct PayTaxReply : BasicReply<PlayerAction::PAY_TAX> {};
+
+struct BuyPropertyReply : BasicReply<PlayerAction::BUY_PROPERTY> {};
+
+struct BuyBuildingReply : BasicReply<PlayerAction::BUY_BUILDING> {};
+
+struct EndTurnReply : BasicReply<PlayerAction::END_TURN> {};
+
+struct ExitGameReply : BasicReply<PlayerAction::EXIT_GAME> {};
+
+struct TakeCardReply : BasicReply<PlayerAction::TAKE_CARD> {};
+
+struct UseCardReply : BasicReply<PlayerAction::USE_CARD> {};
 
 #endif //PLAYERREQUESTS_H

@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <memory>
+#include <map>
 //#include "View.h"
 
 struct PlayerData;
@@ -38,6 +39,15 @@ enum class Token : std::size_t {
     SHIP
 };
 
+enum class TokenForMortgage : std::size_t {
+    DOG_M,
+    HAT_M,
+    BOOT_M,
+    CAT_M,
+    CAR_M,
+    SHIP_M,
+};
+
 class Player;
 class NetworkPlayer;
 class BotPlayer;
@@ -46,6 +56,7 @@ class LocalPlayer;
 struct PlayerRequest;
 struct PlayerMessage;
 struct PlayerReplyData;
+struct PlayerMessage;
 typedef std::unique_ptr<PlayerReplyData> PlayerReply;
 
 class RandomSource;
@@ -54,6 +65,10 @@ class AbstractView;
 class MenuView;
 class MonopolyView;
 class NcursesView;
-using ViewHolder = std::shared_ptr<AbstractView>;
+using ViewHolder = std::unique_ptr<AbstractView>;
+
+class SFMLView;
+
+class MonopolyThreadManager;
 
 #endif //MONOPOLYFWD_H

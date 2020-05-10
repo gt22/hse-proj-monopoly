@@ -4,35 +4,40 @@
 #include "Manager.h"
 
 Game::Game(const std::vector<std::pair<std::string_view, Token>> &players, Manager& manager)
-    : board(players, *this), manager(manager) {
-
-}
+    : board(players, *this), manager(manager) { }
 
 PlayerReply Game::sendRequest(Token token, PlayerRequest request) {
-    return manager.sendRequest(token, std::move(request));
+    sync();
+    PlayerReply rep = manager.sendRequest(token, std::move(request));
+    if(rep->action == PlayerAction::EXIT_GAME) getBoard().terminate();
+    return rep;
 }
 
 void Game::sendMessage(Token token, PlayerMessage mes) {
+    sync();
     manager.sendMessage(token, std::move(mes));
 }
 
 void Game::runGame() {
     std::size_t curPlayerNum = 0;
-    while (true) {
+    while (!board.isFinished()) {
         PlayerData& curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
         if (!curPlayer.alive) {
             curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
             continue;
         }
+        PlayerRequest startTurnRequest;
+        startTurnRequest.availableActions.push_back(PlayerAction::ROLL_DICE);
+        PlayerReply reply = board.sendRequest(curPlayer.token, startTurnRequest);
         if (curPlayer.prisoner) {
             board.getField()[curPlayer.position]->onPlayerEntry(curPlayer.token);
             curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
             continue;
         }
         int firstTrow = rng.nextInt(1, 6), secondTrow = rng.nextInt(1, 6);
-        PlayerMessage message(std::to_string(firstTrow) + " " + std::to_string(secondTrow));
-        sendMessage(curPlayer.token, message);
         curPlayer.lastTrow = firstTrow + secondTrow;
+        sendMessage(curPlayer.token,
+                PlayerMessage(std::to_string(firstTrow) + " " + std::to_string(secondTrow)));
         bool extraTurn = false;
         if (firstTrow == secondTrow) {
             curPlayer.doubleDice++;
@@ -41,6 +46,7 @@ void Game::runGame() {
             curPlayer.doubleDice = 0;
         }
         if (curPlayer.doubleDice == 3) {
+            extraTurn = false;
             curPlayer.toPrison();
         } else {
             curPlayer.newPosition(firstTrow + secondTrow);
@@ -49,6 +55,17 @@ void Game::runGame() {
         if (!extraTurn) {
             curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
         }
-        break;
+        sync();
     }
+    board.sendMessage(board.getWinner(), PlayerMessage("Victory!"));
+    sync();
+}
+
+//TODO should be const, non-const only for debug
+Board& Game::getBoard() {
+    return board;
+}
+
+void Game::sync() {
+    manager.sync(board);
 }

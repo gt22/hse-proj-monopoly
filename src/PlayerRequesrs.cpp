@@ -6,6 +6,6 @@ PlayerRequest::PlayerRequest(std::vector<PlayerAction> availableActions,
         std::string message)
  : availableActions(std::move(availableActions)), message(message) {}
 
-PlayerMessage::PlayerMessage(std::string message) : message(message) {}
+PlayerMessage::PlayerMessage(std::string message) : message(std::move(message)) {}
 
 PlayerReplyData::PlayerReplyData(PlayerAction action) : action(action) {}

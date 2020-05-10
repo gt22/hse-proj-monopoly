@@ -11,7 +11,7 @@
 
 class Player {
 public:
-    explicit Player(Token token);
+    explicit Player(Token token, std::string name);
     virtual ~Player() = default;
     virtual PlayerReply sendRequest(PlayerRequest request) = 0;
     virtual void sendMessage(PlayerMessage request) = 0;
@@ -37,14 +37,14 @@ public:
 
 class LocalPlayer final : public Player {
 public:
-    explicit LocalPlayer(Token token, std::shared_ptr<ViewHolder> view);
+    explicit LocalPlayer(Token token, std::string name, SFMLView& view);
     PlayerReply sendRequest(PlayerRequest request) override;
     void sendMessage(PlayerMessage request) override;
     void sync(const Board& board) override;
 
 private:
-    std::shared_ptr<ViewHolder> view;
-    MonopolyView& gameView();
+    SFMLView& view;
+    SFMLView& gameView();
 };
 
 #endif //PLAYER_H

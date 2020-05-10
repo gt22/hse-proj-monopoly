@@ -3,11 +3,12 @@
 #include <utility>
 #include "Cards.h"
 #include "View.h"
+#include "view/SFMLView.h"
+Player::Player(Token token, std::string name) : token(token), name(std::move(name)) {}
 
-Player::Player(Token token) : token(token) {}
 
-LocalPlayer::LocalPlayer(Token token, std::shared_ptr<ViewHolder> view)
-: Player(token), view(std::move(view)) {
+LocalPlayer::LocalPlayer(Token token, std::string name, SFMLView& view)
+: Player(token, std::move(name)), view(view) {
 
 }
 
@@ -16,13 +17,13 @@ PlayerReply LocalPlayer::sendRequest(PlayerRequest request) {
 }
 
 void LocalPlayer::sendMessage(PlayerMessage request) {
-    gameView().processMessage(*this, request);
+    gameView().processMessage(*this, std::move(request));
 }
 
 void LocalPlayer::sync(const Board &board) {
-    //gameView().redraw(board);
+    gameView().redraw(board);
 }
 
-MonopolyView &LocalPlayer::gameView() {
-    return dynamic_cast<MonopolyView&>(**view);
+SFMLView& LocalPlayer::gameView() {
+    return view;
 }

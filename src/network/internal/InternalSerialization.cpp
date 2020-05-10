@@ -85,6 +85,8 @@ namespace Monopoly::Serialization::Internal {
                 case TileType::GOTO_PRISON:
                 case TileType::CHANCE:
                     break;
+                case TileType::PUBLIC_TREASURY:
+                    break; //TODO
                 case TileType::INCOME_TAX: {
                     const auto &itax = dynamic_cast<const IncomeTax &>(tile);
                     ser.mutable_incometax()->set_tax(itax.tax);
@@ -132,6 +134,7 @@ namespace Monopoly::Serialization::Internal {
             case TileType::PRISON: ret = new Prison(board); break;
             case TileType::GOTO_PRISON: ret = new GoToPrison(board); break;
             case TileType::CHANCE: ret = new Chance(board); break;
+            case TileType::PUBLIC_TREASURY: ret = new PublicTreasury(board);
             case TileType::INCOME_TAX: {
                 auto itax = new IncomeTax(board);
                 ret = itax;
