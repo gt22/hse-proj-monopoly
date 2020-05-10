@@ -294,7 +294,7 @@ int countPrevForColor(int ind, const Board& board) {
 }
 
 bool checkHousesNumForHotel(int ind, const Board& board) {
-    for (std::size_t i = 0; i < board.FIELD_SIZE; i++) {
+    for (std::size_t i = ind; i < board.FIELD_SIZE; i++) {
         if (board.field[i]->getColor() == board.field[ind]->getColor() &&
                 (board.field[i]->getNumberOfHouses() != 4 || board.field[i]->getNumberOfHotels() != 0)) {
             return false;
@@ -315,10 +315,40 @@ bool checkPrevHotel(int ind, const Board& board) {
     return false;
 }
 
+bool checkPrevHouse(int ind, const Board& board) {
+    int i = ind - 1;
+    while (i >= 0) {
+        if (board.field[i]->getColor() == board.field[ind]->getColor()
+            && board.field[i]->getNumberOfHouses() == board.field[ind]->getNumberOfHouses() + 1) {
+            return true;
+        }
+        i--;
+    }
+    return false;
+}
+
+bool checkHousesNumForHouse(int ind, const Board& board) {
+    for (std::size_t i = ind; i < board.FIELD_SIZE; i++) {
+        if (board.field[i]->getColor() == board.field[ind]->getColor() &&
+            (board.field[i]->getNumberOfHouses() !=  board.field[i]->getNumberOfHotels())) {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool checkPrevForHotel(int ind, const Board& board) {
     int pos = countPrevForColor(ind, board);
     if (pos == 0) {
         return checkHousesNumForHotel(ind, board);
     }
     return checkPrevHotel(ind, board);
+}
+
+bool checkPrevForHouse(int ind, const Board& board) {
+    int pos = countPrevForColor(ind, board);
+    if (pos == 0) {
+        return checkHousesNumForHouse(ind, board);
+    }
+    return checkPrevHouse(ind, board);
 }

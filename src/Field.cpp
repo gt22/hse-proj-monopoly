@@ -195,7 +195,7 @@ void makeDefaultRequest(PlayerRequest& r) {
     };
 }
 
-bool handleGenericActions(Token token, FieldTile& tile, const PlayerReply& reply) {
+bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply& reply) {
     if (reply->action == PlayerAction::LOSE) {
         PlayerData& player = tile.board.getPlayer(token);
         player.setLoser();
@@ -209,7 +209,7 @@ bool handleGenericActions(Token token, FieldTile& tile, const PlayerReply& reply
         int index = 11;
         auto chosenField = tile.board.getFieldTile(index);
         if (token != chosenField->getOwner() || chosenField->getColor() == Color::NO_COL || chosenField->isMortgaged ||
-            chosenField->getNumberOfHouses() < 4 || chosenField->getNumberOfHotels() > 0) {
+            chosenField->getNumberOfHouses() >= 4 || chosenField->getNumberOfHotels() > 0) {
             tile.board.sendMessage(token, PlayerMessage("You can't build house on this field tile"));
             return true;
         }
@@ -217,7 +217,18 @@ bool handleGenericActions(Token token, FieldTile& tile, const PlayerReply& reply
             tile.board.sendMessage(token, PlayerMessage("You can't build house on this field tile"));
             return true;
         }
-        //TODO
+        if (!checkPrevForHouse(index, tile.board)) {
+            tile.board.sendMessage(token, PlayerMessage("You can't build house on this field tile"));
+            return true;
+        }
+        PlayerData& player = chosenField->board.getPlayer(token);
+        if (player.getMoney() >= chosenField->getHouseCost()) {
+            player.addMoney(-chosenField->getHouseCost());
+            player.numberOfHouses++;
+            chosenField->addHouse();
+        } else {
+            tile.board.sendMessage(token, PlayerMessage("You don't have enough money :("));
+        }
         return true;
     }
     if (reply->action == PlayerAction::BUY_HOTEL) {
@@ -238,10 +249,10 @@ bool handleGenericActions(Token token, FieldTile& tile, const PlayerReply& reply
             return true;
         }
         PlayerData& player = tile.board.getPlayer(token);
-        if (player.getMoney() >= tile.getHotelCost()) {
-            player.addMoney(-tile.getHotelCost());
+        if (player.getMoney() >= chosenField->getHotelCost()) {
+            player.addMoney(-chosenField->getHotelCost());
             player.numberOfHotels++;
-            tile.addHotel();
+            chosenField->addHotel();
         } else {
             tile.board.sendMessage(token, PlayerMessage("You don't have enough money :("));
         }

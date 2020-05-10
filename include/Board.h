@@ -85,6 +85,8 @@ bool checkPrevForHotel(int ind, const Board& board);
 bool checkPrevForHouse(int ind, const Board& board);
 int countPrevForColor(int ind, const Board& board);
 bool checkHousesNumForHotel(int ind, const Board& board);
+bool checkHousesNumForHouse(int ind, const Board& board);
 bool checkPrevHotel(int ind, const Board& board);
+bool checkPrevHouse(int ind, const Board& board);
 
 #endif //BOARD_H

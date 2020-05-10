@@ -185,6 +185,6 @@ public:
 };
 
 void makeDefaultRequest(PlayerRequest& r);
-bool handleGenericActions(Token token, FieldTile& tile, const PlayerReply& reply);
+bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply& reply);
 
 #endif //FIELD_H
