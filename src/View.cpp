@@ -70,6 +70,8 @@ PlayerReply TerminalView::processRequest(Player &p, PlayerRequest req) {
                 std::cout << "EXIT_GAME"; break;
             case PlayerAction::LOSE:
                 std::cout << "LOSE"; break;
+            case PlayerAction::BUY_BACK_PROPERTY:
+                std::cout << "BUY BACK PROPERTY"; break;
         }
         std::cout << std::endl;
     }

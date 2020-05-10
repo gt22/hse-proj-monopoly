@@ -25,7 +25,7 @@ void FieldTileModel::update(const FieldTile& tile) {
     } else if(auto prison = dynamic_cast<const Prison*>(&tile); prison) {
         tax = prison->tax;
     } else if(auto incometax = dynamic_cast<const IncomeTax*>(&tile); incometax) {
-        tax = incometax->tax;
+        tax = incometax->getTax();
     }
 }
 

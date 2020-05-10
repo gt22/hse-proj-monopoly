@@ -496,6 +496,8 @@ void SFMLView::handleRequest() {
                 std::cout << "BUY_BUILDING"; break;
             case PlayerAction::BUY_HOTEL:
                 std::cout << "BUY_HOTEL"; break;
+            case PlayerAction::BUY_BACK_PROPERTY:
+                std::cout << "BUY_BACK_PROPERTY"; break;
             case PlayerAction::USE_CARD:
                 std::cout << "USE_CARD"; break;
             case PlayerAction::PAY_TO_OTHER_PLAYER:

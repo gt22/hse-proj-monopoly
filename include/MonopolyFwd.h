@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <memory>
+#include <map>
 //#include "View.h"
 
 struct PlayerData;
@@ -36,6 +37,15 @@ enum class Token : std::size_t {
     CAR,
     SHIP,
     FREE_FIELD
+};
+
+enum class TokenForMortgage : std::size_t {
+    DOG_M,
+    HAT_M,
+    BOOT_M,
+    CAT_M,
+    CAR_M,
+    SHIP_M,
 };
 
 class Player;
