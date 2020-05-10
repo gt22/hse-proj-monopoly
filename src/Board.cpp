@@ -250,6 +250,7 @@ Token Board::getWinner() const {
             return players[i].token;
         }
     }
+
     //TODO: что вернуть если не нашли.
     throw 1;
 }

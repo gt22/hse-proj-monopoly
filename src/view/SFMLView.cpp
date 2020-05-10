@@ -9,7 +9,6 @@ using Vec::transpose;
 
 sf::Color getColor(Token tok) {
     switch (tok) {
-
         case Token::DOG:
             return sf::Color::White;
         case Token::HAT:
@@ -25,6 +24,7 @@ sf::Color getColor(Token tok) {
         case Token::FREE_FIELD:
             return sf::Color::Transparent;
     }
+    return sf::Color::Transparent;
 }
 
 sf::Color getColor(Color color) {
@@ -46,7 +46,10 @@ sf::Color getColor(Color color) {
             return sf::Color(0x0213c9FF);
         case Color::COL8:
             return sf::Color(0x4f088cFF);
+        case Color::NO_COL:
+            return sf::Color::Transparent;
     }
+    return sf::Color::Transparent;
 }
 
 SFMLView::SFMLView(Manager &manager) : manager(manager) {
@@ -74,6 +77,10 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
     addActionButton(PlayerAction::PAY_TAX,
                     "images/PAY_TAX.png",
                     "By pressing this button you will pay tax",
+                    makeReplyGenerator<PayTaxReply>());
+    addActionButton(PlayerAction::PAY_TO_OTHER_PLAYER,
+                    "images/PAY_TO_OTHER_PLAYER.png",
+                    "By pressing this button you will pay money to other player",
                     makeReplyGenerator<PayTaxReply>());
     addActionButton(PlayerAction::BUY_PROPERTY,
                     "images/BUY_PROPERTY.png",
@@ -175,7 +182,7 @@ void SFMLView::drawField(const BoardModel &board) {
         const float shift = (w / 4);
         window.draw(viewTile);
 
-        if(fieldTile.color.has_value()) {
+        if (fieldTile.color.has_value()) {
             const float size = w / 6;
             sf::RectangleShape colorRect(sf::Vector2f(size, h));
             colorRect.setFillColor(getColor(fieldTile.color.value()));
@@ -187,6 +194,15 @@ void SFMLView::drawField(const BoardModel &board) {
                 case 3: colorRect.setPosition(viewTile.getPosition() + sf::Vector2f(h, 0));
             }
             window.draw(colorRect);
+        }
+
+        if (fieldTile.owner.has_value()) {
+            sf::Color color = getColor(fieldTile.owner.value());
+            sf::RectangleShape ownerLabel(sf::Vector2f(w / 6, w / 6));
+//        //    p.setOrigin(p.getRadius(), p.getRadius());
+            ownerLabel.setFillColor(color);
+            ownerLabel.setPosition(viewTile.getPosition() /*+ sf::Vector2f(w / 9, w / 9) */);
+            window.draw(ownerLabel);
         }
 
         std::string s = std::string(fieldTile.name);
