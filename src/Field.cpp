@@ -321,6 +321,18 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         }
         return true;
     }
+    if (reply->action == PlayerAction::SELL_FIELD) {
+        //TODO:send request for number of field
+        //TODO
+    }
+    if (reply->action == PlayerAction::SELL_HOUSE) {
+        //TODO:send request for number of field
+        //TODO
+    }
+    if (reply->action == PlayerAction::SELL_HOTEL) {
+        //TODO:send request for number of field
+        //TODO
+    }
     return true;
 }
 
