@@ -74,6 +74,7 @@ public:
     FieldTile* getTile(std::size_t pos) const;
     bool checkAllFieldsOfCurColor(Token token, int ind) const;
     bool checkFieldWithoutBuildings(Token token) const;
+    bool ckeckAllFieldsOfCol(Token token) const;
 
     std::size_t getPlayerIndex() const;
     void setPlayerIndex(std::size_t num);

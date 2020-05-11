@@ -187,8 +187,6 @@ void makeDefaultRequest(PlayerRequest& r, Token token, const Board& board) {
     r.availableActions = {
             PlayerAction::LOSE,
             PlayerAction::END_TURN,
-            PlayerAction::BUY_BUILDING,
-            PlayerAction::BUY_HOTEL,
             PlayerAction::START_TRADE,
             PlayerAction::EXIT_GAME
     };
@@ -196,12 +194,18 @@ void makeDefaultRequest(PlayerRequest& r, Token token, const Board& board) {
     if (player.numberOfHotels > 0) {
         r.availableActions.push_back(PlayerAction::SELL_HOTEL);
     }
-    if (player.numberOfHouses > 0 && player.numberOfHouses != player.numberOfHotels * 4) {
+    if (player.numberOfHouses > 0) {
+        //TODO: CHECK HOTELS
         r.availableActions.push_back(PlayerAction::SELL_HOUSE);
     }
     if (board.checkFieldWithoutBuildings(token)) {
         r.availableActions.push_back(PlayerAction::SELL_FIELD);
         r.availableActions.push_back(PlayerAction::MORTGAGE_HOLDINGS);
+    }
+    if (board.ckeckAllFieldsOfCol(token)) {
+        //TODO: ckeck
+        r.availableActions.push_back(PlayerAction::BUY_BUILDING);
+        r.availableActions.push_back(PlayerAction::BUY_HOTEL);
     }
 }
 

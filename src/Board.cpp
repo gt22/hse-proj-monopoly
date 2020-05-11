@@ -330,6 +330,40 @@ bool Board::checkFieldWithoutBuildings(Token token) const {
     return false;
 }
 
+bool Board::ckeckAllFieldsOfCol(Token token) const {
+    if (field[1]->getOwner() == token && field[3]->getOwner() == token) {
+        return true;
+    }
+    if (field[6]->getOwner() == token && field[8]->getOwner() == token &&
+        field[9]->getOwner() == token) {
+        return true;
+    }
+    if (field[11]->getOwner() == token && field[13]->getOwner() == token &&
+        field[14]->getOwner() == token) {
+        return true;
+    }
+    if (field[16]->getOwner() == token && field[18]->getOwner() == token &&
+        field[19]->getOwner() == token) {
+        return true;
+    }
+    if (field[21]->getOwner() == token && field[23]->getOwner() == token &&
+        field[24]->getOwner() == token) {
+        return true;
+    }
+    if (field[26]->getOwner() == token && field[27]->getOwner() == token &&
+        field[29]->getOwner() == token) {
+        return true;
+    }
+    if (field[31]->getOwner() == token && field[32]->getOwner() == token &&
+        field[34]->getOwner() == token) {
+        return true;
+    }
+    if (field[37]->getOwner() == token && field[39]->getOwner() == token) {
+        return true;
+    }
+    return false;
+}
+
 int countPrevForColor(int ind, const Board& board) {
     if (ind < 0 || ind > (int)board.FIELD_SIZE) {
         throw std::out_of_range("no field " + std::to_string(ind));
