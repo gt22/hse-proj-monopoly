@@ -204,7 +204,7 @@ void makeDefaultRequest(PlayerRequest& r, Token token, Board& board) {
     }
     if (board.ckeckAllFieldsOfCol(token)) {
         //TODO: ckeck
-        r.availableActions.push_back(PlayerAction::BUY_BUILDING);
+        r.availableActions.push_back(PlayerAction::BUY_HOUSE);
         r.availableActions.push_back(PlayerAction::BUY_HOTEL);
     }
 }
@@ -218,7 +218,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         //TODO
         return false;
     }
-    if (reply->action == PlayerAction::BUY_BUILDING) {
+    if (reply->action == PlayerAction::BUY_HOUSE) {
         //TODO:send request for number of field
         int index = 11;
         auto chosenField = tile.board.getFieldTile(index);
@@ -597,7 +597,7 @@ void IncomeTax::onPlayerEntry(Token token) {
 
 std::set<PlayerAction> makePropertyMusthave(const OwnableTile& tile, Token token, bool taxPaid) {
     if (tile.owner == Token::FREE_FIELD) {
-        return { PlayerAction::BUY_PROPERTY, PlayerAction::START_TRADE_NEW_FIELD };
+        return { PlayerAction::BUY_FIELD, PlayerAction::START_TRADE_NEW_FIELD };
     } else if (tile.owner != token && !taxPaid) {
         return { PlayerAction::PAY_TO_OTHER_PLAYER };
     } else {
@@ -623,7 +623,7 @@ void OwnableTile::onPlayerEntry(Token token) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
         if (!buyProperty) {
-            request.availableActions.push_back(PlayerAction::BUY_PROPERTY);
+            request.availableActions.push_back(PlayerAction::BUY_FIELD);
         }
         if (!taxPaid) {
             request.availableActions.push_back(PlayerAction::PAY_TO_OTHER_PLAYER);
@@ -655,7 +655,7 @@ void OwnableTile::onPlayerEntry(Token token) {
             request.message = "Not enough money :(";
             continue;
         }
-        if (reply->action == PlayerAction::BUY_PROPERTY) {
+        if (reply->action == PlayerAction::BUY_FIELD) {
             if (owner == token) {
                 request.message = "You've already bought this field :)";
                 continue;

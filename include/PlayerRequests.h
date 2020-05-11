@@ -7,8 +7,8 @@
 
 enum class PlayerAction {
     PAY_TAX,
-    BUY_PROPERTY,
-    BUY_BUILDING,
+    BUY_FIELD,
+    BUY_HOUSE,
     BUY_HOTEL,
     USE_CARD,
     PAY_TO_OTHER_PLAYER,
@@ -56,11 +56,17 @@ struct PayTaxReply : BasicReply<PlayerAction::PAY_TAX> {};
 
 struct PayToOtherPlayersReply : BasicReply<PlayerAction::PAY_TO_OTHER_PLAYER> {};
 
-struct BuyPropertyReply : BasicReply<PlayerAction::BUY_PROPERTY> {};
+struct BuyPropertyReply : BasicReply<PlayerAction::BUY_FIELD> {};
 
-struct BuyBuildingReply : BasicReply<PlayerAction::BUY_BUILDING> {};
+struct SellPropertyReply : BasicReply<PlayerAction::SELL_FIELD> {};
+
+struct BuyBuildingReply : BasicReply<PlayerAction::BUY_HOUSE> {};
+
+struct SellBuildingReply : BasicReply<PlayerAction::SELL_HOUSE> {};
 
 struct BuyHotelReply : BasicReply<PlayerAction::BUY_HOTEL> {};
+
+struct SellHotelReply : BasicReply<PlayerAction::SELL_HOTEL> {};
 
 struct EndTurnReply : BasicReply<PlayerAction::END_TURN> {};
 

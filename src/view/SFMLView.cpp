@@ -82,18 +82,30 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     "images/PAY_TO_OTHER_PLAYER.png",
                     "By pressing this button you will pay money to other player",
                     makeReplyGenerator<PayToOtherPlayersReply>());
-    addActionButton(PlayerAction::BUY_PROPERTY,
-                    "images/BUY_PROPERTY.png",
-                    "By pressing this button you will buy this property",
+    addActionButton(PlayerAction::BUY_FIELD,
+                    "images/BUY_FIELD.png",
+                    "By pressing this button you will buy this field",
                     makeReplyGenerator<BuyPropertyReply>());
-    addActionButton(PlayerAction::BUY_BUILDING,
-                    "images/BUY_BUILDING.png",
-                    "By pressing this button you will buy building",
+    addActionButton(PlayerAction::SELL_FIELD,
+                    "images/SELL_FIELD.png",
+                    "By pressing this button you will sell this field",
+                    makeReplyGenerator<SellPropertyReply>());
+    addActionButton(PlayerAction::BUY_HOUSE,
+                    "images/BUY_HOUSE.png",
+                    "By pressing this button you will buy house",
                     makeReplyGenerator<BuyBuildingReply>());
+    addActionButton(PlayerAction::SELL_HOUSE,
+                    "images/SELL_HOUSE.png",
+                    "By pressing this button you will sell house",
+                    makeReplyGenerator<SellBuildingReply>());
     addActionButton(PlayerAction::BUY_HOTEL,
                     "images/BUY_HOTEL.png",
                     "By pressing this button you will buy hotel",
                     makeReplyGenerator<BuyHotelReply>());
+    addActionButton(PlayerAction::SELL_HOTEL,
+                    "images/SELL_HOTEL.png",
+                    "By pressing this button you will sell hotel",
+                    makeReplyGenerator<SellHotelReply>());
     addActionButton(PlayerAction::ROLL_DICE,
                     "images/ROLL_DICE.png",
                     "By pressing this button you will roll dice",
@@ -510,12 +522,18 @@ void SFMLView::handleRequest() {
         switch(action) {
             case PlayerAction::PAY_TAX:
                 std::cout << "PAY_TAX"; break;
-            case PlayerAction::BUY_PROPERTY:
-                std::cout << "BUY_PROPERTY"; break;
-            case PlayerAction::BUY_BUILDING:
-                std::cout << "BUY_BUILDING"; break;
+            case PlayerAction::BUY_FIELD:
+                std::cout << "BUY_FIELD"; break;
+            case PlayerAction::SELL_FIELD:
+                std::cout << "SELL_FIELD"; break;
+            case PlayerAction::BUY_HOUSE:
+                std::cout << "BUY_HOUSE"; break;
+            case PlayerAction::SELL_HOUSE:
+                std::cout << "SELL_HOUSE"; break;
             case PlayerAction::BUY_HOTEL:
                 std::cout << "BUY_HOTEL"; break;
+            case PlayerAction::SELL_HOTEL:
+                std::cout << "SELL_HOTEL"; break;
             case PlayerAction::BUY_BACK_PROPERTY:
                 std::cout << "BUY_BACK_PROPERTY"; break;
             case PlayerAction::USE_CARD:

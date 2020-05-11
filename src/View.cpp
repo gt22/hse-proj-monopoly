@@ -37,14 +37,14 @@ void TerminalView::processMessage(Player &p, PlayerMessage mes) {
 PlayerReply TerminalView::processRequest(Player &p, PlayerRequest req) {
     std::cout << "Request for player" << (int) p.token << ": " << std::endl;
     std::cout << "Msg: " << req.message << std::endl;
-    for(size_t i = 0; i < req.availableActions.size(); i++) {
+    /*for(size_t i = 0; i < req.availableActions.size(); i++) {
         PlayerAction a = req.availableActions[i];
         std::cout << (i + 1) << ": ";
         switch(a) {
 
             case PlayerAction::PAY_TAX:
                 std::cout << "PAY_TAX"; break;
-            case PlayerAction::BUY_PROPERTY:
+            case PlayerAction::BUY_FIELD:
                 std::cout << "BUY_PROPERTY"; break;
             case PlayerAction::BUY_BUILDING:
                 std::cout << "BUY_BUILDING"; break;
@@ -74,7 +74,7 @@ PlayerReply TerminalView::processRequest(Player &p, PlayerRequest req) {
                 std::cout << "BUY BACK PROPERTY"; break;
         }
         std::cout << std::endl;
-    }
+    }*/
     int ans;
     std::cin >> ans;
     return std::make_unique<PlayerReplyData>(req.availableActions[ans - 1]);
