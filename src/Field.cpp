@@ -327,14 +327,32 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     }
     if (reply->action == PlayerAction::SELL_FIELD) {
         //TODO:send request for number of field
+        int index = 11;
+        if (tile.board.field[index]->getNumberOfHouses() != 0 || tile.board.field[index]->getNumberOfHotels() != 0 ||
+            tile.board.field[index]->getOwner() != token) {
+            tile.board.sendMessage(token, PlayerMessage("You can't sell this field tile"));
+            return true;
+        }
         //TODO
     }
     if (reply->action == PlayerAction::SELL_HOUSE) {
         //TODO:send request for number of field
+        int index = 11;
+        if (tile.board.field[index]->getNumberOfHouses() == 0 || tile.board.field[index]->getNumberOfHotels() != 0 ||
+            tile.board.field[index]->getOwner() != token) {
+            tile.board.sendMessage(token, PlayerMessage("You can't sell this building"));
+            return true;
+        }
+
         //TODO
     }
     if (reply->action == PlayerAction::SELL_HOTEL) {
         //TODO:send request for number of field
+        int index = 11;
+        if (tile.board.field[index]->getNumberOfHotels() == 0 || tile.board.field[index]->getOwner() != token) {
+            tile.board.sendMessage(token, PlayerMessage("You can't sell this hotel"));
+            return true;
+        }
         //TODO
     }
     return true;
