@@ -44,6 +44,11 @@ public:
     virtual void addHouse() { }
     virtual void addHotel() { }
     virtual void setTaxes(int tax0, int tax1, int tax2, int tax3, int tax4, int tax5) { }
+    virtual void decrHotelNum() { }
+    virtual void decrHouseNum() { }
+    virtual void setOwner(Token token) { }
+    virtual int getFieldCost() { return 0; }
+    virtual void decrPropertyNum(Token token) { };
 };
 
 class OwnableTile : public FieldTile {
@@ -57,7 +62,9 @@ public:
     bool MortgageTile(Token token) override;
     virtual std::vector<std::string> writeTileInfo() override;
     Token getOwner() const override {return owner; }
+    void setOwner(Token token) override { owner = token; }
     int getMortgageCost() const override { return mortgageCost; }
+    int getFieldCost() override { return cost; }
     int mortgageCost = 0;
     int cost;
     Color color;
@@ -73,6 +80,7 @@ public:
     size_t calculateTax(Token token) override;
     void onPurchase(Token token) override;
     std::vector<std::string> writeTileInfo() override;
+    void decrPropertyNum(Token token) override;
 };
 
 class Street final : public OwnableTile {
@@ -88,6 +96,8 @@ public:
     int getHouseCost() const override { return costPerHouse; }
     void addHouse() override { numberOfHouses++; }
     void addHotel() override { numberOfHotels++; }
+    void decrHotelNum() override { numberOfHotels--; }
+    void decrHouseNum() override { numberOfHouses--; }
     void setTaxes(int tax0, int tax1, int tax2, int tax3, int tax4, int tax5) override;
     int numberOfHouses = 0;
     int numberOfHotels = 0;
@@ -109,6 +119,7 @@ public:
     std::vector<std::string> writeTileInfo() override;
     size_t calculateTax(Token token) override;
     void onPurchase(Token token) override;
+    void decrPropertyNum(Token token) override;
 };
 
 class Start final : public FieldTile {
@@ -185,7 +196,7 @@ public:
     bool MortgageTile(Token token) override { return false; };
 };
 
-void makeDefaultRequest(PlayerRequest& r, Token token, const Board& board);
+void makeDefaultRequest(PlayerRequest& r, Token token, Board& board);
 bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply& reply);
 
 #endif //FIELD_H

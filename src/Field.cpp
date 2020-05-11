@@ -182,7 +182,7 @@ void addAll(std::vector<T>& vec, const C& cont) {
     std::copy(cont.begin(), cont.end(), std::back_inserter(vec));
 }
 
-void makeDefaultRequest(PlayerRequest& r, Token token, const Board& board) {
+void makeDefaultRequest(PlayerRequest& r, Token token, Board& board) {
     //TODO: New allocation each time... Maybe rewrite as clear, reserve & many push_backs?
     r.availableActions = {
             PlayerAction::LOSE,
@@ -333,7 +333,11 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
             tile.board.sendMessage(token, PlayerMessage("You can't sell this field tile"));
             return true;
         }
-        //TODO
+        //TODO checks
+        PlayerData& player = tile.board.getPlayer(token);
+        player.addMoney(tile.board.field[index]->getFieldCost());
+        tile.board.field[index]->decrPropertyNum(token);
+        tile.board.field[index]->setOwner(Token::FREE_FIELD);
     }
     if (reply->action == PlayerAction::SELL_HOUSE) {
         //TODO:send request for number of field
@@ -343,8 +347,11 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
             tile.board.sendMessage(token, PlayerMessage("You can't sell this building"));
             return true;
         }
-
-        //TODO
+        //TODO checks
+        PlayerData& player = tile.board.getPlayer(token);
+        player.numberOfHouses--;
+        player.addMoney(tile.board.field[index]->getHouseCost());
+        tile.board.field[index]->decrHouseNum();
     }
     if (reply->action == PlayerAction::SELL_HOTEL) {
         //TODO:send request for number of field
@@ -353,7 +360,11 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
             tile.board.sendMessage(token, PlayerMessage("You can't sell this hotel"));
             return true;
         }
-        //TODO
+        //TODO checks
+        PlayerData& player = tile.board.getPlayer(token);
+        player.numberOfHotels--;
+        player.addMoney(tile.board.field[index]->getHotelCost());
+        tile.board.field[index]->decrHotelNum();
     }
     return true;
 }
@@ -798,6 +809,11 @@ std::vector<std::string> Railway::writeTileInfo() {
     return info;
 }
 
+void Railway::decrPropertyNum(Token token) {
+    PlayerData& player = board.getPlayer(token);
+    player.numberOfRailways--;
+}
+
 std::vector<std::string> Utility::writeTileInfo() {
     std::vector<std::string> info;
     info.push_back(name);
@@ -806,6 +822,11 @@ std::vector<std::string> Utility::writeTileInfo() {
     item = "Moartage Value: ";
     info.push_back(item);
     return info;
+}
+
+void Utility::decrPropertyNum(Token token) {
+    PlayerData& player = board.getPlayer(token);
+    player.numberOfUtilities--;
 }
 
 
