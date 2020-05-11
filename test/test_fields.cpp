@@ -43,7 +43,7 @@ TEST(TestFields, TestStartEntry) {
     EXPECT_CALL(board, getPlayer(Token::CAR)).WillOnce(ReturnRef(playerData));
 
     PlayerRequest expectedRequest(
-            {PlayerAction::BUY_BUILDING, PlayerAction::BUY_HOTEL, PlayerAction::USE_CARD,
+            {PlayerAction::BUY_HOUSE, PlayerAction::BUY_HOTEL, PlayerAction::USE_CARD,
              PlayerAction::MORTGAGE_HOLDINGS, PlayerAction::START_TRADE, PlayerAction::END_TURN},
             "");
 
