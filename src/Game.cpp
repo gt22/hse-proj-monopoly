@@ -14,9 +14,9 @@ PlayerReply Game::sendRequest(Token token, PlayerRequest request) {
     return rep;
 }
 
-void Game::sendMessage(Token token, PlayerMessage mes) {
+void Game::sendMessage(Token token, PlayerMessage mes, MessageType type) {
     sync();
-    manager.sendMessage(token, std::move(mes));
+    manager.sendMessage(token, std::move(mes), type);
 }
 
 void Game::runGame() {
@@ -40,7 +40,7 @@ void Game::runGame() {
         int firstTrow = rng.nextInt(1, 6), secondTrow = rng.nextInt(1, 6);
         curPlayer.lastTrow = firstTrow + secondTrow;
         sendMessage(curPlayer.token,
-                PlayerMessage(std::to_string(firstTrow) + " " + std::to_string(secondTrow)));
+                PlayerMessage(std::to_string(firstTrow) + " " + std::to_string(secondTrow)), MessageType::DICE);
         bool extraTurn = false;
         if (firstTrow == secondTrow) {
             curPlayer.doubleDice++;
@@ -60,7 +60,7 @@ void Game::runGame() {
         }
         sync();
     }
-    board.sendMessage(board.getWinner(), PlayerMessage("Victory!"));
+    board.sendMessage(board.getWinner(), PlayerMessage("Victory!"), MessageType::INFO);
     sync();
 }
 

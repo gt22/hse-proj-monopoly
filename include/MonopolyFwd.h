@@ -48,6 +48,13 @@ enum class TokenForMortgage : std::size_t {
     SHIP_M,
 };
 
+enum class MessageType : std::size_t {
+    INFO,
+    CHANCE,
+    PUBLIC_TREASURY,
+    DICE
+};
+
 class Player;
 class NetworkPlayer;
 class BotPlayer;

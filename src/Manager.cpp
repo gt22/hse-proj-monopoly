@@ -28,10 +28,10 @@ NumReply Manager::sendNumRequest(Token token) {
     throw 1; //TODO: сделать PlayerNotFoundException или что-нибудь такое
 }
 
-void Manager::sendMessage(Token token, PlayerMessage mes) {
+void Manager::sendMessage(Token token, PlayerMessage mes, MessageType type) {
     for(auto& p : players) {
         if(p->token == token) {
-            p->sendMessage(std::move(mes));
+            p->sendMessage(std::move(mes), type);
             return;
         }
     }

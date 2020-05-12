@@ -91,7 +91,8 @@ void GetMoneyFromOtherPlayers::apply(Token token) {
             continue;
         }
         board.sendMessage(board.getPlayers()[i].token, PlayerMessage("You must pay " + std::to_string(amount)
-                                                              + " to " + std::string(board.getPlayers()[i].name)));
+                                                              + " to " + std::string(board.getPlayers()[i].name)),
+                                                       MessageType::INFO);
         board.sync();
         payMoney->apply(board.getPlayers()[i].token);
         player.addMoney(amount);

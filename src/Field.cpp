@@ -24,53 +24,53 @@ GoToPrison::GoToPrison(Board &board, int position, std::string name)
 Chance::Chance(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {
     cards.resize(16);
-    cards[0] = new Teleport(board);
+    cards[0] = new Teleport(board, "Card #1");
     cards[0]->setPos(ARBAT_POS);
 
-    cards[1] = new Teleport(board);
+    cards[1] = new Teleport(board, "Card #2");
     cards[1]->setPos(RIGA_RAILWAY_POS);
 
-    cards[2] = new GetMoney(board);
+    cards[2] = new GetMoney(board, "Card #3");
     cards[2]->setAmount(150);
 
-    cards[3] = new Teleport(board);
+    cards[3] = new Teleport(board, "Card #4");
     cards[3]->setPos(MAYAKOVSKY_SQUARE);
 
     //TODO: cards[4]
-    cards[4] = new Teleport(board);
+    cards[4] = new Teleport(board, "Card #5");
     cards[4]->setPos(MAYAKOVSKY_SQUARE);
     //TODO: cards[4]
 
-    cards[5] = new TeleportToPrison(board);
+    cards[5] = new TeleportToPrison(board, "Card #6");
 
-    cards[6] = new Teleport(board);
+    cards[6] = new Teleport(board, "Card #7");
     cards[6]->setPos(START_POS);
 
-    cards[7] = new GetMoney(board);
+    cards[7] = new GetMoney(board, "Card #8");
     cards[7]->setAmount(50);
 
-    cards[8] = new PayMoney(board);
+    cards[8] = new PayMoney(board, "Card #9");
     cards[8]->setFlag(true);
 
-    cards[9] = new LeavePrisonForFree(board);
+    cards[9] = new LeavePrisonForFree(board, "Card #10");
 
-    cards[10] = new Teleport(board);
+    cards[10] = new Teleport(board, "Card #11");
     cards[10]->setPos(POLYANKA_POS);
 
     //TODO: fill vector cards!!!
-    cards[11] = new GetMoney(board, "");//50
+    cards[11] = new GetMoney(board, "Card #12");//50
     cards[11]->setAmount(50);
 
-    cards[12] = new GetMoney(board, "");//10
+    cards[12] = new GetMoney(board, "Card #13");//10
     cards[12]->setAmount(10);
 
-    cards[13] = new PayMoney(board, "");//30*buildings + 115*hotels
+    cards[13] = new PayMoney(board, "Card #14");//30*buildings + 115*hotels
     cards[13]->setFlag(true);
 
-    cards[14] = new Teleport(board, "");//to start
+    cards[14] = new Teleport(board, "Card #15");//to start
     cards[14]->setPos(START_POS);
 
-    cards[15] = new GetMoney(board, "");//200
+    cards[15] = new GetMoney(board, "Card #16");//200
     cards[15]->setAmount(200);
     //TODO: fill vector cards!!!
 }
@@ -79,50 +79,50 @@ PublicTreasury::PublicTreasury(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {
     cards.resize(16);
 
-    cards[0] = new LeavePrisonForFree(board);
+    cards[0] = new LeavePrisonForFree(board, "Card #1");
 
-    cards[1] = new PayMoney(board, "");//50
+    cards[1] = new PayMoney(board, "Card #2");//50
     cards[1]->setAmount(50);
 
     cards[2] = new GetMoney(board, "Holiday pay! Get 100");//100
     cards[2]->setAmount(100);
 
-    cards[3] = new GetMoney(board, "");//100
+    cards[3] = new GetMoney(board, "Card #4");//100
     cards[3]->setAmount(100);
 
-    cards[4] = new PayMoney(board, "");//50
+    cards[4] = new PayMoney(board, "Card #5");//50
     cards[4]->setAmount(50);
 
-    cards[5] = new GetMoney(board, "");//20
+    cards[5] = new GetMoney(board, "Card #6");//20
     cards[5]->setAmount(20);
 
-    cards[6] = new GetMoney(board, "");//100
+    cards[6] = new GetMoney(board, "Card #7");//100
     cards[6]->setAmount(100);
 
-    cards[7] = new TeleportToPrison(board, "");
+    cards[7] = new TeleportToPrison(board, "Card #8");
 
-    cards[8] = new GetMoney(board, "");//25
+    cards[8] = new GetMoney(board, "Card #9");//25
     cards[8]->setAmount(25);
 
-    cards[9] = new GetMoneyFromOtherPlayers(board, "");//10
+    cards[9] = new GetMoneyFromOtherPlayers(board, "Card #10");//10
     cards[9]->setAmount(10);
 
-    cards[10] = new GetMoney(board, "");//100
+    cards[10] = new GetMoney(board, "Card #11");//100
     cards[10]->setAmount(100);
 
-    cards[11] = new GetMoney(board, "");//50
+    cards[11] = new GetMoney(board, "Card #12");//50
     cards[11]->setAmount(50);
 
-    cards[12] = new GetMoney(board, "");//10
+    cards[12] = new GetMoney(board, "Card #13");//10
     cards[12]->setAmount(10);
 
-    cards[13] = new PayMoney(board, "");//30*buildings + 115*hotels
+    cards[13] = new PayMoney(board, "Card #14");//30*buildings + 115*hotels
     cards[13]->setFlag(true);
 
-    cards[14] = new Teleport(board, "");//to start
+    cards[14] = new Teleport(board, "Card #15");//to start
     cards[14]->setPos(START_POS);
 
-    cards[15] = new GetMoney(board, "");//200
+    cards[15] = new GetMoney(board, "Card #16");//200
     cards[15]->setAmount(200);
     //TODO: fill vector cards
 }
@@ -202,8 +202,8 @@ void makeDefaultRequest(PlayerRequest& r, Token token, Board& board) {
         r.availableActions.push_back(PlayerAction::SELL_FIELD);
         r.availableActions.push_back(PlayerAction::MORTGAGE_HOLDINGS);
     }
-    if (board.ckeckAllFieldsOfCol(token)) {
-        //TODO: ckeck
+    if (board.checkAllFieldsOfCol(token)) {
+        //TODO: check
         r.availableActions.push_back(PlayerAction::BUY_HOUSE);
         r.availableActions.push_back(PlayerAction::BUY_HOTEL);
     }
@@ -214,7 +214,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         PlayerData& player = tile.board.getPlayer(token);
         player.setLoser();
         tile.board.decrNumOfOlayers();
-        tile.board.sendMessage(token, PlayerMessage("lose"));
+        tile.board.sendMessage(token, PlayerMessage("lose"), MessageType::INFO);
         //TODO
         return false;
     }
@@ -225,15 +225,15 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         auto chosenField = tile.board.getFieldTile(index);
         if (token != chosenField->getOwner() || chosenField->getColor() == Color::NO_COL || chosenField->isMortgaged ||
             chosenField->getNumberOfHouses() >= 4 || chosenField->getNumberOfHotels() > 0) {
-            tile.board.sendMessage(token, PlayerMessage("You can't build house on this field tile"));
+            tile.board.sendMessage(token, PlayerMessage("You can't build house on this field tile"), MessageType::INFO);
             return true;
         }
         if (!tile.board.checkAllFieldsOfCurColor(token, index)) {
-            tile.board.sendMessage(token, PlayerMessage("You can't build house on this field tile"));
+            tile.board.sendMessage(token, PlayerMessage("You can't build house on this field tile"), MessageType::INFO);
             return true;
         }
         if (!checkPrevForHouse(index, tile.board)) {
-            tile.board.sendMessage(token, PlayerMessage("You can't build house on this field tile"));
+            tile.board.sendMessage(token, PlayerMessage("You can't build house on this field tile"), MessageType::INFO);
             return true;
         }
         PlayerData& player = chosenField->board.getPlayer(token);
@@ -242,7 +242,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
             player.numberOfHouses++;
             chosenField->addHouse();
         } else {
-            tile.board.sendMessage(token, PlayerMessage("You don't have enough money :("));
+            tile.board.sendMessage(token, PlayerMessage("You don't have enough money :("), MessageType::INFO);
         }
         return true;
     }
@@ -252,15 +252,15 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         auto chosenField = tile.board.getFieldTile(index);
         if (token != chosenField->getOwner() || chosenField->getColor() == Color::NO_COL || chosenField->isMortgaged ||
                 chosenField->getNumberOfHouses() < 4 || chosenField->getNumberOfHotels() > 0) {
-            tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"));
+            tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"), MessageType::INFO);
             return true;
         }
         if (!tile.board.checkAllFieldsOfCurColor(token, index)) {
-            tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"));
+            tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"), MessageType::INFO);
             return true;
         }
         if (!checkPrevForHotel(index, tile.board)) {
-            tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"));
+            tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"), MessageType::INFO);
             return true;
         }
         PlayerData& player = tile.board.getPlayer(token);
@@ -269,7 +269,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
             player.numberOfHotels++;
             chosenField->addHotel();
         } else {
-            tile.board.sendMessage(token, PlayerMessage("You don't have enough money :("));
+            tile.board.sendMessage(token, PlayerMessage("You don't have enough money :("), MessageType::INFO);
         }
         return true;
     }
@@ -279,7 +279,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         std::cout << numReply->num;
         int index = 11;
         if (tile.board.field[index]->getNumberOfHouses() != 0 && tile.board.field[index]->getNumberOfHotels() != 0) {
-            tile.board.sendMessage(token, PlayerMessage("You can't mortgage this field tile"));
+            tile.board.sendMessage(token, PlayerMessage("You can't mortgage this field tile"), MessageType::INFO);
             return true;
         }
         if (!tile.board.field[index]->isMortgaged && tile.board.field[index]->getOwner() == token) {
@@ -288,7 +288,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
             player.numberOfMortgagedProperty++;
             tile.board.field[index]->isMortgaged = true;
         } else {
-            tile.board.sendMessage(token, PlayerMessage("You can't mortgage this field tile"));
+            tile.board.sendMessage(token, PlayerMessage("You can't mortgage this field tile"), MessageType::INFO);
         }
         //get field tile
         //field tile ->
@@ -305,9 +305,9 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         PlayerData& player = tile.board.getPlayer(token);
         player.setLoser();
         if (!tile.board.isFinished()) {
-            tile.board.sendMessage(token, PlayerMessage("lose"));
+            tile.board.sendMessage(token, PlayerMessage("lose"), MessageType::INFO);
         } else {
-            tile.board.sendMessage(token, PlayerMessage("win!"));
+            tile.board.sendMessage(token, PlayerMessage("win!"), MessageType::INFO);
         }
         return false;
     }
@@ -321,10 +321,10 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
                 player.numberOfMortgagedProperty--;
                 tile.board.field[index]->isMortgaged = false;
             } else {
-                tile.board.sendMessage(token, PlayerMessage("You don't have enough money :("));
+                tile.board.sendMessage(token, PlayerMessage("You don't have enough money :("), MessageType::INFO);
             }
         } else {
-            tile.board.sendMessage(token, PlayerMessage("You can't buy back this field tile"));
+            tile.board.sendMessage(token, PlayerMessage("You can't buy back this field tile"), MessageType::INFO);
         }
         return true;
     }
@@ -333,7 +333,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         int index = 11;
         if (tile.board.field[index]->getNumberOfHouses() != 0 || tile.board.field[index]->getNumberOfHotels() != 0 ||
             tile.board.field[index]->getOwner() != token) {
-            tile.board.sendMessage(token, PlayerMessage("You can't sell this field tile"));
+            tile.board.sendMessage(token, PlayerMessage("You can't sell this field tile"), MessageType::INFO);
             return true;
         }
         //TODO checks
@@ -347,7 +347,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         int index = 11;
         if (tile.board.field[index]->getNumberOfHouses() == 0 || tile.board.field[index]->getNumberOfHotels() != 0 ||
             tile.board.field[index]->getOwner() != token) {
-            tile.board.sendMessage(token, PlayerMessage("You can't sell this building"));
+            tile.board.sendMessage(token, PlayerMessage("You can't sell this building"), MessageType::INFO);
             return true;
         }
         //TODO checks
@@ -360,7 +360,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         //TODO:send request for number of field
         int index = 11;
         if (tile.board.field[index]->getNumberOfHotels() == 0 || tile.board.field[index]->getOwner() != token) {
-            tile.board.sendMessage(token, PlayerMessage("You can't sell this hotel"));
+            tile.board.sendMessage(token, PlayerMessage("You can't sell this hotel"), MessageType::INFO);
             return true;
         }
         //TODO checks
@@ -510,8 +510,9 @@ void Chance::onPlayerEntry(Token token) {
             mustHave.erase(PlayerAction::TAKE_CARD);
             int firstThrow = rng.nextInt(1, 6), secondThrow = rng.nextInt(1, 6), thirdThrow = rng.nextInt(1, 6);
             std::size_t num = firstThrow + secondThrow + thirdThrow - 3;
-            board.sendMessage(token, PlayerMessage(std::to_string(firstThrow) + " " + std::to_string(secondThrow)
-                                                        + " " + std::to_string(thirdThrow) + "\n" + cards[num]->text));
+       //     board.sendMessage(token, PlayerMessage(std::to_string(firstThrow) + " " + std::to_string(secondThrow)
+         //                                               + " " + std::to_string(thirdThrow) + "\n" + cards[num]->text));
+            board.sendMessage(token, PlayerMessage(cards[num]->text), MessageType::CHANCE);
             try {
                 cards[num]->apply(player.token);
             } catch (...) {
@@ -549,8 +550,10 @@ void PublicTreasury::onPlayerEntry(Token token) {
             mustHave.erase(PlayerAction::TAKE_CARD);
             int firstThrow = rng.nextInt(1, 6), secondThrow = rng.nextInt(1, 6), thirdThrow = rng.nextInt(1, 6);
             std::size_t num = firstThrow + secondThrow + thirdThrow - 3;
-            board.sendMessage(token, PlayerMessage(std::to_string(firstThrow) + " " + std::to_string(secondThrow)
-                                                   + " " + std::to_string(thirdThrow) + "\n" + cards[num]->text));
+//            board.sendMessage(token, PlayerMessage(std::to_string(firstThrow) + " " + std::to_string(secondThrow)
+//                                                   + " " + std::to_string(thirdThrow) + "\n" + cards[num]->text));
+            board.sendMessage(token, PlayerMessage(cards[num]->text), MessageType::PUBLIC_TREASURY);
+
             try {
                 cards[num]->apply(player.token);
             } catch (...) {

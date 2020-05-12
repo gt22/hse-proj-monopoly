@@ -14,8 +14,8 @@ PlayerReply LocalPlayer::sendRequest(PlayerRequest request) {
     return gameView().processRequest(*this, request);
 }
 
-void LocalPlayer::sendMessage(PlayerMessage request) {
-    gameView().processMessage(*this, std::move(request));
+void LocalPlayer::sendMessage(PlayerMessage request, MessageType type) {
+    gameView().processMessage(*this, std::move(request), type);
 }
 
 NumReply LocalPlayer::sendNum() {

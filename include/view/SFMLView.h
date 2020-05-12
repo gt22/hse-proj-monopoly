@@ -178,7 +178,7 @@ public:
     PlayerReply processRequest(Player& p, PlayerRequest req);
     NumReply processNum(Player &p);
 
-    void processMessage(Player& p, PlayerMessage mes);
+    void processMessage(Player& p, PlayerMessage mes, MessageType type);
 private:
     void onResize(sf::Event::SizeEvent e);
 
@@ -221,9 +221,10 @@ private:
     PlayerReply curReply;
     NumReply curNum; //
 
-    // временный ужас
+
     sf::Text box;
     sf::Text message;
+    MessageType messageType;
 
     Token curTurnBy;
     bool shouldClose = false;

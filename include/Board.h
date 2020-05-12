@@ -65,7 +65,7 @@ public:
     const std::vector<PlayerData>& getPlayers() const;
     virtual PlayerReply sendRequest(Token token, PlayerRequest request) const;
     virtual NumReply sendNumRequest(Token token) const;
-    void sendMessage(Token token, PlayerMessage mes) const;
+    void sendMessage(Token token, PlayerMessage mes, MessageType type) const;
     std::size_t getPlayersNumber() const;
     void decrNumOfOlayers();
     bool isFinished() const;
@@ -75,7 +75,7 @@ public:
     FieldTile* getTile(std::size_t pos) const;
     bool checkAllFieldsOfCurColor(Token token, int ind) const;
     bool checkFieldWithoutBuildings(Token token) const;
-    bool ckeckAllFieldsOfCol(Token token) const;
+    bool checkAllFieldsOfCol(Token token) const;
 
     std::size_t getPlayerIndex() const;
     void setPlayerIndex(std::size_t num);

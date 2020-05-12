@@ -377,9 +377,27 @@ void SFMLView::drawPlayers(const BoardModel &board) {
 
 void SFMLView::drawMessage() {
     std::lock_guard g(requestMutex);
-    const auto& baseRect = shapes.fieldRects[0];
-    message.setCharacterSize(15);
-    message.setPosition(baseRect.getPosition() + baseRect.getPoint(1) + sf::Vector2f(5, -message.getLocalBounds().height * 2));
+    switch(messageType) {
+        case MessageType::CHANCE:
+            break;
+        case MessageType::PUBLIC_TREASURY:
+            break;
+        case MessageType::INFO:
+            {
+                const auto &baseRect = shapes.fieldRects[0];
+                message.setCharacterSize(15);
+                message.setPosition(baseRect.getPosition() + baseRect.getPoint(1) +
+                                sf::Vector2f(5, -message.getLocalBounds().height * 2));
+            }
+            break;
+        case MessageType::DICE:
+            {
+                auto[W, H] = window.getSize();
+                message.setCharacterSize(30);
+                message.setPosition(sf::Vector2f(float(W), float(H)) + sf::Vector2f(5, -message.getLocalBounds().height * 2));
+            }
+            break;
+    }
     window.draw(message);
 }
 
@@ -405,7 +423,7 @@ PlayerReply SFMLView::processRequest(Player &p, PlayerRequest req) {
     return std::move(curReply);
 }
 
-void SFMLView::processMessage(Player &p, PlayerMessage mes) {
+void SFMLView::processMessage(Player &p, PlayerMessage mes, MessageType type) {
     std::lock_guard g(requestMutex);
     message.setString(mes.message);
 }

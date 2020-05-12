@@ -14,7 +14,7 @@ public:
     explicit Player(Token token, std::string name);
     virtual ~Player() = default;
     virtual PlayerReply sendRequest(PlayerRequest request) = 0;
-    virtual void sendMessage(PlayerMessage request) = 0;
+    virtual void sendMessage(PlayerMessage request, MessageType type) = 0;
     virtual NumReply sendNum() = 0;
     virtual void sync(const Board& board) = 0;
 
@@ -25,7 +25,7 @@ public:
 class NetworkPlayer final : public Player {
 public:
     PlayerReply sendRequest(PlayerRequest request) override;
-    void sendMessage(PlayerMessage request) override;
+    void sendMessage(PlayerMessage request, MessageType type) override;
     NumReply sendNum() override;
     void sync(const Board& board) override;
 };
@@ -33,7 +33,7 @@ public:
 class BotPlayer final : public Player {
 public:
     PlayerReply sendRequest(PlayerRequest request) override;
-    void sendMessage(PlayerMessage request) override;
+    void sendMessage(PlayerMessage request, MessageType type) override;
     NumReply sendNum() override;
     void sync(const Board& board) override;
 };
@@ -42,7 +42,7 @@ class LocalPlayer final : public Player {
 public:
     explicit LocalPlayer(Token token, std::string name, SFMLView& view);
     PlayerReply sendRequest(PlayerRequest request) override;
-    void sendMessage(PlayerMessage request) override;
+    void sendMessage(PlayerMessage request, MessageType type) override;
     NumReply sendNum() override;
     void sync(const Board& board) override;
 

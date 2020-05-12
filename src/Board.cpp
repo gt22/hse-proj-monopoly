@@ -243,8 +243,8 @@ PlayerReply Board::sendRequest(Token token, PlayerRequest request) const {
     return game.sendRequest(token, std::move(request));
 }
 
-void Board::sendMessage(Token token, PlayerMessage mes) const {
-    game.sendMessage(token, std::move(mes));
+void Board::sendMessage(Token token, PlayerMessage mes, MessageType type) const {
+    game.sendMessage(token, std::move(mes), type);
 }
 
 std::size_t Board::getPlayersNumber() const {
@@ -331,7 +331,7 @@ bool Board::checkFieldWithoutBuildings(Token token) const {
     return false;
 }
 
-bool Board::ckeckAllFieldsOfCol(Token token) const {
+bool Board::checkAllFieldsOfCol(Token token) const {
     if (field[1]->getOwner() == token && field[3]->getOwner() == token) {
         return true;
     }
