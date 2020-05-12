@@ -55,15 +55,19 @@ void PayMoney::apply(Token token) {
         PlayerReply reply = board.sendRequest(player.token, request);
         board.sync();
         request.message = "";
-        if (reply->action == PlayerAction::END_TURN && !payTax) {
-            request.message = "You can't finish turn now";
-            continue;
+        if (reply->action == PlayerAction::END_TURN) {
+            if (!payTax) {
+                request.message = "You can't finish turn now";
+                continue;
+            }
+            return;
         }
         if (reply->action == PlayerAction::PAY_TAX) {
             if (player.getMoney() >= amount) {
                 player.addMoney(-amount);
                 amount = tmp;
-                return;
+                payTax = true;
+                continue;
             } else {
                 request.message = "You don't have enough money";
                 continue;
