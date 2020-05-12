@@ -220,8 +220,9 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     }
     if (reply->action == PlayerAction::BUY_HOUSE) {
         //TODO:send request for number of field
-
-        int index = 11;
+        NumReply numReply = tile.board.sendNumRequest(token);
+        std::cout << numReply->num;
+        int index = numReply->num;
         auto chosenField = tile.board.getFieldTile(index);
         if (token != chosenField->getOwner() || chosenField->getColor() == Color::NO_COL || chosenField->isMortgaged ||
             chosenField->getNumberOfHouses() >= 4 || chosenField->getNumberOfHotels() > 0) {
@@ -248,7 +249,9 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     }
     if (reply->action == PlayerAction::BUY_HOTEL) {
         //TODO:send request for number of field
-        int index = 11;
+        NumReply numReply = tile.board.sendNumRequest(token);
+        std::cout << numReply->num;
+        int index = numReply->num;
         auto chosenField = tile.board.getFieldTile(index);
         if (token != chosenField->getOwner() || chosenField->getColor() == Color::NO_COL || chosenField->isMortgaged ||
                 chosenField->getNumberOfHouses() < 4 || chosenField->getNumberOfHotels() > 0) {
@@ -277,7 +280,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         //TODO:send request for number of field
         NumReply numReply = tile.board.sendNumRequest(token);
         std::cout << numReply->num;
-        int index = 11;
+        int index = numReply->num;
         if (tile.board.field[index]->getNumberOfHouses() != 0 && tile.board.field[index]->getNumberOfHotels() != 0) {
             tile.board.sendMessage(token, PlayerMessage("You can't mortgage this field tile"), MessageType::INFO);
             return true;
@@ -313,7 +316,9 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     }
     if (reply->action == PlayerAction::BUY_BACK_PROPERTY) {
         //TODO:send request for number of field
-        int index = 11;
+        NumReply numReply = tile.board.sendNumRequest(token);
+        std::cout << numReply->num;
+        int index = numReply->num;
         if (tile.board.field[index]->isMortgaged && tile.board.field[index]->getOwner() == token) {
             PlayerData& player = tile.board.getPlayer(token);
             if ((double)player.getMoney() >= 1.1 * (double)tile.getMortgageCost()) {
@@ -330,7 +335,9 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     }
     if (reply->action == PlayerAction::SELL_FIELD) {
         //TODO:send request for number of field
-        int index = 11;
+        NumReply numReply = tile.board.sendNumRequest(token);
+        std::cout << numReply->num;
+        int index = numReply->num;
         if (tile.board.field[index]->getNumberOfHouses() != 0 || tile.board.field[index]->getNumberOfHotels() != 0 ||
             tile.board.field[index]->getOwner() != token) {
             tile.board.sendMessage(token, PlayerMessage("You can't sell this field tile"), MessageType::INFO);
@@ -344,7 +351,9 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     }
     if (reply->action == PlayerAction::SELL_HOUSE) {
         //TODO:send request for number of field
-        int index = 11;
+        NumReply numReply = tile.board.sendNumRequest(token);
+        std::cout << numReply->num;
+        int index = numReply->num;
         if (tile.board.field[index]->getNumberOfHouses() == 0 || tile.board.field[index]->getNumberOfHotels() != 0 ||
             tile.board.field[index]->getOwner() != token) {
             tile.board.sendMessage(token, PlayerMessage("You can't sell this building"), MessageType::INFO);
@@ -358,7 +367,9 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     }
     if (reply->action == PlayerAction::SELL_HOTEL) {
         //TODO:send request for number of field
-        int index = 11;
+        NumReply numReply = tile.board.sendNumRequest(token);
+        std::cout << numReply->num;
+        int index = numReply->num;
         if (tile.board.field[index]->getNumberOfHotels() == 0 || tile.board.field[index]->getOwner() != token) {
             tile.board.sendMessage(token, PlayerMessage("You can't sell this hotel"), MessageType::INFO);
             return true;
