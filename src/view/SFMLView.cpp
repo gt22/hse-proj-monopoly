@@ -64,7 +64,6 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
     message.setCharacterSize(20);
     message.setFillColor(sf::Color::White);
 
-    // sprite button
 
     addActionButton(PlayerAction::END_TURN,
                     "images/END_TURN.png",
@@ -134,11 +133,21 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
         box.setString(std::string(this->tooltips.getTooltip(e)));
         box.setPosition(sf::Vector2f(20, window.getSize().y - box.getLocalBounds().height * 2));
     });
-    events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e) {
-        buttons.handle(e);
-    });
+
 
     onResize({window.getSize().x, window.getSize().y});
+
+    events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e) {
+        buttons.handle(e);
+        if (e.button == sf::Mouse::Left) {
+            for (std::size_t i = 0; i < fieldButtons.fieldButtons.size(); i++) {
+                if (fieldButtons.fieldButtons[i].isValidTarget(e)) {
+                    makeNumReply(std::make_unique<NumReplyData>(i));
+                    break;
+                }
+            }
+        }
+    });
 
     //TODO: temp
     curTurnBy = Token::DOG;
@@ -223,7 +232,6 @@ void SFMLView::drawField(const BoardModel &board) {
                 case 2: ownerLabel.setPosition(viewTile.getPosition() + sf::Vector2f(w - size, h - size)); break;
                 case 3: ownerLabel.setPosition(viewTile.getPosition() + sf::Vector2f(0, w - size)); break;
             }
-            //ownerLabel.setPosition(viewTile.getPosition());
             window.draw(ownerLabel);
         }
 
@@ -458,15 +466,12 @@ void SFMLView::processMessage(Player &p, PlayerMessage mes, MessageType type) {
 }
 
 NumReply SFMLView::processNum(Player &p) {
-    std::cout << "\n 1 line of SFMLView::processNum \n";
     std::unique_lock g(requestMutex);
-    std::cout << "\n 2 line of SFMLView::processNum \n";
-    makeNumReply(std::make_unique<NumReplyData>(2));
-    std::cout << "\n 3 line of SFMLView::processNum \n";
+    for (auto& [act, btn] : actionButtons) {
+        btn.deactivate();
+    }
     requestCond.wait(g, [this]() { return bool(this->curNum); });
-    std::cout << "\n 4 line of SFMLView::processNum \n";
     assert(curNum);
-    std::cout << "\n 5 line of SFMLView::processNum \n";
     return std::move(curNum);
 }
 
@@ -534,7 +539,9 @@ void SFMLView::onResize(sf::Event::SizeEvent e) {
                 tile.setSize({ss, ls});
             }
         }
-
+        auto [x, y] = shapes.fieldRects[i].getPosition();
+        auto [w, h] = shapes.fieldRects[i].getSize();
+        fieldButtons.fieldButtons[i].setSize(x, y, w, h);
     }
 
     const auto& baseRect = shapes.fieldRects[0];
@@ -560,7 +567,6 @@ void SFMLView::onResize(sf::Event::SizeEvent e) {
                 message.setPosition(sf::Vector2f(float(W) / 2, float(H) / 2));
             }
             break;
-
     }
 
 }
@@ -581,8 +587,7 @@ void SFMLView::drawMoney(const BoardModel &board) {
         auto& [mt, tok] = moneyTexts[i];
         mt.setPosition(W - maxW - shift, 10 + static_cast<float>(i + 1) * maxH);
         sf::CircleShape p(maxH / 4);
-        moneyTextY = 10 + static_cast<float>(i + 1) * maxH + mt.getLocalBounds().top + maxH / 4;
-        p.setPosition(W - maxW - maxH / 2 - shift, moneyTextY);
+        p.setPosition(W - maxW - maxH / 2 - shift, 10 + static_cast<float>(i + 1) * maxH + mt.getLocalBounds().top + maxH / 4);
         p.setFillColor(getColor(tok));
         window.draw(mt);
         window.draw(p);
@@ -598,7 +603,6 @@ void SFMLView::handleRequest() {
         req = std::move(curRequest.value());
         curRequest.reset();
     }
-   // curTurnBy =
     for (auto& [act, btn] : actionButtons) {
         btn.deactivate();
     }
@@ -662,9 +666,9 @@ void SFMLView::makeReply(PlayerReply rep) {
 }
 
 void SFMLView::makeNumReply(NumReply rep) {
-  //  std::lock_guard g(requestMutex);
+    std::lock_guard g(requestMutex);
     curNum = std::move(rep);
-    numCond.notify_all();
+    requestCond.notify_all();
 }
 
 void SFMLView::addActionButton(PlayerAction action,

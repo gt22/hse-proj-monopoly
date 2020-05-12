@@ -24,6 +24,13 @@ struct ShapeHolder {
 
 };
 
+struct ButtonHolder {
+
+    std::array<FieldButton, Board::FIELD_SIZE> fieldButtons;
+
+};
+
+/*
 class ButtonImage {
 public:
     ButtonImage() = default;
@@ -165,7 +172,7 @@ private:
 
     int buttonWidth;
     int buttonHeight;
-};
+};*/
 
 
 class SFMLView {
@@ -189,7 +196,7 @@ private:
     void draw();
     void handleRequest();
     void makeReply(PlayerReply rep);
-    void makeNumReply(NumReply rep); //
+    void makeNumReply(NumReply rep);
     BoardModel getModel();
 
     void addActionButton(PlayerAction action, const std::string& texture,
@@ -210,21 +217,20 @@ private:
 
     std::unordered_map<PlayerAction, SpriteButton&> actionButtons;
     ShapeHolder shapes;
+    ButtonHolder fieldButtons;
     sf::RenderWindow window;
     sf::Font mainFont;
     std::mutex boardMutex, windowMutex, requestMutex;
     std::condition_variable requestCond;
-    std::condition_variable numCond; //
     BoardModel model;
 
     std::optional<PlayerRequest> curRequest;
     PlayerReply curReply;
-    NumReply curNum; //
+    NumReply curNum;
 
 
     sf::Text box;
     sf::Text message;
-    float moneyTextY;
     MessageType messageType;
 
     Token curTurnBy;

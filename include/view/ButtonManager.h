@@ -48,4 +48,24 @@ private:
     std::vector<std::pair<std::unique_ptr<Button>, Handler>> buttons;
 };
 
+class FieldButton {
+public:
+    void setSize(int x, int y, int w, int h) {
+        startX = x;
+        startY = y;
+        width = w;
+        height = h;
+    }
+
+    bool isValidTarget(sf::Event::MouseButtonEvent mouse) const {
+        auto[button, x, y] = mouse;
+        return startX <= x && x <= startX + width &&
+               startY <= y  && y <= startY + height;
+    }
+private:
+    int startX, startY;
+    int width, height;
+
+};
+
 #endif //BUTTONMANAGER_H
