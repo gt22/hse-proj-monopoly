@@ -176,6 +176,8 @@ public:
 
     void redraw(const Board& board);
     PlayerReply processRequest(Player& p, PlayerRequest req);
+    NumReply processNum(Player &p);
+
     void processMessage(Player& p, PlayerMessage mes);
 private:
     void onResize(sf::Event::SizeEvent e);
@@ -187,6 +189,7 @@ private:
     void draw();
     void handleRequest();
     void makeReply(PlayerReply rep);
+    void makeNumReply(NumReply rep); //
     BoardModel getModel();
 
     void addActionButton(PlayerAction action, const std::string& texture,
@@ -211,10 +214,12 @@ private:
     sf::Font mainFont;
     std::mutex boardMutex, windowMutex, requestMutex;
     std::condition_variable requestCond;
+    std::condition_variable numCond; //
     BoardModel model;
 
     std::optional<PlayerRequest> curRequest;
     PlayerReply curReply;
+    NumReply curNum; //
 
     // временный ужас
     sf::Text box;

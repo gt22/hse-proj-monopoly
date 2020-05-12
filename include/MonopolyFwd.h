@@ -55,8 +55,10 @@ class LocalPlayer;
 
 struct PlayerRequest;
 struct PlayerReplyData;
+struct NumReplyData;
 struct PlayerMessage;
 typedef std::unique_ptr<PlayerReplyData> PlayerReply;
+typedef std::unique_ptr<NumReplyData> NumReply;
 
 class RandomSource;
 

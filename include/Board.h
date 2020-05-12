@@ -64,6 +64,7 @@ public:
     Token getPlayerToken(std::size_t index) const;
     const std::vector<PlayerData>& getPlayers() const;
     virtual PlayerReply sendRequest(Token token, PlayerRequest request) const;
+    virtual NumReply sendNumRequest(Token token) const;
     void sendMessage(Token token, PlayerMessage mes) const;
     std::size_t getPlayersNumber() const;
     void decrNumOfOlayers();

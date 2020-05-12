@@ -20,6 +20,7 @@ public:
     bool isGameStarted();
     Board& getBoard();
     PlayerReply sendRequest(Token token, PlayerRequest request);
+    NumReply sendNumRequest(Token token);
     void sendMessage(Token token, PlayerMessage request);
     void sync(const Board& board);
 private:

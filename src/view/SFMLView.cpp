@@ -410,6 +410,19 @@ void SFMLView::processMessage(Player &p, PlayerMessage mes) {
     message.setString(mes.message);
 }
 
+NumReply SFMLView::processNum(Player &p) {
+    std::cout << "\n 1 line of SFMLView::processNum \n";
+    std::unique_lock g(requestMutex);
+    std::cout << "\n 2 line of SFMLView::processNum \n";
+    makeNumReply(std::make_unique<NumReplyData>(2));
+    std::cout << "\n 3 line of SFMLView::processNum \n";
+    requestCond.wait(g, [this]() { return bool(this->curNum); });
+    std::cout << "\n 4 line of SFMLView::processNum \n";
+    assert(curNum);
+    std::cout << "\n 5 line of SFMLView::processNum \n";
+    return std::move(curNum);
+}
+
 
 void SFMLView::onResize(sf::Event::SizeEvent e) {
     auto[m, M] = e;
@@ -576,6 +589,12 @@ void SFMLView::makeReply(PlayerReply rep) {
     requestCond.notify_all();
 }
 
+void SFMLView::makeNumReply(NumReply rep) {
+  //  std::lock_guard g(requestMutex);
+    curNum = std::move(rep);
+    numCond.notify_all();
+}
+
 void SFMLView::addActionButton(PlayerAction action,
                                const std::string& texture,
                                std::string tooltip,
@@ -591,5 +610,9 @@ void SFMLView::addActionButton(PlayerAction action,
     tooltips.addTooltip({std::move(tooltip), x, y, w, h});
     buttons.addButton(std::move(btn), [handler](auto e) { handler(); return true; });
 }
+
+
+
+
 
 

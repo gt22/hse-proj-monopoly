@@ -19,6 +19,15 @@ PlayerReply Manager::sendRequest(Token token, PlayerRequest request) {
     throw 1; //TODO: сделать PlayerNotFoundException или что-нибудь такое
 }
 
+NumReply Manager::sendNumRequest(Token token) {
+    for(auto& p : players) {
+        if(p->token == token) {
+            return p->sendNum();
+        }
+    }
+    throw 1; //TODO: сделать PlayerNotFoundException или что-нибудь такое
+}
+
 void Manager::sendMessage(Token token, PlayerMessage mes) {
     for(auto& p : players) {
         if(p->token == token) {
@@ -77,6 +86,7 @@ Manager::~Manager() {
         gameThread.join();
     }
 }
+
 
 
 

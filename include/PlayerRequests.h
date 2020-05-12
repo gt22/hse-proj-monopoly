@@ -45,6 +45,12 @@ struct PlayerReplyData {
     const PlayerAction action;
 };
 
+struct NumReplyData {
+    explicit NumReplyData(std::size_t num);
+    virtual ~NumReplyData() = default;
+    std::size_t num;
+};
+
 template<PlayerAction ACTION>
 struct BasicReply : PlayerReplyData {
     BasicReply() : PlayerReplyData(ACTION) {}

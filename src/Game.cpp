@@ -3,6 +3,7 @@
 #include <utility>
 #include "Manager.h"
 
+
 Game::Game(const std::vector<std::pair<std::string_view, Token>> &players, Manager& manager)
     : board(players, *this), manager(manager) { }
 
@@ -70,4 +71,10 @@ Board& Game::getBoard() {
 
 void Game::sync() {
     manager.sync(board);
+}
+
+NumReply Game::sendNumRequest(Token token) {
+    sync();
+    NumReply rep = manager.sendNumRequest(token);
+    return rep;
 }

@@ -9,3 +9,5 @@ PlayerRequest::PlayerRequest(std::vector<PlayerAction> availableActions,
 PlayerMessage::PlayerMessage(std::string message) : message(std::move(message)) {}
 
 PlayerReplyData::PlayerReplyData(PlayerAction action) : action(action) {}
+
+NumReplyData::NumReplyData(std::size_t num) : num(num) {}

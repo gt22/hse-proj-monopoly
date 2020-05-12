@@ -18,6 +18,10 @@ void LocalPlayer::sendMessage(PlayerMessage request) {
     gameView().processMessage(*this, std::move(request));
 }
 
+NumReply LocalPlayer::sendNum() {
+    return gameView().processNum(*this);
+}
+
 void LocalPlayer::sync(const Board &board) {
     gameView().redraw(board);
 }
@@ -25,3 +29,5 @@ void LocalPlayer::sync(const Board &board) {
 SFMLView& LocalPlayer::gameView() {
     return view;
 }
+
+

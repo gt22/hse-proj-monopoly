@@ -220,6 +220,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     }
     if (reply->action == PlayerAction::BUY_HOUSE) {
         //TODO:send request for number of field
+
         int index = 11;
         auto chosenField = tile.board.getFieldTile(index);
         if (token != chosenField->getOwner() || chosenField->getColor() == Color::NO_COL || chosenField->isMortgaged ||
@@ -274,6 +275,8 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     }
     if (reply->action == PlayerAction::MORTGAGE_HOLDINGS) {
         //TODO:send request for number of field
+        NumReply numReply = tile.board.sendNumRequest(token);
+        std::cout << numReply->num;
         int index = 11;
         if (tile.board.field[index]->getNumberOfHouses() != 0 && tile.board.field[index]->getNumberOfHotels() != 0) {
             tile.board.sendMessage(token, PlayerMessage("You can't mortgage this field tile"));

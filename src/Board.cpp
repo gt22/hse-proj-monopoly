@@ -4,6 +4,7 @@
 #include "Field.h"
 #include "Game.h"
 
+
 PlayerData::PlayerData(std::string_view name, Token token) : name(name), token(token) {}
 
 int PlayerData::getMoney() {
@@ -362,6 +363,10 @@ bool Board::ckeckAllFieldsOfCol(Token token) const {
         return true;
     }
     return false;
+}
+
+NumReply Board::sendNumRequest(Token token) const {
+    return game.sendNumRequest(token);
 }
 
 int countPrevForColor(int ind, const Board& board) {
