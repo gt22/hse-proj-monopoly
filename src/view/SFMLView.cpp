@@ -60,9 +60,15 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
     box.setFont(mainFont);
     box.setCharacterSize(15);
     box.setFillColor(sf::Color::White);
-    message.setFont(mainFont);
-    message.setCharacterSize(20);
-    message.setFillColor(sf::Color::White);
+    messageInfo.setFont(mainFont);
+    messageInfo.setCharacterSize(20);
+    messageInfo.setFillColor(sf::Color::White);
+    messageChance.setFont(mainFont);
+    messageChance.setCharacterSize(20);
+    messageChance.setFillColor(sf::Color::White);
+    messageDice.setFont(mainFont);
+    messageDice.setCharacterSize(20);
+    messageDice.setFillColor(sf::Color::White);
 
     // sprite button
 
@@ -385,20 +391,23 @@ void SFMLView::drawMessage() {
         case MessageType::INFO:
             {
                 const auto &baseRect = shapes.fieldRects[0];
-                message.setCharacterSize(15);
-                message.setPosition(baseRect.getPosition() + baseRect.getPoint(1) +
-                                sf::Vector2f(5, -message.getLocalBounds().height * 2));
+                messageInfo.setCharacterSize(15);
+                messageInfo.setPosition(baseRect.getPosition() + baseRect.getPoint(1) +
+                                sf::Vector2f(5, -messageInfo.getLocalBounds().height * 2));
             }
             break;
         case MessageType::DICE:
             {
                 auto[W, H] = window.getSize();
-                message.setCharacterSize(30);
-                message.setPosition(sf::Vector2f(float(W), float(H)) + sf::Vector2f(5, -message.getLocalBounds().height * 2));
+                messageDice.setCharacterSize(30);
+                auto[nx, ny, nw, nh] = messageDice.getLocalBounds();
+                messageDice.setOrigin(nx + nw / 2, ny + nh / 2);
+                messageDice.setPosition(sf::Vector2f(float(W) / 2, float(H) / 2));
             }
             break;
     }
-    window.draw(message);
+    window.draw(messageDice);
+    window.draw(messageInfo);
 }
 
 
@@ -425,7 +434,21 @@ PlayerReply SFMLView::processRequest(Player &p, PlayerRequest req) {
 
 void SFMLView::processMessage(Player &p, PlayerMessage mes, MessageType type) {
     std::lock_guard g(requestMutex);
-    message.setString(mes.message);
+    messageType = type;
+    switch(messageType) {
+        case MessageType::INFO:
+            messageInfo.setString(mes.message);
+            break;
+        case MessageType::CHANCE:
+            messageChance.setString(mes.message);
+            break;
+        case MessageType::PUBLIC_TREASURY:
+            messageChance.setString(mes.message);
+            break;
+        case MessageType::DICE:
+            messageDice.setString(mes.message);
+            break;
+    }
 }
 
 NumReply SFMLView::processNum(Player &p) {
@@ -509,7 +532,7 @@ void SFMLView::onResize(sf::Event::SizeEvent e) {
     }
 
     const auto& baseRect = shapes.fieldRects[0];
-    message.setPosition(baseRect.getPosition() + baseRect.getPoint(1) + sf::Vector2f(5, -message.getLocalBounds().height * 2));
+    messageInfo.setPosition(baseRect.getPosition() + baseRect.getPoint(1) + sf::Vector2f(5, -messageInfo.getLocalBounds().height * 2));
 }
 
 void SFMLView::drawMoney(const BoardModel &board) {

@@ -223,7 +223,7 @@ private:
 
 
     sf::Text box;
-    sf::Text message;
+    sf::Text messageInfo, messageChance, messageDice;
     MessageType messageType;
 
     Token curTurnBy;
