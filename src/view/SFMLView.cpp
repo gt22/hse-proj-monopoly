@@ -60,15 +60,9 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
     box.setFont(mainFont);
     box.setCharacterSize(15);
     box.setFillColor(sf::Color::White);
-    messageInfo.setFont(mainFont);
-    messageInfo.setCharacterSize(20);
-    messageInfo.setFillColor(sf::Color::White);
-    messageChance.setFont(mainFont);
-    messageChance.setCharacterSize(20);
-    messageChance.setFillColor(sf::Color::White);
-    messageDice.setFont(mainFont);
-    messageDice.setCharacterSize(20);
-    messageDice.setFillColor(sf::Color::White);
+    message.setFont(mainFont);
+    message.setCharacterSize(20);
+    message.setFillColor(sf::Color::White);
 
     // sprite button
 
@@ -213,17 +207,23 @@ void SFMLView::drawField(const BoardModel &board) {
                 case 0: colorRect.setPosition(viewTile.getPosition() + sf::Vector2f(w - size, 0)); break;
                 case 1: colorRect.setPosition(viewTile.getPosition() + sf::Vector2f(h, w - size)); break;
                 case 2: colorRect.setPosition(viewTile.getPosition()); break;
-                case 3: colorRect.setPosition(viewTile.getPosition() + sf::Vector2f(h, 0));
+                case 3: colorRect.setPosition(viewTile.getPosition() + sf::Vector2f(h, 0)); break;
             }
             window.draw(colorRect);
         }
 
         if (fieldTile.owner.has_value()) {
             sf::Color color = getColor(fieldTile.owner.value());
-            sf::RectangleShape ownerLabel(sf::Vector2f(w / 6, w / 6));
-//        //    p.setOrigin(p.getRadius(), p.getRadius());
+            const float size = w / 6;
+            sf::RectangleShape ownerLabel(sf::Vector2f(size, size));
             ownerLabel.setFillColor(color);
-            ownerLabel.setPosition(viewTile.getPosition() /*+ sf::Vector2f(w / 9, w / 9) */);
+            switch(i / 10) {
+                case 0: ownerLabel.setPosition(viewTile.getPosition()); break;
+                case 1: ownerLabel.setPosition(viewTile.getPosition() + sf::Vector2f(h - size, 0)); break;
+                case 2: ownerLabel.setPosition(viewTile.getPosition() + sf::Vector2f(w - size, h - size)); break;
+                case 3: ownerLabel.setPosition(viewTile.getPosition() + sf::Vector2f(0, w - size)); break;
+            }
+            //ownerLabel.setPosition(viewTile.getPosition());
             window.draw(ownerLabel);
         }
 
@@ -385,29 +385,42 @@ void SFMLView::drawMessage() {
     std::lock_guard g(requestMutex);
     switch(messageType) {
         case MessageType::CHANCE:
+            {
+                auto[W, H] = window.getSize();
+                message.setCharacterSize(20);
+                auto[nx, ny, nw, nh] = message.getLocalBounds();
+                message.setOrigin(nx + nw / 2, ny + nh / 2);
+                message.setPosition(sf::Vector2f(float(W) / 2, float(H) / 2));
+            }
             break;
         case MessageType::PUBLIC_TREASURY:
+            {
+                auto[W, H] = window.getSize();
+                message.setCharacterSize(20);
+                auto[nx, ny, nw, nh] = message.getLocalBounds();
+                message.setOrigin(nx + nw / 2, ny + nh / 2);
+                message.setPosition(sf::Vector2f(float(W) / 2, float(H) / 2));
+            }
             break;
         case MessageType::INFO:
             {
                 const auto &baseRect = shapes.fieldRects[0];
-                messageInfo.setCharacterSize(15);
-                messageInfo.setPosition(baseRect.getPosition() + baseRect.getPoint(1) +
-                                sf::Vector2f(5, -messageInfo.getLocalBounds().height * 2));
+                message.setCharacterSize(15);
+                message.setPosition(baseRect.getPosition() + baseRect.getPoint(1) +
+                                sf::Vector2f(5, -message.getLocalBounds().height * 2));
             }
             break;
         case MessageType::DICE:
             {
                 auto[W, H] = window.getSize();
-                messageDice.setCharacterSize(30);
-                auto[nx, ny, nw, nh] = messageDice.getLocalBounds();
-                messageDice.setOrigin(nx + nw / 2, ny + nh / 2);
-                messageDice.setPosition(sf::Vector2f(float(W) / 2, float(H) / 2));
+                message.setCharacterSize(30);
+                auto[nx, ny, nw, nh] = message.getLocalBounds();
+                message.setOrigin(nx + nw / 2, ny + nh / 2);
+                message.setPosition(sf::Vector2f(float(W) / 2, float(H) / 2));
             }
             break;
     }
-    window.draw(messageDice);
-    window.draw(messageInfo);
+    window.draw(message);
 }
 
 
@@ -435,20 +448,13 @@ PlayerReply SFMLView::processRequest(Player &p, PlayerRequest req) {
 void SFMLView::processMessage(Player &p, PlayerMessage mes, MessageType type) {
     std::lock_guard g(requestMutex);
     messageType = type;
-    switch(messageType) {
-        case MessageType::INFO:
-            messageInfo.setString(mes.message);
-            break;
-        case MessageType::CHANCE:
-            messageChance.setString(mes.message);
-            break;
-        case MessageType::PUBLIC_TREASURY:
-            messageChance.setString(mes.message);
-            break;
-        case MessageType::DICE:
-            messageDice.setString(mes.message);
-            break;
-    }
+    if (type == MessageType::CHANCE) {
+        message.setString("CHANCE\n" + mes.message);
+    } else if (type == MessageType::PUBLIC_TREASURY) {
+        message.setString("PUBLIC TREASURY\n" + mes.message);
+    } else
+        message.setString(mes.message);
+
 }
 
 NumReply SFMLView::processNum(Player &p) {
@@ -532,7 +538,31 @@ void SFMLView::onResize(sf::Event::SizeEvent e) {
     }
 
     const auto& baseRect = shapes.fieldRects[0];
-    messageInfo.setPosition(baseRect.getPosition() + baseRect.getPoint(1) + sf::Vector2f(5, -messageInfo.getLocalBounds().height * 2));
+    switch(messageType) {
+        case MessageType::INFO:
+            message.setPosition(baseRect.getPosition() + baseRect.getPoint(1) + sf::Vector2f(5, -message.getLocalBounds().height * 2));
+            break;
+        case MessageType::DICE:
+            {
+                auto[W, H] = window.getSize();
+                message.setPosition(sf::Vector2f(float(W) / 2, float(H) / 2));
+            }
+            break;
+        case MessageType::CHANCE:
+            {
+                auto[W, H] = window.getSize();
+                message.setPosition(sf::Vector2f(float(W) / 2, float(H) / 2));
+            }
+            break;
+        case MessageType::PUBLIC_TREASURY:
+            {
+                auto[W, H] = window.getSize();
+                message.setPosition(sf::Vector2f(float(W) / 2, float(H) / 2));
+            }
+            break;
+
+    }
+
 }
 
 void SFMLView::drawMoney(const BoardModel &board) {
@@ -551,7 +581,8 @@ void SFMLView::drawMoney(const BoardModel &board) {
         auto& [mt, tok] = moneyTexts[i];
         mt.setPosition(W - maxW - shift, 10 + static_cast<float>(i + 1) * maxH);
         sf::CircleShape p(maxH / 4);
-        p.setPosition(W - maxW - maxH / 2 - shift, 10 + static_cast<float>(i + 1) * maxH + mt.getLocalBounds().top + maxH / 4);
+        moneyTextY = 10 + static_cast<float>(i + 1) * maxH + mt.getLocalBounds().top + maxH / 4;
+        p.setPosition(W - maxW - maxH / 2 - shift, moneyTextY);
         p.setFillColor(getColor(tok));
         window.draw(mt);
         window.draw(p);

@@ -223,7 +223,8 @@ private:
 
 
     sf::Text box;
-    sf::Text messageInfo, messageChance, messageDice;
+    sf::Text message;
+    float moneyTextY;
     MessageType messageType;
 
     Token curTurnBy;
