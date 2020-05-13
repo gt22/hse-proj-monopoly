@@ -508,6 +508,9 @@ void Chance::onPlayerEntry(Token token) {
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
+        if (!takeCard) {
+            request.availableActions.push_back(PlayerAction::TAKE_CARD);
+        }
         //addAll(request.availableActions, mustHave);
         PlayerReply reply = board.sendRequest(token, request);
         request.message = "";
@@ -527,7 +530,8 @@ void Chance::onPlayerEntry(Token token) {
          //                                               + " " + std::to_string(thirdThrow) + "\n" + cards[num]->text));
             board.sendMessage(token, PlayerMessage(cards[num]->text), MessageType::CHANCE);
             try {
-                cards[num]->apply(player.token);
+                //cards[num]->apply(player.token);
+                cards[8]->apply(player.token);
             } catch (...) {
                 throw std::out_of_range("card num " + std::to_string(num));
             }

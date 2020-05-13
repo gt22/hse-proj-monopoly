@@ -51,15 +51,19 @@ void PayMoney::apply(Token token) {
     }
     while (true) {
         makeDefaultRequest(request, token, board);
-        request.availableActions.push_back(PlayerAction::PAY_TAX);
+        if (!payTax) {
+            request.availableActions.push_back(PlayerAction::PAY_TAX);
+        }
         PlayerReply reply = board.sendRequest(player.token, request);
         board.sync();
         request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
+            std::cout << "card PayMoney END_TURN\n";
             if (!payTax) {
                 request.message = "You can't finish turn now";
                 continue;
             }
+            std::cout << "      return\n";
             return;
         }
         if (reply->action == PlayerAction::PAY_TAX) {
