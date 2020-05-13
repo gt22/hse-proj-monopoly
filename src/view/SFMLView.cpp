@@ -242,46 +242,47 @@ void SFMLView::drawField(const BoardModel &board) {
             }
             window.draw(ownerLabel);
         }
-
-        std::string s = std::string(fieldTile.name);
-        sf::Text name(s, mainFont);
-        int fsize = 11;
-        name.setCharacterSize(fsize);
-        while (!doesFit(name, h * 0.8f)) {
-            auto lastSpace = s.rfind(' ');
-            if (lastSpace == std::string::npos) break;
-            s.replace(lastSpace, 1, "\n");
-            name.setString(s);
-        }
-        while (doesFit(name, h * 0.7f)) {
-            name.setCharacterSize(++fsize);
-        }
-        auto[nx, ny, nw, nh] = name.getLocalBounds();
-        const float align = ((h - nw) / 2);
         if (i % 10 == 0) {
-            name.setOrigin(nx + nw / 2, ny + nh / 2);
-            name.setPosition(x + h / 2, y + w / 2);
-            name.rotate(isSide ? 45 : -45);
-        } else {
-            switch (i / 10) {
-                case 0:
-                    name.rotate(+90);
-                    name.setPosition(x + w - shift, y + align);
-                    break;
-                case 1:
-                    name.setPosition(x + align, y + h - shift - nh / 2);
-                    break;
-                case 2:
-                    name.rotate(-90);
-                    name.setPosition(x + shift, y + h - align);
-                    break;
-                case 3:
-                    name.setPosition(x + align, y + shift);
-                    break;
+            std::string s = std::string(fieldTile.name);
+            sf::Text name(s, mainFont);
+            int fsize = 11;
+            name.setCharacterSize(fsize);
+            while (!doesFit(name, h * 0.8f)) {
+                auto lastSpace = s.rfind(' ');
+                if (lastSpace == std::string::npos) break;
+                s.replace(lastSpace, 1, "\n");
+                name.setString(s);
             }
-        }
+            while (doesFit(name, h * 0.7f)) {
+                name.setCharacterSize(++fsize);
+            }
+            auto[nx, ny, nw, nh] = name.getLocalBounds();
+            const float align = ((h - nw) / 2);
+            if (i % 10 == 0) {
+                name.setOrigin(nx + nw / 2, ny + nh / 2);
+                name.setPosition(x + h / 2, y + w / 2);
+                name.rotate(isSide ? 45 : -45);
+            } else {
+                switch (i / 10) {
+                    case 0:
+                        name.rotate(+90);
+                        name.setPosition(x + w - shift, y + align);
+                        break;
+                    case 1:
+                        name.setPosition(x + align, y + h - shift - nh / 2);
+                        break;
+                    case 2:
+                        name.rotate(-90);
+                        name.setPosition(x + shift, y + h - align);
+                        break;
+                    case 3:
+                        name.setPosition(x + align, y + shift);
+                        break;
+                }
+            }
 
-        window.draw(name);
+            window.draw(name);
+        }
     }
     {
         sf::Text curTurn("Cur turn by: ", mainFont);
