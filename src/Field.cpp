@@ -501,24 +501,26 @@ void Chance::onPlayerEntry(Token token) {
     PlayerData& player = board.getPlayer(token);
     RandomSource rng;
     PlayerRequest request;
-    std::set<PlayerAction> mustHave = { PlayerAction::TAKE_CARD };
+    //std::set<PlayerAction> mustHave = { PlayerAction::TAKE_CARD };
+    bool takeCard = false;
     while (true) {
         makeDefaultRequest(request, token, board);
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
-        addAll(request.availableActions, mustHave);
+        //addAll(request.availableActions, mustHave);
         PlayerReply reply = board.sendRequest(token, request);
         request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
-            if (mustHave.empty()) {
+            if (takeCard) {
                 break;
             }
             request.message = "You can't finish turn";
             continue;
         }
         if (reply->action == PlayerAction::TAKE_CARD) {
-            mustHave.erase(PlayerAction::TAKE_CARD);
+            //mustHave.erase(PlayerAction::TAKE_CARD);
+            takeCard = true;
             int firstThrow = rng.nextInt(1, 6), secondThrow = rng.nextInt(1, 6), thirdThrow = rng.nextInt(1, 6);
             std::size_t num = firstThrow + secondThrow + thirdThrow - 3;
        //     board.sendMessage(token, PlayerMessage(std::to_string(firstThrow) + " " + std::to_string(secondThrow)

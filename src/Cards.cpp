@@ -45,13 +45,13 @@ void PayMoney::apply(Token token) {
     PlayerRequest request;
     FieldTile* cur_field = board.getTile(player.position);
     bool payTax = false;
-    request.availableActions.push_back(PlayerAction::PAY_TAX);
     int tmp = amount;
     if (countTax) {
         amount = countPlayerTax(player);
     }
     while (true) {
         makeDefaultRequest(request, token, board);
+        request.availableActions.push_back(PlayerAction::PAY_TAX);
         PlayerReply reply = board.sendRequest(player.token, request);
         board.sync();
         request.message = "";
