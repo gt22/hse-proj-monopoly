@@ -19,14 +19,14 @@ struct PlayerModel {
 struct FieldTileModel {
     int position;
     std::string_view name;
-    std::optional<int> tax;
+   // std::optional<int> tax;
     std::optional<int> cost;
     std::optional<int> costOfParking;
     std::optional<Color> color;
     std::optional<Token> owner;
     std::optional<int> numberOfHouses;
     std::optional<int> costPerHouse;
-
+    bool isStreet = false;
     void update(const FieldTile& tile);
 };
 

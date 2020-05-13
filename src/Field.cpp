@@ -146,12 +146,24 @@ Street::Street(Board &board, int position, std::string name, int cost, Color col
 
 size_t Street::calculateTax(Token token) {
     switch (numberOfHouses + numberOfHotels) {
-        case 0: return startTax;
-        case 1: return taxOneHouse;
-        case 2: return taxTwoHouses;
-        case 3: return taxThreeHouses;
-        case 4: return taxFourHouses;
-        case 5: return taxHotel;
+        case 0:
+            costOfParking = startTax;
+            return startTax;
+        case 1:
+            costOfParking = taxOneHouse;
+            return taxOneHouse;
+        case 2:
+            costOfParking = taxTwoHouses;
+            return taxTwoHouses;
+        case 3:
+            costOfParking = taxThreeHouses;
+            return taxThreeHouses;
+        case 4:
+            costOfParking = taxFourHouses;
+            return taxFourHouses;
+        case 5:
+            costOfParking = taxHotel;
+            return taxHotel;
     }
     throw std::domain_error("too many buildings");
 }
@@ -651,6 +663,7 @@ void OwnableTile::onPlayerEntry(Token token) {
         if (!taxPaid) {
             request.availableActions.push_back(PlayerAction::PAY_TO_OTHER_PLAYER);
         }
+
         PlayerReply reply = board.sendRequest(token, request);
         request.message = "";
         if (reply->action == PlayerAction::END_TURN) {
@@ -661,17 +674,18 @@ void OwnableTile::onPlayerEntry(Token token) {
             request.message = "You can't finish turn";
             continue;
         }
+        costOfParking = calculateTax(owner);
         if (reply->action == PlayerAction::PAY_TO_OTHER_PLAYER) {
             std::cout << "PlayerAction::PAY_TO_OTHER_PLAYER\n";
             if (taxPaid) {
                 request.message = "You don't have to pay tax";
                 continue;
             }
-            tax = calculateTax(owner);
-            if (player.getMoney() >= tax) {
+
+            if (player.getMoney() >= costOfParking) {
                 std::cout << "paying tax \n";
-                player.addMoney(-tax);
-                fieldOwner->addMoney(tax);
+                player.addMoney(-costOfParking);
+                fieldOwner->addMoney(costOfParking);
                 taxPaid = true;
                 continue;
             }
@@ -707,8 +721,11 @@ void OwnableTile::onPlayerEntry(Token token) {
 }
 
 size_t Railway::calculateTax(Token token) {
-    if(owner == Token::FREE_FIELD) return 0;
-    return 25 * (1u << board.getPlayer(owner).numberOfRailways);
+    if(owner == Token::FREE_FIELD)
+        costOfParking = 0;
+    else
+        costOfParking = 25 * (1u << board.getPlayer(owner).numberOfRailways);
+    return costOfParking;
 }
 
 void Railway::onPurchase(Token token) {
@@ -719,8 +736,12 @@ size_t Utility::calculateTax(Token token) {
     if(owner == Token::FREE_FIELD) return 0;
     int lastThrow = board.getPlayer(token).lastTrow;
     switch(board.getPlayer(owner).numberOfUtilities) {
-        case 1: return lastThrow * 4;
-        case 2: return lastThrow * 10;
+        case 1:
+            costOfParking = lastThrow * 4;
+            return lastThrow * 4;
+        case 2:
+            costOfParking = lastThrow * 10;
+            return lastThrow * 10;
         default: assert(false);
     }
 }

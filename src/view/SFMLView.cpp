@@ -631,21 +631,83 @@ void SFMLView::drawCardInfo(std::optional<std::size_t> index) {
         window.draw(colorRect);
 
 
-        //name
-        std::string s = std::string(fieldTile.name);
-        sf::Text title(s, mainFont);
-        int fsize = 15;
-        title.setCharacterSize(fsize);
-        while (!doesFit(title, w)) {
-            title.setCharacterSize(--fsize);
-        }
-        auto[nx, ny, nw, nh] = title.getLocalBounds();
-        auto[x, y] = baseRect.getPosition();
-     //   const float align = ((h - nw) / 2);
-        title.setOrigin(nx + nw / 2, 0);
-        title.setPosition(x + w / 2, y);
+        {   // name
 
-        window.draw(title);
+            std::string s = std::string(fieldTile.name);
+            sf::Text title(s, mainFont);
+            int fsize = 15;
+            title.setCharacterSize(fsize);
+            while (!doesFit(title, w)) {
+                title.setCharacterSize(--fsize);
+            }
+            auto[nx, ny, nw, nh] = title.getLocalBounds();
+            auto[x, y] = baseRect.getPosition();
+
+            title.setOrigin(nx + nw / 2, 0);
+            title.setPosition(x + w / 2, y);
+            window.draw(title);
+        }
+        //
+        std::string cardText;
+        if (fieldTile.cost.has_value()) {
+            cardText += "Cost: ";
+            cardText += std::to_string(fieldTile.cost.value());
+            cardText += "\n";
+        }
+
+        if (fieldTile.costOfParking.has_value()) {
+            cardText += "Cost of Parking: ";
+            cardText += std::to_string(fieldTile.costOfParking.value());
+            cardText += "\n";
+        }
+
+      /*  if (fieldTile.tax.has_value() && !fieldTile.isStreet) {
+            cardText += "Tax: ";
+            cardText += std::to_string(fieldTile.tax.value());
+            cardText += "\n";
+        }
+*/
+
+        if (fieldTile.owner.has_value()) {
+            cardText += "Owner: ";
+            sf::Color c = getColor(fieldTile.owner.value());
+            if (c == sf::Color::White) {
+                cardText += "White";
+            } else if (c == sf::Color::Red) {
+                cardText += "Red";
+            } else if (c == sf::Color::Blue) {
+                cardText += "Blue";
+            } else if (c == sf::Color::Cyan) {
+                cardText += "Cyan";
+            } else if (c == sf::Color::Magenta) {
+                cardText += "Magenta";
+            } else if (c == sf::Color::Green) {
+                cardText += "Green";
+            }
+            cardText += "\n";
+        }
+
+        if (fieldTile.numberOfHouses.has_value()) {
+            cardText += "Num of houses: ";
+            cardText += std::to_string(fieldTile.numberOfHouses.value());
+            cardText += "\n";
+        }
+
+        if (fieldTile.costPerHouse.has_value()) {
+            cardText += "Cost per house: ";
+            cardText += std::to_string(fieldTile.costPerHouse.value());
+            cardText += "\n";
+        }
+
+        sf::Text text(cardText, mainFont);
+        int fsize = 12;
+        text.setCharacterSize(fsize);
+        auto[x, y] = baseRect.getPosition();
+        y = wy - h + size;
+      //  text.setOrigin(nx + nw / 2, 0);
+        text.setPosition(x, y);
+        window.draw(text);
+
     }
 
 

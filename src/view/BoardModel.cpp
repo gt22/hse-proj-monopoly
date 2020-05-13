@@ -20,12 +20,13 @@ void FieldTileModel::update(const FieldTile& tile) {
             numberOfHouses = street->numberOfHouses;
             costPerHouse = street->costPerHouse;
             color = street->color;
-            tax = street->tax;
+           // tax = street->tax;
+           // isStreet = true;
         }
     } else if(auto prison = dynamic_cast<const Prison*>(&tile); prison) {
-        tax = prison->tax;
+        costOfParking = prison->tax;
     } else if(auto incometax = dynamic_cast<const IncomeTax*>(&tile); incometax) {
-        tax = incometax->getTax();
+        costOfParking = incometax->getTax();
     }
 }
 
