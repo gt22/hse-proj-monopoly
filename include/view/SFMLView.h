@@ -137,7 +137,7 @@ public:
     void setTextColor(sf::Color color) {
         text.setFillColor(color);
     }
-
+make
     void setPosition(sf::Vector2f point) {
         button.setPosition(point);
 
@@ -192,6 +192,7 @@ private:
     void drawField(const BoardModel& board);
     void drawPlayers(const BoardModel& board);
     void drawMoney(const BoardModel& board);
+    void drawCardInfo(std::optional<std::size_t> index);
     void drawMessage();
     void draw();
     void handleRequest();
@@ -234,6 +235,7 @@ private:
     MessageType messageType;
 
     Token curTurnBy;
+    std::optional<std::size_t> curCardIndex;
     bool shouldClose = false;
 };
 

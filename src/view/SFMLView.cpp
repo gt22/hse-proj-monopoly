@@ -146,6 +146,14 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     break;
                 }
             }
+        } else if (e.button == sf::Mouse::Right) {
+            for (std::size_t i = 0; i < fieldButtons.fieldButtons.size(); i++) {
+                if (fieldButtons.fieldButtons[i].isValidTarget(e)) {
+                    curCardIndex = i;
+                    drawCardInfo(i);
+                    break;
+                }
+            }
         }
     });
 
@@ -438,6 +446,7 @@ void SFMLView::draw() {
     drawPlayers(m);
     drawMoney(m);
     drawMessage();
+    drawCardInfo(curCardIndex);
 }
 
 void SFMLView::redraw(const Board &board) {
@@ -455,6 +464,7 @@ PlayerReply SFMLView::processRequest(Player &p, PlayerRequest req) {
 
 void SFMLView::processMessage(Player &p, PlayerMessage mes, MessageType type) {
     std::lock_guard g(requestMutex);
+    messageType = type;
     messageType = type;
     if (type == MessageType::CHANCE) {
         message.setString("CHANCE\n" + mes.message);
@@ -568,6 +578,7 @@ void SFMLView::onResize(sf::Event::SizeEvent e) {
             }
             break;
     }
+    drawCardInfo(curCardIndex);
 
 }
 
@@ -593,6 +604,53 @@ void SFMLView::drawMoney(const BoardModel &board) {
         window.draw(p);
     }
     window.draw(money);
+}
+
+void SFMLView::drawCardInfo(std::optional<std::size_t> index) {
+    auto baseRect = shapes.fieldRects[0];
+    auto[w, h] = baseRect.getSize();
+    w *= 3, h *= 4;
+    baseRect.setSize(sf::Vector2f(w, h));
+    auto[wx, wy] = window.getSize();
+    baseRect.setPosition(sf::Vector2f(float(wx), float(wy)) - sf::Vector2f(w + 1, h + 1));
+    if (index.has_value()) {
+        const auto &fieldTile = model.field[index.value()];
+        //color
+        sf::Color color;
+        if (fieldTile.color.has_value()) {
+            color = getColor(fieldTile.color.value());
+        } else {
+            color.r = 128;
+            color.g = 128;
+            color.b = 128;
+        }
+        const float size = h / 8;
+        sf::RectangleShape colorRect(sf::Vector2f(w, size));
+        colorRect.setFillColor(color);
+        colorRect.setPosition(sf::Vector2f(float(wx), float(wy)) - sf::Vector2f(w + 1, h + 1));
+        window.draw(colorRect);
+
+
+        //name
+        std::string s = std::string(fieldTile.name);
+        sf::Text title(s, mainFont);
+        int fsize = 15;
+        title.setCharacterSize(fsize);
+        while (!doesFit(title, w)) {
+            title.setCharacterSize(--fsize);
+        }
+        auto[nx, ny, nw, nh] = title.getLocalBounds();
+        auto[x, y] = baseRect.getPosition();
+     //   const float align = ((h - nw) / 2);
+        title.setOrigin(nx + nw / 2, 0);
+        title.setPosition(x + w / 2, y);
+
+        window.draw(title);
+    }
+
+
+
+    window.draw(baseRect);
 }
 
 void SFMLView::handleRequest() {
@@ -686,6 +744,8 @@ void SFMLView::addActionButton(PlayerAction action,
     tooltips.addTooltip({std::move(tooltip), x, y, w, h});
     buttons.addButton(std::move(btn), [handler](auto e) { handler(); return true; });
 }
+
+
 
 
 
