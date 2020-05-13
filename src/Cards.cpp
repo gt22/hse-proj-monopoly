@@ -71,6 +71,8 @@ void PayMoney::apply(Token token) {
                 player.addMoney(-amount);
                 amount = tmp;
                 payTax = true;
+                std::cout << "cards PayMoney PAY_TAX return\n";
+                return;
                 continue;
             } else {
                 request.message = "You don't have enough money";
