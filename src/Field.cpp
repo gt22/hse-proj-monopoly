@@ -231,7 +231,6 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         return false;
     }
     if (reply->action == PlayerAction::BUY_HOUSE) {
-        //TODO:send request for number of field
         NumReply numReply = tile.board.sendNumRequest(token);
         std::cout << numReply->num << "\n";
         int index = numReply->num;
@@ -260,7 +259,6 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         return true;
     }
     if (reply->action == PlayerAction::BUY_HOTEL) {
-        //TODO:send request for number of field
         NumReply numReply = tile.board.sendNumRequest(token);
         std::cout << numReply->num << "\n";
         int index = numReply->num;
@@ -324,7 +322,6 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         return false;
     }
     if (reply->action == PlayerAction::BUY_BACK_PROPERTY) {
-        //TODO:send request for number of field
         NumReply numReply = tile.board.sendNumRequest(token);
         std::cout << numReply->num << "\n";
         int index = numReply->num;
@@ -343,7 +340,6 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         return true;
     }
     if (reply->action == PlayerAction::SELL_FIELD) {
-        //TODO:send request for number of field
         NumReply numReply = tile.board.sendNumRequest(token);
         std::cout << numReply->num << "\n";
         int index = numReply->num;
@@ -359,7 +355,6 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         tile.board.field[index]->setOwner(Token::FREE_FIELD);
     }
     if (reply->action == PlayerAction::SELL_HOUSE) {
-        //TODO:send request for number of field
         NumReply numReply = tile.board.sendNumRequest(token);
         std::cout << numReply->num << "\n";
         int index = numReply->num;
@@ -379,7 +374,6 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         tile.board.field[index]->decrHouseNum();
     }
     if (reply->action == PlayerAction::SELL_HOTEL) {
-        //TODO:send request for number of field
         NumReply numReply = tile.board.sendNumRequest(token);
         std::cout << numReply->num << "\n";
         int index = numReply->num;
@@ -664,6 +658,7 @@ void OwnableTile::onPlayerEntry(Token token) {
         }
         if (!buyProperty) {
             request.availableActions.push_back(PlayerAction::BUY_FIELD);
+            request.availableActions.push_back(PlayerAction::START_TRADE_NEW_FIELD);
         }
         if (!taxPaid) {
             request.availableActions.push_back(PlayerAction::PAY_TO_OTHER_PLAYER);
@@ -718,6 +713,9 @@ void OwnableTile::onPlayerEntry(Token token) {
             continue;
         }
         if (reply->action == PlayerAction::START_TRADE_NEW_FIELD) {
+
+            //TODO
+
             buyProperty = true;
         }
         if (!handleGenericActions(token, *this, reply)) {
