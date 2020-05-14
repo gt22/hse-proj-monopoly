@@ -63,9 +63,10 @@ struct NumReplyData {
 };
 
 struct PlayerTradeReplyData {
-    explicit PlayerTradeReplyData(PlayerTradeAction action);
+    explicit PlayerTradeReplyData(PlayerTradeAction action, int amount);
     virtual ~PlayerTradeReplyData() = default;
     const PlayerTradeAction action;
+    int amount;
 };
 
 template<PlayerAction ACTION>
