@@ -26,11 +26,22 @@ enum class PlayerAction {
     LOSE
 };
 
+enum class PlayerTradeAction {
+    REFUSE,
+    PARTICIPATE
+};
+
 struct PlayerRequest final {
     PlayerRequest();
     explicit PlayerRequest(std::vector<PlayerAction> availableActions,
             std::string_view message);
     std::vector<PlayerAction> availableActions;
+    std::string_view message;
+};
+
+struct PlayerTradeRequest final {
+    PlayerTradeRequest();
+    explicit PlayerTradeRequest(std::string_view message);
     std::string_view message;
 };
 
@@ -49,6 +60,12 @@ struct NumReplyData {
     explicit NumReplyData(std::size_t num);
     virtual ~NumReplyData() = default;
     std::size_t num;
+};
+
+struct PlayerTradeReplyData {
+    explicit PlayerTradeReplyData(PlayerTradeAction action);
+    virtual ~PlayerTradeReplyData() = default;
+    const PlayerTradeAction action;
 };
 
 template<PlayerAction ACTION>

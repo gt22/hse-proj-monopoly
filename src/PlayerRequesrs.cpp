@@ -11,3 +11,9 @@ PlayerMessage::PlayerMessage(std::string message) : message(std::move(message)) 
 PlayerReplyData::PlayerReplyData(PlayerAction action) : action(action) {}
 
 NumReplyData::NumReplyData(std::size_t num) : num(num) {}
+
+PlayerTradeRequest::PlayerTradeRequest(std::string_view message) : message(message) {}
+
+PlayerTradeRequest::PlayerTradeRequest() : PlayerTradeRequest("") {}
+
+PlayerTradeReplyData::PlayerTradeReplyData(PlayerTradeAction action) : action(action) {}
