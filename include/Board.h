@@ -92,6 +92,10 @@ private:
 
 bool checkPrevForHotel(int ind, const Board& board);
 bool checkPrevForHouse(int ind, const Board& board);
+
+bool checkNextForHotel(int ind, const Board& board);
+bool checkNextForHouse(int ind, const Board& board);
+
 int countPrevForColor(int ind, const Board& board);
 bool checkHousesNumForHotel(int ind, const Board& board);
 bool checkHousesNumForHouse(int ind, const Board& board);

@@ -289,7 +289,6 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         return true;
     }
     if (reply->action == PlayerAction::MORTGAGE_HOLDINGS) {
-        //TODO:send request for number of field
         NumReply numReply = tile.board.sendNumRequest(token);
         std::cout << numReply->num << "\n";
         int index = numReply->num;
@@ -305,8 +304,6 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         } else {
             tile.board.sendMessage(token, PlayerMessage("You can't mortgage this field tile"), MessageType::INFO);
         }
-        //get field tile
-        //field tile ->
         return true;
     }
     if (reply->action == PlayerAction::START_TRADE) {
@@ -368,6 +365,10 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         int index = numReply->num;
         if (tile.board.field[index]->getNumberOfHouses() == 0 || tile.board.field[index]->getNumberOfHotels() != 0 ||
             tile.board.field[index]->getOwner() != token) {
+            tile.board.sendMessage(token, PlayerMessage("You can't sell building on this field"), MessageType::INFO);
+            return true;
+        }
+        if (checkNextForHouse(index, tile.board)) {
             tile.board.sendMessage(token, PlayerMessage("You can't sell this building"), MessageType::INFO);
             return true;
         }
@@ -383,6 +384,10 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         std::cout << numReply->num << "\n";
         int index = numReply->num;
         if (tile.board.field[index]->getNumberOfHotels() == 0 || tile.board.field[index]->getOwner() != token) {
+            tile.board.sendMessage(token, PlayerMessage("You can't sell hotel on this field"), MessageType::INFO);
+            return true;
+        }
+        if (!checkNextForHotel(index, tile.board)) {
             tile.board.sendMessage(token, PlayerMessage("You can't sell this hotel"), MessageType::INFO);
             return true;
         }
@@ -706,6 +711,7 @@ void OwnableTile::onPlayerEntry(Token token) {
                 onPurchase(token);
                 buyProperty = true;
                 owner = token;
+                costOfParking = calculateTax(token);
                 continue;
             }
             request.message = "Not enough money :(";

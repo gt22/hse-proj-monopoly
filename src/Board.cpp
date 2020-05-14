@@ -442,3 +442,20 @@ bool checkPrevForHouse(int ind, const Board& board) {
     return checkPrevHouse(ind, board);
 }
 
+bool checkNextForHotel(int ind, const Board& board) {
+    std::size_t pos = ind + 1;
+    while (pos < board.FIELD_SIZE && board.field[pos]->getColor() != board.field[ind]->getColor()) {
+        pos++;
+    }
+    return (pos == board.FIELD_SIZE || board.field[pos]->getNumberOfHotels() == 0);
+}
+
+bool checkNextForHouse(int ind, const Board& board) {
+    std::size_t pos = ind + 1;
+    while (pos < board.FIELD_SIZE && board.field[pos]->getColor() != board.field[ind]->getColor()) {
+        pos++;
+    }
+    return pos == board.FIELD_SIZE || (board.field[pos]->getNumberOfHotels() == 0 &&
+                                       board.field[pos]->getNumberOfHouses() + 1 ==
+                                       board.field[ind]->getNumberOfHouses());
+}
