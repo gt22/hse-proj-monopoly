@@ -62,6 +62,7 @@ public:
     const PlayerData& getPlayer(Token token) const;
     FieldTile *getFieldTile(int ind);
     Token getPlayerToken(std::size_t index) const;
+    std::size_t getPlayerNum(Token token) const;
     const std::vector<PlayerData>& getPlayers() const;
     virtual PlayerReply sendRequest(Token token, PlayerRequest request) const;
     virtual NumReply sendNumRequest(Token token) const;

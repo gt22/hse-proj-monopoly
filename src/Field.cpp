@@ -713,9 +713,60 @@ void OwnableTile::onPlayerEntry(Token token) {
             continue;
         }
         if (reply->action == PlayerAction::START_TRADE_NEW_FIELD) {
-
             //TODO
-
+            int numOfParticipants = board.getCurNumOfPlayers() - 1;
+            std::vector<bool> participants(board.getPlayersNumber(), true);
+            int curPlayerNum = board.getPlayerNum(token);
+            participants[curPlayerNum] = false;
+            int curCost = cost;
+            int curBuyer = -1;
+            PlayerTradeRequest tradeRequest(name);
+            while (numOfParticipants > 1) {
+                if (!participants[curPlayerNum]) {
+                    continue;
+                }
+                PlayerData& curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
+                if (!curPlayer.alive) {
+                    curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
+                    continue;
+                }
+                if (curCost > curPlayer.getMoney()) {
+                    participants[curPlayerNum] = false;
+                    numOfParticipants--;
+                    curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
+                    continue;
+                }
+                //send PlayerTradeRequest
+                //TODO info about curCost and CurBuyer
+                //get PlayerTradeReplyData
+                PlayerTradeReplyData tradeReply(PlayerTradeAction::REFUSE, 0);// = board.sendRequest(token, request);
+                if (tradeReply.action == PlayerTradeAction::REFUSE) {
+                    participants[curPlayerNum] = false;
+                    numOfParticipants--;
+                }
+                if (tradeReply.action == PlayerTradeAction::PARTICIPATE) {
+                    if (curPlayer.getMoney() < tradeReply.amount) {
+                        board.sendMessage(curPlayer.token, PlayerMessage("You don't have enough money"), MessageType::INFO);
+                    } else {
+                        curBuyer = curPlayerNum;
+                        curCost = tradeReply.amount;
+                    }
+                }
+                curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
+            }
+            while (true) {
+                PlayerData& curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
+                if (!curPlayer.alive || !participants[curPlayerNum]) {
+                    curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
+                } else {
+                    break;
+                }
+            }
+            if (curBuyer == curPlayerNum) {
+                //TODO: buy
+            } else {
+                //TODO: ask
+            }
             buyProperty = true;
         }
         if (!handleGenericActions(token, *this, reply)) {

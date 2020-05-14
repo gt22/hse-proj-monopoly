@@ -369,6 +369,15 @@ NumReply Board::sendNumRequest(Token token) const {
     return game.sendNumRequest(token);
 }
 
+std::size_t Board::getPlayerNum(Token token) const {
+    for (std::size_t i = 0; i < (*this).getPlayersNumber(); i++) {
+        if (players[i].token == token) {
+            return i;
+        }
+    }
+    throw std::invalid_argument("no player with this token");
+}
+
 int countPrevForColor(int ind, const Board& board) {
     if (ind < 0 || ind > (int)board.FIELD_SIZE) {
         throw std::out_of_range("no field " + std::to_string(ind));
