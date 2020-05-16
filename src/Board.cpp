@@ -324,7 +324,7 @@ bool Board::checkFieldWithoutBuildings(Token token) const {
     }
     for (std::size_t i = 0; i < FIELD_SIZE; i++) {
         if (field[i]->getOwner() == token && field[i]->getNumberOfHotels() == 0 &&
-            field[i]->getNumberOfHouses() == 0) {
+            field[i]->getNumberOfHouses() == 0 && !field[i]->isMortgaged) {
             return true;
         }
     }
