@@ -3,7 +3,7 @@
 #include "Field.h"
 #include "Cards.h"
 #include "Board.h"
-#include "view/BoardModel.h"
+#include "include/threads/BoardModel.h"
 #include <google/protobuf/port_def.inc>
 
 namespace Monopoly::Serialization::Internal {

@@ -21,8 +21,13 @@ PROTOBUF_GENERATE_CPP(ProtoSources ProtoHeaders ${ProtoFiles})
 include_directories(${PROTOBUF_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(hseproj src/main.cpp include/View.h src/Player.cpp include/Player.h src/Board.cpp include/Board.h src/Manager.cpp include/Manager.h include/Field.h src/Field.cpp include/MonopolyFwd.h src/Game.cpp include/Game.h include/Cards.h include/PlayerRequests.h src/Cards.cpp include/Random.h src/Random.cpp src/PlayerRequesrs.cpp include/view/SFMLView.h src/view/SFMLView.cpp include/MonopolyThreadManager.h src/MonopolyThreadManager.cpp include/view/EventManager.h src/view/EventManager.cpp include/view/VectorOps.h include/view/BoardModel.h src/view/BoardModel.cpp include/view/ButtonManager.h src/view/ButtonManager.cpp include/view/TooltipManager.h src/view/TooltipManager.cpp include/network/internal/InternalSerialization.h ${ProtoSources} ${ProtoHeaders} src/network/internal/InternalSerialization.cpp include/network/MonopolySerialization.h src/network/MonopolySerialization.cpp)
-target_link_libraries(hseproj Threads::Threads sfml-graphics ${PROTOBUF_LIBRARIES})
+add_subdirectory(lib)
+
+file(GLOB_RECURSE sources "src/*")
+file(GLOB_RECURSE includes "include/*")
+
+add_executable(hseproj ${sources} ${includes} ${ProtoSources} ${ProtoHeaders})
+target_link_libraries(hseproj Threads::Threads sfml-graphics ${PROTOBUF_LIBRARIES} ${SOCKPP})
 
 include(cmake/googletest.cmake)
 fetch_googletest(
@@ -32,8 +37,7 @@ fetch_googletest(
 
 add_library(hseproj-lib "")
 target_link_libraries(hseproj-lib sfml-graphics)
-file(GLOB_RECURSE sources "src/*")
-file(GLOB_RECURSE includes "include/*")
+
 
 target_sources(
         hseproj-lib

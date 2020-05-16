@@ -1,7 +1,7 @@
 #include "network/MonopolySerialization.h"
 #include "network/internal/InternalSerialization.h"
 #include "PlayerRequests.h"
-#include "view/BoardModel.h"
+#include "include/threads/BoardModel.h"
 #include "monopoly.pb.h"
 namespace Monopoly::Serialization {
 

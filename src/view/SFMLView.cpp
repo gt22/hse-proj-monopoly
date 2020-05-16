@@ -118,10 +118,7 @@ void SFMLView::dispose() {
     windowMutex.lock();
     shouldClose = true;
     windowMutex.unlock();
-    requestMutex.lock();
-    curReply = std::make_unique<ExitGameReply>();
-    requestCond.notify_all();
-    requestMutex.unlock();
+    model.sendReply(std::make_unique<ExitGameReply>());
 }
 
 
@@ -330,7 +327,6 @@ void SFMLView::drawPlayers(const BoardModel &board) {
 }
 
 void SFMLView::drawMessage() {
-    std::lock_guard g(requestMutex);
     const auto& baseRect = shapes.fieldRects[0];
     message.setCharacterSize(15);
     message.setPosition(baseRect.getPosition() + baseRect.getPoint(1) + sf::Vector2f(5, -message.getLocalBounds().height * 2));
@@ -339,7 +335,7 @@ void SFMLView::drawMessage() {
 
 
 void SFMLView::draw() {
-    BoardModel m = getModel();
+    BoardModel m = model.getBoard();
     drawField(m);
     drawPlayers(m);
     drawMoney(m);
@@ -347,23 +343,16 @@ void SFMLView::draw() {
 }
 
 void SFMLView::redraw(const Board &board) {
-    std::lock_guard g(boardMutex);
-    model.update(board);
+    model.sync(board);
 }
 
 PlayerReply SFMLView::processRequest(Player &p, PlayerRequest req) {
-    std::unique_lock g(requestMutex);
-    curRequest = std::move(req);
-    requestCond.wait(g, [this]() { return bool(this->curReply); });
-    assert(curReply);
-    return std::move(curReply);
+    return model.processRequest(p, std::move(req));
 }
 
 void SFMLView::processMessage(Player &p, PlayerMessage mes) {
-    std::lock_guard g(requestMutex);
-    message.setString(mes.message);
+    model.processMessage(p, std::move(mes));
 }
-
 
 void SFMLView::onResize(sf::Event::SizeEvent e) {
     auto[m, M] = e;
@@ -460,33 +449,19 @@ void SFMLView::drawMoney(const BoardModel &board) {
 }
 
 void SFMLView::handleRequest() {
-    PlayerRequest req;
-    {
-        std::lock_guard g(requestMutex);
-        if(!curRequest.has_value()) return;
-        req = std::move(curRequest.value());
-        curRequest.reset();
-    }
-   // curTurnBy =
-    for (auto& [act, btn] : actionButtons) {
-        btn.deactivate();
-    }
-    for(auto action : req.availableActions) {
-        if(actionButtons.count(action)) {
-            actionButtons.at(action).activate();
+    if(auto req = model.getRequest(); req.has_value()) {
+        for (auto&[act, btn] : actionButtons) {
+            btn.deactivate();
+        }
+        for (auto action : req.value().availableActions) {
+            if (actionButtons.count(action)) {
+                actionButtons.at(action).activate();
+            }
         }
     }
-}
-
-BoardModel SFMLView::getModel() {
-    std::lock_guard g(boardMutex);
-    return model; //copy
-}
-
-void SFMLView::makeReply(PlayerReply rep) {
-    std::lock_guard g(requestMutex);
-    curReply = std::move(rep);
-    requestCond.notify_all();
+    if(auto msg = model.getMessage(); msg.has_value()) {
+        message.setString(std::move(msg.value().message));
+    }
 }
 
 void SFMLView::addActionButton(PlayerAction action,

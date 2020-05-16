@@ -1,4 +1,4 @@
-#include "view/BoardModel.h"
+#include "include/threads/BoardModel.h"
 #include "Field.h"
 void PlayerModel::update(const PlayerData& player) {
     name = player.name;

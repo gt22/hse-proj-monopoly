@@ -4,9 +4,10 @@
 #include "PlayerRequests.h"
 #include "EventManager.h"
 #include "Board.h"
-#include "BoardModel.h"
+#include "include/threads/BoardModel.h"
 #include "ButtonManager.h"
 #include "TooltipManager.h"
+#include "threads/ModelThreadManager.h"
 #include <SFML/Graphics.hpp>
 
 //#include <pthread/pthread.h>
@@ -186,15 +187,13 @@ private:
     void drawMessage();
     void draw();
     void handleRequest();
-    void makeReply(PlayerReply rep);
-    BoardModel getModel();
 
     void addActionButton(PlayerAction action, const std::string& texture,
                          std::string tooltip, const std::function<void()>& handler);
 
     template<typename T>
     auto makeReplyGenerator() {
-        return [this]() { makeReply(std::make_unique<T>()); };
+        return [this]() { model.sendReply(std::make_unique<T>()); };
     }
 
     int tmp = 0;
@@ -209,12 +208,8 @@ private:
     ShapeHolder shapes;
     sf::RenderWindow window;
     sf::Font mainFont;
-    std::mutex boardMutex, windowMutex, requestMutex;
-    std::condition_variable requestCond;
-    BoardModel model;
-
-    std::optional<PlayerRequest> curRequest;
-    PlayerReply curReply;
+    std::mutex windowMutex;
+    Monopoly::Threads::ModelThreadManager model;
 
     // временный ужас
     sf::Text box;
