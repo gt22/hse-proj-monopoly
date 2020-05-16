@@ -281,6 +281,20 @@ void SFMLView::drawField(const BoardModel &board) {
                 case 3: ownerLabel.setPosition(viewTile.getPosition() + sf::Vector2f(0, w - size)); break;
             }
             window.draw(ownerLabel);
+
+            if (fieldTile.isMortgaged) {
+                sf::Color mortgageColor = sf::Color::Black;
+                const float mortgageSize = w / 12;
+                sf::CircleShape mortgageLabel(mortgageSize);
+                mortgageLabel.setFillColor(mortgageColor);
+                switch(i / 10) {
+                    case 0: mortgageLabel.setPosition(viewTile.getPosition()); break;
+                    case 1: mortgageLabel.setPosition(viewTile.getPosition() + sf::Vector2f(h - size, 0)); break;
+                    case 2: mortgageLabel.setPosition(viewTile.getPosition() + sf::Vector2f(w - size, h - size)); break;
+                    case 3: mortgageLabel.setPosition(viewTile.getPosition() + sf::Vector2f(0, w - size)); break;
+                }
+                window.draw(mortgageLabel);
+            }
         }
         std::string s = std::string(fieldTile.name);
         sf::Text name(s, mainFont);
