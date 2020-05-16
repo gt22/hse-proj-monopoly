@@ -31,21 +31,21 @@ sf::Color getColor(Color color) {
     switch(color) {
 
         case Color::COL1:
-            return sf::Color(0x6e0000FF);
+            return sf::Color(105, 50, 50);
         case Color::COL2:
-            return sf::Color(0x2a7ce8FF);
+            return sf::Color(36, 194, 181);
         case Color::COL3:
-            return sf::Color(0xff3b6fFF);
+            return sf::Color(213, 0, 112);
         case Color::COL4:
-            return sf::Color(0xff9d3bFF);
+            return sf::Color(255, 135, 0);
         case Color::COL5:
-            return sf::Color(0xe82a2aFF);
+            return sf::Color(182, 0, 0);
         case Color::COL6:
-            return sf::Color(0xeded2bFF);
+            return sf::Color(175, 165, 15);
         case Color::COL7:
-            return sf::Color(0x0213c9FF);
+            return sf::Color(30, 175, 15);
         case Color::COL8:
-            return sf::Color(0x4f088cFF);
+            return sf::Color(15, 109, 175);
         case Color::NO_COL:
             return sf::Color::Transparent;
     }
