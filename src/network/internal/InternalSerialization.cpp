@@ -3,12 +3,14 @@
 #include "Field.h"
 #include "Cards.h"
 #include "Board.h"
+#include "view/BoardModel.h"
 #include <google/protobuf/port_def.inc>
+
 namespace Monopoly::Serialization::Internal {
 
     Pb::PlayerRequest serializeRequest(const PlayerRequest& req) {
         Pb::PlayerRequest ser;
-        for(auto action : req.availableActions) {
+        for (auto action : req.availableActions) {
             ser.add_availableactions(Pb::PlayerAction(action));
         }
         ser.set_msg(req.message);
@@ -18,7 +20,7 @@ namespace Monopoly::Serialization::Internal {
     PlayerRequest deserializeRequest(const Pb::PlayerRequest& ser) {
         PlayerRequest ret;
         ret.availableActions.reserve(ser.availableactions_size());
-        for(auto action : ser.availableactions()) {
+        for (auto action : ser.availableactions()) {
             ret.availableActions.push_back(PlayerAction(action));
         }
         ret.message = ser.msg();
@@ -46,107 +48,80 @@ namespace Monopoly::Serialization::Internal {
         return std::make_unique<PlayerReplyData>(PlayerAction(ser.action()));
     }
 
-    Pb::FieldTile serializeFieldTile(const FieldTile* tilePtr) {
-        const FieldTile& tile = *tilePtr;
-        Pb::FieldTile ser;
-        ser.set_type(Pb::FieldTile_TileType(tile.type));
-        ser.set_position(tile.position);
-        ser.set_name(tile.name);
-        try {
-            switch (tile.type) {
-                case TileType::START:
-                    break;
-                case TileType::OWNABLE_TILE: {
-                    const auto &ownable = dynamic_cast<const OwnableTile &>(tile);
-                    auto ownableSer = ser.mutable_ownabletile();
-                    ownableSer->set_ownabletype(Pb::FieldTile_OwnableTile_OwnableType(ownable.ownableType));
-                    ownableSer->set_cost(ownable.cost);
-                    ownableSer->set_cost_of_parking(ownable.costOfParking);
-                    ownableSer->set_color(Pb::Color(ownable.color));
-                    ownableSer->set_owner(Pb::Token(ownable.owner));
-                    switch (ownable.ownableType) {
-                        case OwnableType::RAILWAY:
-                            break;
-                        case OwnableType::STREET: {
-                            const auto &street = dynamic_cast<const Street &>(ownable);
-                            auto streetSer = ownableSer->mutable_street();
-                            streetSer->set_number_of_houses(street.numberOfHouses);
-                            streetSer->set_cost_per_house(street.costPerHouse);
-                            break;
-                        }
-                        case OwnableType::UTILITY:
-                            break;
-                        case OwnableType::UNINITIALIZED:
-                            assert(false); //Attempt to serialize uninitialized tile
-                    }
-                    break;
-                }
-                case TileType::PRISON:
-                case TileType::GOTO_PRISON:
-                case TileType::CHANCE:
-                    break;
-                case TileType::PUBLIC_TREASURY:
-                    break; //TODO
-                case TileType::INCOME_TAX: {
-                    const auto &itax = dynamic_cast<const IncomeTax &>(tile);
-                    ser.mutable_incometax()->set_tax(itax.tax);
-                    break;
-                }
-                case TileType::FREE_PARKING:
-                    break;
-                case TileType::UNINITIALIZED:
-                    assert(false); //Attempt to serialize uninitialized tile
-            }
-        } catch(std::bad_cast& e) {
-            assert(false); //TODO: exception handling?
+    template<typename T, typename U>
+    std::optional<U> apply(std::optional<T> inp, std::function<U(const T&)> func) {
+        if (inp.has_value()) return func(inp.value());
+        else return {};
+    }
+
+    Pb::Taxes serializeTaxes(const Taxes& data) {
+        Pb::Taxes ser;
+        ser.set_starttax(data.startTax);
+        ser.set_taxonehouse(data.taxOneHouse);
+        ser.set_taxtwohouses(data.taxTwoHouses);
+        ser.set_taxthreehouses(data.taxThreeHouses);
+        ser.set_taxfourhouses(data.taxFourHouses);
+        ser.set_taxhotel(data.taxHotel);
+        return ser;
+    }
+
+    Taxes deserializeTaxes(const Pb::Taxes& ser) {
+        Taxes ret;
+        ret.startTax = ser.starttax();
+        ret.taxOneHouse = ser.taxonehouse();
+        ret.taxTwoHouses = ser.taxtwohouses();
+        ret.taxThreeHouses = ser.taxthreehouses();
+        ret.taxFourHouses = ser.taxfourhouses();
+        ret.taxHotel = ser.taxhotel();
+        return ret;
+    }
+
+    template<typename I, typename O>
+    std::function<O(const I&)> converter() {
+        return [](const I& x) { return O(x); };
+    }
+
+    Pb::FieldTileModel serializeFieldTile(const FieldTileModel& data) {
+        Pb::FieldTileModel ser;
+        ser.set_position(data.position);
+        ser.set_name(data.name);
+        ser.set_tax(data.tax.value_or(-1));
+        ser.set_cost(data.cost.value_or(-1));
+        ser.set_costofparking(data.costOfParking.value_or(-1));
+        ser.set_color(apply(
+                data.color, converter<Color, Pb::Color>()
+        ).value_or(Pb::Color::UNSPECIFIED_col));
+        ser.set_owner(apply(
+                data.owner, converter<Token, Pb::Token>()
+        ).value_or(Pb::Token::UNSPECIFIED_tok));
+        ser.set_numberofhouses(data.numberOfHouses.value_or(-1));
+        ser.set_costperhouse(data.costPerHouse.value_or(-1));
+        if (data.taxes.has_value()) {
+            *ser.mutable_taxes() = serializeTaxes(data.taxes.value());
         }
         return ser;
     }
 
-    FieldTile* deserializeFieldTile(const Pb::FieldTile& ser, Board& board) {
-        FieldTile *ret;
-        switch(TileType(ser.type())) {
+    template<typename T>
+    std::optional<T> loadIfPresent(const T& value, const T& notPresent) {
+        if (value == notPresent) return {};
+        else return value;
+    }
 
-            case TileType::START: ret = new Start(board); break;
-            case TileType::OWNABLE_TILE: {
-                const auto& ownableSer = ser.ownabletile();
-                OwnableTile *ownable;
-                switch(OwnableType(ownableSer.ownabletype())) {
-                    case OwnableType::RAILWAY: ret = ownable = new Railway(board); break;
-                    case OwnableType::STREET: {
-                        const auto& streetSer = ownableSer.street();
-                        auto street = new Street(board);
-                        ret = ownable = street;
-                        street->numberOfHouses = streetSer.number_of_houses();
-                        street->costPerHouse = streetSer.cost_per_house();
-                        break;
-                    }
-                    case OwnableType::UTILITY: ret = ownable = new Utility(board); break;
-                    case OwnableType::UNINITIALIZED: assert(false);
-                }
-                ownable->ownableType = OwnableType(ownableSer.ownabletype());
-                ownable->cost = ownableSer.cost();
-                ownable->costOfParking = ownableSer.cost_of_parking();
-                ownable->color = Color(ownableSer.color());
-                ownable->owner = Token(ownableSer.owner());
-                break;
-            }
-            case TileType::PRISON: ret = new Prison(board); break;
-            case TileType::GOTO_PRISON: ret = new GoToPrison(board); break;
-            case TileType::CHANCE: ret = new Chance(board); break;
-            case TileType::PUBLIC_TREASURY: ret = new PublicTreasury(board);
-            case TileType::INCOME_TAX: {
-                auto itax = new IncomeTax(board);
-                ret = itax;
-                itax->tax = ser.incometax().tax();
-                break;
-            }
-            case TileType::FREE_PARKING: ret = new FreeParking(board); break;
-            case TileType::UNINITIALIZED: assert(false);
-        }
-        ret->type = TileType(ser.type());
-        ret->position = ser.position();
-        ret->name = ser.name();
+    FieldTileModel deserializeFieldTile(const Pb::FieldTileModel& ser) {
+        FieldTileModel ret;
+        ret.position = ser.position();
+        ret.name = ser.name();
+        ret.tax = loadIfPresent(ser.tax(), -1);
+        ret.cost = loadIfPresent(ser.cost(), -1);
+        ret.costOfParking = loadIfPresent(ser.costofparking(), -1);
+        ret.color = apply(loadIfPresent(ser.color(), Pb::Color::UNSPECIFIED_col),
+                          converter<Pb::Color, Color>());
+        ret.owner = apply(loadIfPresent(ser.owner(), Pb::Token::UNSPECIFIED_tok),
+                          converter<Pb::Token, Token>());
+        ret.numberOfHouses = loadIfPresent(ser.numberofhouses(), -1);
+        ret.costPerHouse = loadIfPresent(ser.costperhouse(), -1);
+        if(ser.has_taxes()) ret.taxes = deserializeTaxes(ser.taxes());
         return ret;
     }
 
@@ -156,81 +131,62 @@ namespace Monopoly::Serialization::Internal {
         return ser;
     }
 
-    Card* deserializeCard(const Pb::Card& data, Board&) {
+    Card *deserializeCard(const Pb::Card& data, Board&) {
         //TODO: Subclasses
         throw 1;
     }
 
-    Pb::PlayerData serializePlayerData(const PlayerData& data) {
+    Pb::PlayerData serializePlayerModel(const PlayerModel& data) {
         Pb::PlayerData ser;
-        ser.set_name(std::string(data.name));
+        ser.set_name(data.name);
         ser.set_token(Pb::Token(data.token));
         ser.set_position(data.position);
         ser.set_money(data.money);
-        ser.set_doubledice(data.doubleDice);
-        ser.set_daysleftinprison(data.daysLeftInPrison);
-        ser.set_numberofrailways(data.numberOfRailways);
-        ser.set_numberofutilities(data.numberOfUtilities);
-        ser.set_lastthrow(data.lastTrow);
         ser.set_prisoner(data.prisoner);
-        for(const auto& card : data.cards) {
-            *ser.add_card() = serializeCard(*card);
-        }
+        ser.set_alive(data.alive);
         return ser;
     }
 
-
-
-    PlayerData deserializePlayerData(const Pb::PlayerData& ser, Board& board) {
-        PlayerData ret(ser.name(), Token(ser.token()));
+    PlayerModel deserializePlayerModel(const Pb::PlayerData& ser) {
+        PlayerModel ret;
+        ret.name = ser.name();
+        ret.token = Token(ser.token());
         ret.position = ser.position();
         ret.money = ser.money();
-        ret.doubleDice = ser.doubledice();
-        ret.daysLeftInPrison = ser.daysleftinprison();
-        ret.numberOfRailways = ser.numberofrailways();
-        ret.numberOfUtilities = ser.numberofutilities();
-        ret.lastTrow = ser.lastthrow();
         ret.prisoner = ser.prisoner();
-        for(const auto& card : ser.card()) {
-            ret.cards.emplace_back(deserializeCard(card, board));
-        }
+        ret.alive = ser.alive();
         return ret;
     }
 
     template<typename T, typename C, typename F>
     //T - serialized type
     //C - container of type V
-    //F - serialization function (const V&) -> T&&
-    void addAll(PROTOBUF_NAMESPACE_ID::RepeatedPtrField<T>* field, const C& cont, F conv) {
+    void addAll(PROTOBUF_NAMESPACE_ID::RepeatedPtrField<T> *field, const C& cont, F conv) {
         field->Reserve(cont.size());
-        for(const auto& x : cont) {
+        for (const auto& x : cont) {
             field->Add(conv(x));
         }
     }
 
-    Pb::Board serializeBoard(const Board& board) {
-        Pb::Board ser;
-        addAll(ser.mutable_tiles(), board.getField(), serializeFieldTile);
-        addAll(ser.mutable_deck(), board.getDeck().getCards(), [](const auto& card){ return serializeCard(*card); });
-        addAll(ser.mutable_players(), board.getPlayers(), serializePlayerData);
+    Pb::BoardModel serializeBoardModel(const BoardModel& board) {
+        Pb::BoardModel ser;
+        addAll(ser.mutable_tiles(), board.field, serializeFieldTile);
+        addAll(ser.mutable_players(), board.players, serializePlayerModel);
+        ser.set_curplayer(Pb::Token(board.curPlayer));
         return ser;
     }
 
-    Board deserializeBoard(const Pb::Board& ser, Game& game) {
-        Board ret(game);
+    BoardModel deserializeBoardModel(const Pb::BoardModel& ser) {
+        BoardModel ret;
         for(const auto& tileSer : ser.tiles()) {
-            FieldTile *tile = deserializeFieldTile(tileSer, ret);
-            ret.getField()[tile->position] = tile;
+            auto tile = deserializeFieldTile(tileSer);
+            ret.field[tile.position] = std::move(tile);
         }
-        auto& cards = ret.getDeck().getCards();
-        cards.reserve(ser.deck_size());
-        for(const auto& cardSer : ser.deck()) {
-            cards.emplace_back(deserializeCard(cardSer, ret));
+        ret.players.reserve(ser.players_size());
+        for (const auto& dataSer : ser.players()) {
+            ret.players.push_back(deserializePlayerModel(dataSer));
         }
-        ret.getPlayers().reserve(ser.players_size());
-        for(const auto& dataSer : ser.players()) {
-            ret.getPlayers().push_back(deserializePlayerData(dataSer, ret));
-        }
+        ret.curPlayer = Token(ser.curplayer());
         return ret;
     }
 }

@@ -53,6 +53,10 @@ class NetworkPlayer;
 class BotPlayer;
 class LocalPlayer;
 
+struct PlayerModel;
+struct FieldTileModel;
+struct BoardModel;
+
 struct PlayerRequest;
 struct PlayerMessage;
 struct PlayerReplyData;

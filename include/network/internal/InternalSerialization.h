@@ -18,17 +18,17 @@ namespace Monopoly::Serialization::Internal {
     Pb::PlayerReply serializeReply(const PlayerReplyData& rep);
     PlayerReply deserializeReply(const Pb::PlayerReply& ser);
 
-    Pb::FieldTile serializeFieldTile(const FieldTile* tile);
-    FieldTile* deserializeFieldTile(const Pb::FieldTile& ser, Board& board);
+    Pb::FieldTileModel serializeFieldTile(const FieldTileModel& data);
+    FieldTileModel deserializeFieldTile(const Pb::FieldTileModel& ser);
 
     Pb::Card serializeCard(const Card& card);
     Card* deserializeCard(const Pb::Card& data, Board&);
 
-    Pb::PlayerData serializePlayerData(const PlayerData& data);
-    PlayerData deserializePlayerData(const Pb::PlayerData& ser, Board&);
+    Pb::PlayerData serializePlayerModel(const PlayerModel& data);
+    PlayerModel deserializePlayerModel(const Pb::PlayerData& ser);
 
-    Pb::Board serializeBoard(const Board& board);
-    Board deserializeBoard(const Pb::Board& ser, Game& game);
+    Pb::BoardModel serializeBoardModel(const BoardModel& board);
+    BoardModel deserializeBoardModel(const Pb::BoardModel& ser);
 
 }
 

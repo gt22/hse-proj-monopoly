@@ -1,7 +1,7 @@
 #include "network/MonopolySerialization.h"
 #include "network/internal/InternalSerialization.h"
 #include "PlayerRequests.h"
-#include "Board.h"
+#include "view/BoardModel.h"
 #include "monopoly.pb.h"
 namespace Monopoly::Serialization {
 
@@ -41,12 +41,12 @@ namespace Monopoly::Serialization {
         return deserialize<Pb::PlayerReply>(ser, Internal::deserializeReply);
     }
 
-    std::string serializeBoard(const Board& board) {
-        return serialize(board, Internal::serializeBoard);
+    std::string serializeBoard(const BoardModel& board) {
+        return serialize(board, Internal::serializeBoardModel);
     }
 
-    Board deserializeBoard(const std::string& ser, Game& game) {
-        return deserialize<Pb::Board>(ser, [&game](auto s){ return Internal::deserializeBoard(s, game); });
+    BoardModel deserializeBoard(const std::string& ser) {
+        return deserialize<Pb::BoardModel>(ser, Internal::deserializeBoardModel);
     }
 
 }

@@ -7,7 +7,7 @@
 #include "Field.h"
 
 struct PlayerModel {
-    std::string_view name;
+    std::string name;
     Token token;
     std::size_t position;
     int money;
@@ -19,7 +19,7 @@ struct PlayerModel {
 
 struct FieldTileModel {
     int position;
-    std::string_view name;
+    std::string name;
     std::optional<int> tax;
     std::optional<int> cost;
     std::optional<int> costOfParking;

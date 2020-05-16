@@ -12,6 +12,7 @@ enum Token {
     CAT = 4;
     CAR = 5;
     SHIP = 6;
+    UNSPECIFIED_tok = 16;
 }
 
 enum PlayerAction {
@@ -38,6 +39,7 @@ enum Color {
     COL6 = 5;
     COL7 = 6;
     COL8 = 7;
+    UNSPECIFIED_col = 16;
 }
 
 message PlayerRequest {
@@ -59,58 +61,26 @@ message PlayerReply {
 // Board
 //==================
 
-//TODO: Is this a good way to handle inheritance? Read more on protobuf format.
-// Does this lead to message size blowing when more types are added?
+message Taxes {
+    uint32 startTax = 1;
+    uint32 taxOneHouse = 2;
+    uint32 taxTwoHouses = 3;
+    uint32 taxThreeHouses = 4;
+    uint32 taxFourHouses = 5;
+    uint32 taxHotel = 6;
+}
 
-message FieldTile {
-
-    enum TileType {
-        START = 0;
-        OWNABLE_TILE = 1;
-        PRISON = 2;
-        GOTO_PRISON = 3;
-        CHANCE = 4;
-        INCOME_TAX = 5;
-        FREE_PARKING = 6;
-    }
-
-    message OwnableTile {
-
-        enum OwnableType {
-            RAILWAY = 0;
-            STREET = 1;
-            UTILITY = 2;
-        }
-
-        message Street {
-            uint32 number_of_houses = 1;
-            uint32 cost_per_house = 2;
-        }
-
-        OwnableType ownableType = 1;
-        uint32 cost = 2;
-        uint32 cost_of_parking = 3;
-        Color color = 4;
-        Token owner = 5;
-        reserved 6; //no data for Railway
-        Street street = 7; /* exists <=> [ownableType == STREET] */
-        reserved 8; //no data for Utility
-    }
-
-    message IncomeTax {
-        uint32 tax = 1;
-    }
-
-    TileType type = 1;
-    uint32 position = 2;
-    string name = 3;
-    reserved 4; //no data for Start
-    OwnableTile ownableTile = 5; /* exists <=> [type == OWNABLE_TILE] */
-    reserved 6; //no data for Prison
-    reserved 7; //no data for GotoPrison
-    reserved 8; //no data for Change
-    IncomeTax incomeTax = 9; /* exists <=> [type == INCOME_TAX] */
-    reserved 10; //no data for FreeParking
+message FieldTileModel {
+    int32 position = 1;
+    string name = 2;
+    int32 tax = 3;
+    int32 cost = 4;
+    int32 costOfParking = 5;
+    Color color = 6;
+    Token owner = 7;
+    int32 numberOfHouses = 8;
+    int32 costPerHouse = 9;
+    Taxes taxes = 10;
 }
 
 message Card {
@@ -123,19 +93,12 @@ message PlayerData {
     Token token = 2;
     uint32 position = 3;
     uint32 money = 4; //TODO: a lot of money (64-bit??)? Negative money?
-    uint32 doubleDice = 5;
-    uint32 daysLeftInPrison = 6;
-    uint32 numberOfRailways = 7;
-    uint32 numberOfUtilities = 8;
-    uint32 lastThrow = 9;
-    bool prisoner = 10;
-    bool alive = 11;
-    repeated Card card = 12;
+    bool prisoner = 5;
+    bool alive = 6;
 }
 
-message Board {
-    repeated FieldTile tiles = 1;
-    repeated Card deck = 2;
+message BoardModel {
+    repeated FieldTileModel tiles = 1;
     repeated PlayerData players = 3;
-
+    Token curPlayer = 4;
 }
