@@ -648,7 +648,7 @@ void OwnableTile::onPlayerEntry(Token token) {
     if (owner == token || isMortgaged || owner == Token::FREE_FIELD) {
         taxPaid = true;
     }
-    if (owner != Token::FREE_FIELD && owner != token) {
+    if (owner != Token::FREE_FIELD) {
         buyProperty = true;
     }
     while (true) {
