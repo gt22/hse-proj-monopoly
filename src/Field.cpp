@@ -290,17 +290,21 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         NumReply numReply = tile.board.sendNumRequest(token);
         std::cout << numReply->num << "\n";
         int index = numReply->num;
-        if (tile.board.field[index]->getNumberOfHouses() != 0 && tile.board.field[index]->getNumberOfHotels() != 0) {
+        auto chosenField = tile.board.getFieldTile(index);
+        if (chosenField->getNumberOfHouses() != 0 && chosenField->getNumberOfHotels() != 0) {
             tile.board.sendMessage(token, PlayerMessage("You can't mortgage this field tile"), MessageType::INFO);
+            std::cout << "MORTGAGE_HOLDINGS 1\n";
             return true;
         }
-        if (!tile.board.field[index]->isMortgaged && tile.board.field[index]->getOwner() == token) {
+        if (!chosenField->isMortgaged && chosenField->getOwner() == token) {
+            std::cout << "MORTGAGE_HOLDINGS 2\n";
             PlayerData& player = tile.board.getPlayer(token);
-            player.addMoney(tile.getMortgageCost());
+            player.addMoney(chosenField->getMortgageCost());
             player.numberOfMortgagedProperty++;
-            tile.board.field[index]->isMortgaged = true;
+            chosenField->isMortgaged = true;
         } else {
             tile.board.sendMessage(token, PlayerMessage("You can't mortgage this field tile"), MessageType::INFO);
+            std::cout << "MORTGAGE_HOLDINGS 3\n";
         }
         return true;
     }
