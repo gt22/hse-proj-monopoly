@@ -126,46 +126,84 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     "By pressing this button you will get mortgage",
                     makeReplyGenerator<MortgageHoldingsReply>());
 
+    tokenButtons[Token::DOG].setTexture("images/DOG.png");
+    tokenButtons[Token::BOOT].setTexture("images/BOOT.png");
+    tokenButtons[Token::CAR].setTexture("images/CAR.png");
+    tokenButtons[Token::CAT].setTexture("images/CAT.png");
+    tokenButtons[Token::HAT].setTexture("images/HAT.png");
+    tokenButtons[Token::SHIP].setTexture("images/SHIP.png");
 
     events.addHandler<sf::Event::Closed>([this]() { window.close(); });
-    events.addHandler<sf::Event::Resized>([this](auto e) { onResize(e); });
+    events.addHandler<sf::Event::Resized>([this](sf::Event::SizeEvent e) {
+        window.setView(sf::View(sf::FloatRect(0, 0, e.width, e.height)));
+        onResize(e);
+    });
     events.addHandler<sf::Event::MouseMoved>([this](sf::Event::MouseMoveEvent e) {
-        box.setString(std::string(this->tooltips.getTooltip(e)));
-        box.setPosition(sf::Vector2f(20, window.getSize().y - box.getLocalBounds().height * 2));
+        if (!isMenu) {
+            box.setString(std::string(this->tooltips.getTooltip(e)));
+            box.setPosition(sf::Vector2f(20, window.getSize().y - box.getLocalBounds().height * 2));
+        }
     });
 
 
     onResize({window.getSize().x, window.getSize().y});
 
     events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e) {
+        if (!isMenu) {
         buttons.handle(e);
-        if (e.button == sf::Mouse::Left) {
-            for (std::size_t i = 0; i < fieldButtons.fieldButtons.size(); i++) {
-                if (fieldButtons.fieldButtons[i].isValidTarget(e)) {
-                    makeNumReply(std::make_unique<NumReplyData>(i));
-                    break;
+            if (e.button == sf::Mouse::Left) {
+                for (std::size_t i = 0; i < fieldButtons.fieldButtons.size(); i++) {
+                    if (fieldButtons.fieldButtons[i].isValidTarget(e)) {
+                        makeNumReply(std::make_unique<NumReplyData>(i));
+                        break;
+                    }
                 }
-            }
-        } else if (e.button == sf::Mouse::Right) {
-            for (std::size_t i = 0; i < fieldButtons.fieldButtons.size(); i++) {
-                if (fieldButtons.fieldButtons[i].isValidTarget(e)) {
-                    curCardIndex = i;
-                    drawCardInfo(i);
-                    break;
+            } else if (e.button == sf::Mouse::Right) {
+                for (std::size_t i = 0; i < fieldButtons.fieldButtons.size(); i++) {
+                    if (fieldButtons.fieldButtons[i].isValidTarget(e)) {
+                        curCardIndex = i;
+                        break;
+                    }
                 }
             }
         }
-    });
+        if (isMenu) {
+            if (e.button == sf::Mouse::Left) {
+                if (menuButtons[0].isMouseOver(window)) {
+                    isMenu = false;
+                    this->manager.startGame();
+                } else if (numOfAddedPlayers < 6 && menuButtons[1].isMouseOver(window)) {
+                    isTokenDraw = true;
+                } else if (menuButtons[2].isMouseOver(window)) {
+
+                } else if (menuButtons[3].isMouseOver(window)) {
+                    dispose();
+                }
+
+                if (isTokenDraw) {
+                    for (auto &t : tokenButtons) {
+                        if (t.second.getClickability() && t.second.isMouseOver(window)) {
+                            std::string name = "Player" + std::to_string(numOfAddedPlayers + 1);
+                            this->manager.addPlayer(std::make_unique<LocalPlayer>(t.first, name, *this));
+                            t.second.deactivate();
+                            isTokenDraw = false;
+                            ++numOfAddedPlayers;
+                        }
+                    }
+                }
+
+            }
+        }
+        });
 
     //TODO: temp
     curTurnBy = Token::DOG;
-    manager.addPlayer(std::make_unique<LocalPlayer>(Token::DOG, "Player 1", *this));
+    /*manager.addPlayer(std::make_unique<LocalPlayer>(Token::DOG, "Player 1", *this));
     manager.addPlayer(std::make_unique<LocalPlayer>(Token::HAT, "Player 2", *this));
     manager.addPlayer(std::make_unique<LocalPlayer>(Token::BOOT, "Player 3", *this));
     manager.addPlayer(std::make_unique<LocalPlayer>(Token::CAR, "Player 4", *this));
     manager.addPlayer(std::make_unique<LocalPlayer>(Token::CAT, "Player 5", *this));
-    manager.addPlayer(std::make_unique<LocalPlayer>(Token::SHIP, "Player 6", *this));
-    manager.startGame();
+    manager.addPlayer(std::make_unique<LocalPlayer>(Token::SHIP, "Player 6", *this));*/
 }
 
 void SFMLView::dispose() {
@@ -194,9 +232,11 @@ void SFMLView::mainLoop() {
             events.handleEvent(e);
         }
         window.clear();
-        draw();
-        buttons.draw(window);
-        window.draw(box);
+        monopolyDrawer();
+        if (isMenu) {
+            menuDrawer();
+        }
+
         window.display();
     }
 }
@@ -242,47 +282,45 @@ void SFMLView::drawField(const BoardModel &board) {
             }
             window.draw(ownerLabel);
         }
-        if (i % 10 == 0) {
-            std::string s = std::string(fieldTile.name);
-            sf::Text name(s, mainFont);
-            int fsize = 11;
-            name.setCharacterSize(fsize);
-            while (!doesFit(name, h * 0.8f)) {
-                auto lastSpace = s.rfind(' ');
-                if (lastSpace == std::string::npos) break;
-                s.replace(lastSpace, 1, "\n");
-                name.setString(s);
-            }
-            while (doesFit(name, h * 0.7f)) {
-                name.setCharacterSize(++fsize);
-            }
-            auto[nx, ny, nw, nh] = name.getLocalBounds();
-            const float align = ((h - nw) / 2);
-            if (i % 10 == 0) {
-                name.setOrigin(nx + nw / 2, ny + nh / 2);
-                name.setPosition(x + h / 2, y + w / 2);
-                name.rotate(isSide ? 45 : -45);
-            } else {
-                switch (i / 10) {
-                    case 0:
-                        name.rotate(+90);
-                        name.setPosition(x + w - shift, y + align);
-                        break;
-                    case 1:
-                        name.setPosition(x + align, y + h - shift - nh / 2);
-                        break;
-                    case 2:
-                        name.rotate(-90);
-                        name.setPosition(x + shift, y + h - align);
-                        break;
-                    case 3:
-                        name.setPosition(x + align, y + shift);
-                        break;
-                }
-            }
-
-            window.draw(name);
+        std::string s = std::string(fieldTile.name);
+        sf::Text name(s, mainFont);
+        int fsize = 11;
+        name.setCharacterSize(fsize);
+        while (!doesFit(name, h * 0.8f)) {
+            auto lastSpace = s.rfind(' ');
+            if (lastSpace == std::string::npos) break;
+            s.replace(lastSpace, 1, "\n");
+            name.setString(s);
         }
+        while (doesFit(name, h * 0.7f)) {
+            name.setCharacterSize(++fsize);
+        }
+        auto[nx, ny, nw, nh] = name.getLocalBounds();
+        const float align = ((h - nw) / 2);
+        if (i % 10 == 0) {
+            name.setOrigin(nx + nw / 2, ny + nh / 2);
+            name.setPosition(x + h / 2, y + w / 2);
+            name.rotate(isSide ? 45 : -45);
+        } else {
+            switch (i / 10) {
+                case 0:
+                    name.rotate(+90);
+                    name.setPosition(x + w - shift, y + align);
+                    break;
+                case 1:
+                    name.setPosition(x + align, y + h - shift - nh / 2);
+                    break;
+                case 2:
+                    name.rotate(-90);
+                    name.setPosition(x + shift, y + h - align);
+                    break;
+                case 3:
+                    name.setPosition(x + align, y + shift);
+                    break;
+            }
+        }
+
+        window.draw(name);
     }
     {
         sf::Text curTurn("Cur turn by: ", mainFont);
@@ -441,13 +479,25 @@ void SFMLView::drawMessage() {
 }
 
 
-void SFMLView::draw() {
+void SFMLView::monopolyDrawer() {
     BoardModel m = getModel();
-    drawField(m);
-    drawPlayers(m);
-    drawMoney(m);
-    drawMessage();
-    drawCardInfo(curCardIndex);
+    if (!isMenu) {
+        drawField(m);
+        drawPlayers(m);
+        drawMoney(m);
+        drawMessage();
+        drawCardInfo(m, curCardIndex);
+
+        buttons.draw(window);
+        window.draw(box);
+    }
+}
+
+void SFMLView::menuDrawer() {
+    drawMenuButtons();
+    if (isTokenDraw) {
+        drawTokenButtons();
+    }
 }
 
 void SFMLView::redraw(const Board &board) {
@@ -579,8 +629,6 @@ void SFMLView::onResize(sf::Event::SizeEvent e) {
             }
             break;
     }
-    drawCardInfo(curCardIndex);
-
 }
 
 void SFMLView::drawMoney(const BoardModel &board) {
@@ -607,7 +655,7 @@ void SFMLView::drawMoney(const BoardModel &board) {
     window.draw(money);
 }
 
-void SFMLView::drawCardInfo(std::optional<std::size_t> index) {
+void SFMLView::drawCardInfo(const BoardModel &board, std::optional<std::size_t> index) {
     auto baseRect = shapes.fieldRects[0];
     auto[w, h] = baseRect.getSize();
     w *= 3, h *= 4;
@@ -615,7 +663,7 @@ void SFMLView::drawCardInfo(std::optional<std::size_t> index) {
     auto[wx, wy] = window.getSize();
     baseRect.setPosition(sf::Vector2f(float(wx), float(wy)) - sf::Vector2f(w + 1, h + 1));
     if (index.has_value()) {
-        const auto &fieldTile = model.field[index.value()];
+        const auto &fieldTile = board.field[index.value()];
         //color
         sf::Color color;
         if (fieldTile.color.has_value()) {
@@ -710,8 +758,6 @@ void SFMLView::drawCardInfo(std::optional<std::size_t> index) {
         window.draw(text);
 
     }
-
-
 
     window.draw(baseRect);
 }
@@ -808,10 +854,49 @@ void SFMLView::addActionButton(PlayerAction action,
     buttons.addButton(std::move(btn), [handler](auto e) { handler(); return true; });
 }
 
+void SFMLView::drawMenuButtons() {
+    auto[w, h] = window.getSize();
+    float shift = float(h) / NUM_OF_BUTTONS;
+    sf::Vector2f buttonSize = sf::Vector2f(float(w) / 3, float(h) / 10);
+    menuButtons[0] = ButtonText("START GAME", buttonSize, 15, sf::Color(130, 130, 130), sf::Color::White);
+    menuButtons[1] = ButtonText("ADD PLAYER", buttonSize, 15, sf::Color(130, 130, 130), sf::Color::White);
+    menuButtons[2] = ButtonText("ABOUT", buttonSize, 15, sf::Color(130, 130, 130), sf::Color::White);
+    menuButtons[3] = ButtonText("EXIT", buttonSize, 15, sf::Color(130, 130, 130), sf::Color::White);
 
+    for (auto & menuButton : menuButtons)
+        menuButton.setFont(mainFont);
+    float start = shift / 2;
 
+    menuButtons[0].setPosition(sf::Vector2f(w / 2, start));
+    menuButtons[1].setPosition(sf::Vector2f(w / 2, start + shift));
+    menuButtons[2].setPosition(sf::Vector2f(w / 2, start + shift * 2));
+    menuButtons[3].setPosition(sf::Vector2f(w / 2, start + shift * 3));
 
+    for (auto & menuButton : menuButtons)
+        menuButton.drawTo(window);
+}
 
+void SFMLView::drawTokenButtons() {
+    auto[w, h] = window.getSize();
+    float shift = h / 3;
+    float start = shift / 4;
+    float x1 = w / 6;
+    float x2 = w * 5 / 6;
+    tokenButtons[Token::DOG].setPosition(sf::Vector2f(x1, start));
+    tokenButtons[Token::DOG].setScale(sf::Vector2f(0.5,0.5));
+    tokenButtons[Token::BOOT].setPosition(sf::Vector2f(x1, start + shift));
+    tokenButtons[Token::BOOT].setScale(sf::Vector2f(0.5,0.5));
+    tokenButtons[Token::CAR].setPosition(sf::Vector2f(x1, start + shift * 2));
+    tokenButtons[Token::CAR].setScale(sf::Vector2f(0.5,0.5));
 
+    tokenButtons[Token::CAT].setPosition(sf::Vector2f(x2, start));
+    tokenButtons[Token::CAT].setScale(sf::Vector2f(0.5,0.5));
+    tokenButtons[Token::HAT].setPosition(sf::Vector2f(x2, start + shift));
+    tokenButtons[Token::HAT].setScale(sf::Vector2f(0.5,0.5));
+    tokenButtons[Token::SHIP].setPosition(sf::Vector2f(x2, start + shift * 2));
+    tokenButtons[Token::SHIP].setScale(sf::Vector2f(0.5,0.5));
 
-
+    for (auto &t : tokenButtons) {
+        t.second.drawTo(window);
+    }
+}

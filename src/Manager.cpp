@@ -4,8 +4,6 @@
 #include <string_view>
 #include <cassert>
 
-#include <iostream>
-
 void Manager::addPlayer(std::unique_ptr<Player> player) {
     players.push_back(std::move(player));
 }
