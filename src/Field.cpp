@@ -762,10 +762,37 @@ void OwnableTile::onPlayerEntry(Token token) {
                     break;
                 }
             }
+            PlayerData& curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
             if (curBuyer == curPlayerNum) {
-                //TODO: buy
+                if (curPlayer.money >= curCost) {
+                    curPlayer.money -= curCost;
+                    onPurchase(curPlayer.token);
+                    buyProperty = true;
+                    owner = curPlayer.token;
+                    costOfParking = calculateTax(curPlayer.token);
+                    continue;
+                } else {
+                    request.message = "Not enough money :(";
+                    curPlayer.setLoser();
+                }
             } else {
-                //TODO: ask
+                //send PlayerTradeRequest
+                //TODO info about curCost
+                //get PlayerTradeReplyData
+                PlayerTradeReplyData tradeReply(PlayerTradeAction::REFUSE, 0);// = board.sendRequest(token, request);
+                if (tradeReply.action == PlayerTradeAction::PARTICIPATE) {
+                    if (curPlayer.money >= cost) {
+                        curPlayer.money -= cost;
+                        onPurchase(curPlayer.token);
+                        buyProperty = true;
+                        owner = curPlayer.token;
+                        costOfParking = calculateTax(curPlayer.token);
+                        continue;
+                    } else {
+                            request.message = "Not enough money :(";
+                            curPlayer.setLoser();
+                    }
+                }
             }
             buyProperty = true;
         }
