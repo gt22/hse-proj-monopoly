@@ -198,7 +198,6 @@ void makeDefaultRequest(PlayerRequest& r, Token token, Board& board) {
     //TODO: New allocation each time... Maybe rewrite as clear, reserve & many push_backs?
     r.availableActions = {
             PlayerAction::LOSE,
-            PlayerAction::END_TURN,
             PlayerAction::START_TRADE,
             PlayerAction::EXIT_GAME
     };
@@ -403,6 +402,7 @@ void Start::onPlayerEntry(Token token) {
     PlayerRequest request;
     while (true) {
         makeDefaultRequest(request, token, board);
+        request.availableActions.push_back(PlayerAction::END_TURN);
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
@@ -424,6 +424,7 @@ void Prison::onPlayerEntry(Token token) {
     bool diceUsed = false;
     while (true) {
         makeDefaultRequest(request, token, board);
+        request.availableActions.push_back(PlayerAction::END_TURN);
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
@@ -520,6 +521,9 @@ void Chance::onPlayerEntry(Token token) {
     bool takeCard = false;
     while (true) {
         makeDefaultRequest(request, token, board);
+        if (takeCard) {
+            request.availableActions.push_back(PlayerAction::END_TURN);
+        }
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
@@ -565,6 +569,9 @@ void PublicTreasury::onPlayerEntry(Token token) {
     std::set<PlayerAction> mustHave = { PlayerAction::TAKE_CARD };
     while (true) {
         makeDefaultRequest(request, token, board);
+        if (mustHave.empty()) {
+            request.availableActions.push_back(PlayerAction::END_TURN);
+        }
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
@@ -605,6 +612,9 @@ void IncomeTax::onPlayerEntry(Token token) {
     std::set<PlayerAction> mustHave = { PlayerAction::PAY_TAX };
     while (true) {
         makeDefaultRequest(request, token, board);
+        if (mustHave.empty()) {
+            request.availableActions.push_back(PlayerAction::END_TURN);
+        }
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
@@ -657,6 +667,9 @@ void OwnableTile::onPlayerEntry(Token token) {
     }
     while (true) {
         makeDefaultRequest(request, token, board);
+        if (buyProperty && taxPaid) {
+            request.availableActions.push_back(PlayerAction::END_TURN);
+        }
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
