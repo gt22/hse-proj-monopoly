@@ -290,17 +290,21 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         NumReply numReply = tile.board.sendNumRequest(token);
         std::cout << numReply->num << "\n";
         int index = numReply->num;
-        if (tile.board.field[index]->getNumberOfHouses() != 0 && tile.board.field[index]->getNumberOfHotels() != 0) {
+        auto chosenField = tile.board.getFieldTile(index);
+        if (chosenField->getNumberOfHouses() != 0 && chosenField->getNumberOfHotels() != 0) {
             tile.board.sendMessage(token, PlayerMessage("You can't mortgage this field tile"), MessageType::INFO);
+            std::cout << "MORTGAGE_HOLDINGS 1\n";
             return true;
         }
-        if (!tile.board.field[index]->isMortgaged && tile.board.field[index]->getOwner() == token) {
+        if (!chosenField->isMortgaged && chosenField->getOwner() == token) {
+            std::cout << "MORTGAGE_HOLDINGS 2\n";
             PlayerData& player = tile.board.getPlayer(token);
-            player.addMoney(tile.getMortgageCost());
+            player.addMoney(chosenField->getMortgageCost());
             player.numberOfMortgagedProperty++;
-            tile.board.field[index]->isMortgaged = true;
+            chosenField->isMortgaged = true;
         } else {
             tile.board.sendMessage(token, PlayerMessage("You can't mortgage this field tile"), MessageType::INFO);
+            std::cout << "MORTGAGE_HOLDINGS 3\n";
         }
         return true;
     }
@@ -648,7 +652,7 @@ void OwnableTile::onPlayerEntry(Token token) {
     if (owner == token || isMortgaged || owner == Token::FREE_FIELD) {
         taxPaid = true;
     }
-    if (owner != Token::FREE_FIELD && owner != token) {
+    if (owner != Token::FREE_FIELD) {
         buyProperty = true;
     }
     while (true) {
@@ -762,10 +766,37 @@ void OwnableTile::onPlayerEntry(Token token) {
                     break;
                 }
             }
+            PlayerData& curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
             if (curBuyer == curPlayerNum) {
-                //TODO: buy
+                if (curPlayer.money >= curCost) {
+                    curPlayer.money -= curCost;
+                    onPurchase(curPlayer.token);
+                    buyProperty = true;
+                    owner = curPlayer.token;
+                    costOfParking = calculateTax(curPlayer.token);
+                    continue;
+                } else {
+                    request.message = "Not enough money :(";
+                    curPlayer.setLoser();
+                }
             } else {
-                //TODO: ask
+                //send PlayerTradeRequest
+                //TODO info about curCost
+                //get PlayerTradeReplyData
+                PlayerTradeReplyData tradeReply(PlayerTradeAction::REFUSE, 0);// = board.sendRequest(token, request);
+                if (tradeReply.action == PlayerTradeAction::PARTICIPATE) {
+                    if (curPlayer.money >= cost) {
+                        curPlayer.money -= cost;
+                        onPurchase(curPlayer.token);
+                        buyProperty = true;
+                        owner = curPlayer.token;
+                        costOfParking = calculateTax(curPlayer.token);
+                        continue;
+                    } else {
+                            request.message = "Not enough money :(";
+                            curPlayer.setLoser();
+                    }
+                }
             }
             buyProperty = true;
         }
