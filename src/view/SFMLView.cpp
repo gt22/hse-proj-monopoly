@@ -10,17 +10,17 @@ using Vec::transpose;
 sf::Color getColor(Token tok) {
     switch (tok) {
         case Token::DOG:
-            return sf::Color::White;
+            return sf::Color(255, 183, 50); // ORANGE
         case Token::HAT:
-            return sf::Color::Red;
+            return sf::Color(246, 94, 94); // PINK
         case Token::BOOT:
-            return sf::Color::Blue;
+            return sf::Color(38, 158, 255); // BLUE
         case Token::CAT:
-            return sf::Color::Cyan;
+            return sf::Color(36, 194, 181); // CYAN
         case Token::CAR:
-            return sf::Color::Magenta;
+            return sf::Color(104, 50, 255); // PURPLE
         case Token::SHIP:
-            return sf::Color::Green;
+            return sf::Color(46, 218, 50); // GREEN
         case Token::FREE_FIELD:
             return sf::Color::Transparent;
     }
@@ -724,31 +724,30 @@ void SFMLView::drawCardInfo(const BoardModel &board, std::optional<std::size_t> 
             cardText += "\n";
         }
 
-      /*  if (fieldTile.tax.has_value() && !fieldTile.isStreet) {
-            cardText += "Tax: ";
-            cardText += std::to_string(fieldTile.tax.value());
-            cardText += "\n";
-        }
-*/
-
         if (fieldTile.owner.has_value()) {
             cardText += "Owner: ";
             sf::Color c = getColor(fieldTile.owner.value());
-            if (c == sf::Color::White) {
-                cardText += "White";
-            } else if (c == sf::Color::Red) {
-                cardText += "Red";
-            } else if (c == sf::Color::Blue) {
+            if (c == sf::Color(255, 183, 50)) {
+                cardText += "Orange";
+            } else if (c == sf::Color(246, 94, 94)) {
+                cardText += "Pink";
+            } else if (c == sf::Color(38, 158, 255)) {
                 cardText += "Blue";
-            } else if (c == sf::Color::Cyan) {
+            } else if (c == sf::Color(36, 194, 181)) {
                 cardText += "Cyan";
-            } else if (c == sf::Color::Magenta) {
-                cardText += "Magenta";
-            } else if (c == sf::Color::Green) {
+            } else if (c == sf::Color(104, 50, 255)) {
+                cardText += "Purple";
+            } else if (c == sf::Color(46, 218, 50)) {
                 cardText += "Green";
             }
             cardText += "\n";
         }
+
+        cardText += "Mortgage: ";
+        if (fieldTile.isMortgaged)
+            cardText += "Yes\n";
+        else
+            cardText += "No\n";
 
         if (fieldTile.numberOfHouses.has_value()) {
             cardText += "Num of houses: ";
