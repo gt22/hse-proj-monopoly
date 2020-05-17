@@ -109,6 +109,8 @@ struct StartTradeReply : BasicReply<PlayerAction::START_TRADE> {};
 
 struct MortgageHoldingsReply : BasicReply<PlayerAction::MORTGAGE_HOLDINGS> {};
 
+struct BuyBackProperty : BasicReply<PlayerAction::BUY_BACK_PROPERTY> {};
+
 
 
 #endif //PLAYERREQUESTS_H

@@ -75,7 +75,7 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     makeReplyGenerator<ExitGameReply>());
     addActionButton(PlayerAction::PAY_TAX,
                     "images/PAY_TAX.png",
-                    "By pressing this button you will pay tax",
+                    "By pressing this button you will pay tax to bank",
                     makeReplyGenerator<PayTaxReply>());
     addActionButton(PlayerAction::PAY_TO_OTHER_PLAYER,
                     "images/PAY_TO_OTHER_PLAYER.png",
@@ -125,6 +125,10 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     "images/MORTGAGE_HOLDINGS.png",
                     "By pressing this button you will get mortgage",
                     makeReplyGenerator<MortgageHoldingsReply>());
+    addActionButton(PlayerAction::BUY_BACK_PROPERTY,
+                    "images/BUY_BACK_PROPERTY.png",
+                    "By pressing this button you will buy your field back",
+                    makeReplyGenerator<BuyBackProperty>());
 
     tokenButtons[Token::DOG].setTexture("images/DOG.png");
     tokenButtons[Token::BOOT].setTexture("images/BOOT.png");
@@ -305,7 +309,7 @@ void SFMLView::drawField(const BoardModel &board) {
         else
             s = std::string(fieldTile.name);
         sf::Text name(s, mainFont);
-        int fsize = 9;
+        int fsize = 13;
         if (i % 10 == 0) {
             fsize = 15;
         }
@@ -317,7 +321,6 @@ void SFMLView::drawField(const BoardModel &board) {
             name.setString(s);
         }
          /*   while (doesFit(name, h * 0.8f)) {
-                std::cout << jk++ << " INSIDE FIT2\n";
                 name.setCharacterSize(++fsize);
             }*/
         auto[nx, ny, nw, nh] = name.getLocalBounds();
@@ -869,7 +872,7 @@ void SFMLView::addActionButton(PlayerAction action,
     auto btn = std::make_unique<SpriteButton>();
     size_t i = actionButtons.size();
     btn->setPosition(static_cast<float>(10 + 60 * (i % 2)), static_cast<float>(10 + 60 * (i / 2)));
-    btn->setScale({0.7f, 0.7f});
+    btn->setScale({0.8f, 0.8f});
     btn->setTexture(texture);
     actionButtons.emplace(action, *btn);
     auto[x, y] = btn->getPosition();
