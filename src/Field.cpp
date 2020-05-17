@@ -761,7 +761,7 @@ void OwnableTile::onPlayerEntry(Token token) {
                     numOfParticipants--;
                 }
                 if (tradeReply.action == PlayerTradeAction::PARTICIPATE) {
-                    if (curPlayer.getMoney() < tradeReply.amount) {
+                    if (curPlayer.getMoney() <= tradeReply.amount) {
                         board.sendMessage(curPlayer.token, PlayerMessage("You don't have enough money"), MessageType::INFO);
                     } else {
                         curBuyer = curPlayerNum;
