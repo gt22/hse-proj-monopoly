@@ -369,6 +369,14 @@ NumReply Board::sendNumRequest(Token token) const {
     return game.sendNumRequest(token);
 }
 
+SumReply Board::sendSumRequest(Token token) const {
+    return game.sendSumRequest(token);
+}
+
+PlayerTradeReply Board::sendTradeRequest(Token token, PlayerTradeRequest request) const {
+    return game.sendTradeRequest(token, request);
+}
+
 std::size_t Board::getPlayerNum(Token token) const {
     for (std::size_t i = 0; i < (*this).getPlayersNumber(); i++) {
         if (players[i].token == token) {

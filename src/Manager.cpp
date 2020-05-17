@@ -26,6 +26,25 @@ NumReply Manager::sendNumRequest(Token token) {
     throw 1; //TODO: сделать PlayerNotFoundException или что-нибудь такое
 }
 
+
+SumReply Manager::sendSumRequest(Token token) {
+    for(auto& p : players) {
+        if(p->token == token) {
+            return p->sendSum();
+        }
+    }
+    throw 1; //TODO: сделать PlayerNotFoundException или что-нибудь такое
+}
+
+PlayerTradeReply Manager::sendTradeRequest(Token token, PlayerTradeRequest request) {
+    for(auto& p : players) {
+        if(p->token == token) {
+            return p->sendTradeRequest(std::move(request));
+        }
+    }
+    throw 1; //TODO: сделать PlayerNotFoundException или что-нибудь такое
+}
+
 void Manager::sendMessage(Token token, PlayerMessage mes, MessageType type) {
     for(auto& p : players) {
         if(p->token == token) {
@@ -84,7 +103,3 @@ Manager::~Manager() {
         gameThread.join();
     }
 }
-
-
-
-
