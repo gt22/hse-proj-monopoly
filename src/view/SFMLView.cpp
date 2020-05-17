@@ -10,17 +10,17 @@ using Vec::transpose;
 sf::Color getColor(Token tok) {
     switch (tok) {
         case Token::DOG:
-            return sf::Color(255, 183, 50); // ORANGE
+            return sf::Color::White;// ORANGE
         case Token::HAT:
-            return sf::Color(246, 94, 94); // PINK
+            return sf::Color::Red; // PINK
         case Token::BOOT:
-            return sf::Color(38, 158, 255); // BLUE
+            return sf::Color::Blue; // BLUE
         case Token::CAT:
-            return sf::Color(36, 194, 181); // CYAN
+            return sf::Color::Cyan; // CYAN
         case Token::CAR:
-            return sf::Color(104, 50, 255); // PURPLE
+            return sf::Color::Magenta; // PURPLE
         case Token::SHIP:
-            return sf::Color(46, 218, 50); // GREEN
+            return sf::Color::Green; // GREEN
         case Token::FREE_FIELD:
             return sf::Color::Transparent;
     }
@@ -150,7 +150,7 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
 
     events.addHandler<sf::Event::MouseButtonPressed>([this](sf::Event::MouseButtonEvent e) {
         if (!isMenu) {
-        buttons.handle(e);
+            buttons.handle(e);
             if (e.button == sf::Mouse::Left) {
                 for (std::size_t i = 0; i < fieldButtons.fieldButtons.size(); i++) {
                     if (fieldButtons.fieldButtons[i].isValidTarget(e)) {
@@ -169,9 +169,12 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
         }
         if (isMenu) {
             if (e.button == sf::Mouse::Left) {
-                if (menuButtons[0].isMouseOver(window)) {
-                    isMenu = false;
+                if (numOfAddedPlayers >= 2 && menuButtons[0].isMouseOver(window)) {
+                   // window.clear();
                     this->manager.startGame();
+                    isMenu = false;
+                    window.clear();
+
                 } else if (numOfAddedPlayers < 6 && menuButtons[1].isMouseOver(window)) {
                     isTokenDraw = true;
                 } else if (menuButtons[2].isMouseOver(window)) {
@@ -185,6 +188,7 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                         if (t.second.getClickability() && t.second.isMouseOver(window)) {
                             std::string name = "Player" + std::to_string(numOfAddedPlayers + 1);
                             this->manager.addPlayer(std::make_unique<LocalPlayer>(t.first, name, *this));
+                            std::cout << "Player added\n";
                             t.second.deactivate();
                             isTokenDraw = false;
                             ++numOfAddedPlayers;
@@ -197,7 +201,7 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
         });
 
     //TODO: temp
-    curTurnBy = Token::DOG;
+   // curTurnBy = Token::DOG;
     /*manager.addPlayer(std::make_unique<LocalPlayer>(Token::DOG, "Player 1", *this));
     manager.addPlayer(std::make_unique<LocalPlayer>(Token::HAT, "Player 2", *this));
     manager.addPlayer(std::make_unique<LocalPlayer>(Token::BOOT, "Player 3", *this));
@@ -494,8 +498,8 @@ void SFMLView::drawMessage() {
 
 
 void SFMLView::monopolyDrawer() {
-    BoardModel m = getModel();
     if (!isMenu) {
+        BoardModel m = getModel();
         drawField(m);
         drawPlayers(m);
         drawMoney(m);
@@ -727,17 +731,17 @@ void SFMLView::drawCardInfo(const BoardModel &board, std::optional<std::size_t> 
         if (fieldTile.owner.has_value()) {
             cardText += "Owner: ";
             sf::Color c = getColor(fieldTile.owner.value());
-            if (c == sf::Color(255, 183, 50)) {
-                cardText += "Orange";
-            } else if (c == sf::Color(246, 94, 94)) {
-                cardText += "Pink";
-            } else if (c == sf::Color(38, 158, 255)) {
+            if (c == sf::Color::White) {
+                cardText += "White";
+            } else if (c == sf::Color::Red) {
+                cardText += "Red";
+            } else if (c == sf::Color::Blue) {
                 cardText += "Blue";
-            } else if (c == sf::Color(36, 194, 181)) {
+            } else if (c == sf::Color::Cyan) {
                 cardText += "Cyan";
-            } else if (c == sf::Color(104, 50, 255)) {
-                cardText += "Purple";
-            } else if (c == sf::Color(46, 218, 50)) {
+            } else if (c == sf::Color::Magenta) {
+                cardText += "Magenta";
+            } else if (c == sf::Color::Green) {
                 cardText += "Green";
             }
             cardText += "\n";
