@@ -16,5 +16,6 @@ PlayerTradeRequest::PlayerTradeRequest(std::string_view message) : message(messa
 
 PlayerTradeRequest::PlayerTradeRequest() : PlayerTradeRequest("") {}
 
-PlayerTradeReplyData::PlayerTradeReplyData(PlayerTradeAction action, int amount)
-        : action(action), amount(amount) {}
+PlayerTradeReplyData::PlayerTradeReplyData(PlayerTradeAction action) : action(action) {}
+
+SumReplyData::SumReplyData(int amount) : amount(amount) {}

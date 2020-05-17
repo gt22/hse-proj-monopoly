@@ -79,6 +79,12 @@ NumReply Game::sendNumRequest(Token token) {
     return rep;
 }
 
+SumReply Game::sendSumRequest(Token token) {
+    sync();
+    SumReply rep = manager.sendSumRequest(token);
+    return rep;
+}
+
 PlayerTradeReply Game::sendTradeRequest(Token token, PlayerTradeRequest request) {
     sync();
     PlayerTradeReply rep = manager.sendTradeRequest(token, request);

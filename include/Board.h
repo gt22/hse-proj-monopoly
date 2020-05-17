@@ -66,6 +66,7 @@ public:
     const std::vector<PlayerData>& getPlayers() const;
     virtual PlayerReply sendRequest(Token token, PlayerRequest request) const;
     virtual NumReply sendNumRequest(Token token) const;
+    virtual SumReply sendSumRequest(Token token) const;
     virtual PlayerTradeReply sendTradeRequest(Token token, PlayerTradeRequest request) const;
     void sendMessage(Token token, PlayerMessage mes, MessageType type) const;
     std::size_t getPlayersNumber() const;

@@ -755,17 +755,18 @@ void OwnableTile::onPlayerEntry(Token token) {
                 //send PlayerTradeRequest
                 //TODO info about curCost and CurBuyer
                 //get PlayerTradeReplyData
-                PlayerTradeReplyData tradeReply(PlayerTradeAction::REFUSE, 0);// = board.sendRequest(token, request);
+                PlayerTradeReplyData tradeReply(PlayerTradeAction::REFUSE);// = board.sendRequest(token, request);
                 if (tradeReply.action == PlayerTradeAction::REFUSE) {
                     participants[curPlayerNum] = false;
                     numOfParticipants--;
                 }
                 if (tradeReply.action == PlayerTradeAction::PARTICIPATE) {
-                    if (curPlayer.getMoney() <= tradeReply.amount) {
+                    SumReply sumReply = board.sendSumRequest(curPlayer.token);
+                    if (curPlayer.getMoney() <= sumReply->amount) {
                         board.sendMessage(curPlayer.token, PlayerMessage("You don't have enough money"), MessageType::INFO);
                     } else {
                         curBuyer = curPlayerNum;
-                        curCost = tradeReply.amount;
+                        curCost = sumReply->amount;
                     }
                 }
                 curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
@@ -795,7 +796,7 @@ void OwnableTile::onPlayerEntry(Token token) {
                 //send PlayerTradeRequest
                 //TODO info about curCost
                 //get PlayerTradeReplyData
-                PlayerTradeReplyData tradeReply(PlayerTradeAction::REFUSE, 0);// = board.sendRequest(token, request);
+                PlayerTradeReplyData tradeReply(PlayerTradeAction::REFUSE);// = board.sendRequest(token, request);
                 if (tradeReply.action == PlayerTradeAction::PARTICIPATE) {
                     if (curPlayer.money >= cost) {
                         curPlayer.money -= cost;

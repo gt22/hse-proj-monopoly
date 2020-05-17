@@ -62,11 +62,16 @@ struct NumReplyData {
     std::size_t num;
 };
 
+struct SumReplyData {
+    explicit SumReplyData(int amount);
+    virtual ~SumReplyData() = default;
+    int amount;
+};
+
 struct PlayerTradeReplyData {
-    explicit PlayerTradeReplyData(PlayerTradeAction action, int amount);
+    explicit PlayerTradeReplyData(PlayerTradeAction action);
     virtual ~PlayerTradeReplyData() = default;
     const PlayerTradeAction action;
-    int amount;
 };
 
 template<PlayerAction ACTION>
