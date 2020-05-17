@@ -58,19 +58,19 @@ Chance::Chance(Board &board, int position, std::string name)
     cards[10]->setPos(POLYANKA_POS);
 
     //TODO: fill vector cards!!!
-    cards[11] = new GetMoney(board, "Card #12");//50
+    cards[11] = new GetMoney(board, "From sale of stock you earn M50");//50
     cards[11]->setAmount(50);
 
-    cards[12] = new GetMoney(board, "Card #13");//10
+    cards[12] = new GetMoney(board, "You won second place in a beauty contest. Collect M10");//10
     cards[12]->setAmount(10);
 
-    cards[13] = new PayMoney(board, "Card #14");//30*buildings + 115*hotels
+    cards[13] = new PayMoney(board, "You are to make streets repair.\n Pay M40 for each house and M115 for each hotel in your property.");//30*buildings + 115*hotels
     cards[13]->setFlag(true);
 
-    cards[14] = new Teleport(board, "Card #15");//to start
+    cards[14] = new Teleport(board, "Pass \"Go\". Collect M200");//to start
     cards[14]->setPos(START_POS);
 
-    cards[15] = new GetMoney(board, "Card #16");//200
+    cards[15] = new GetMoney(board, "Bank error in your favor. Collect M200");//200
     cards[15]->setAmount(200);
     //TODO: fill vector cards!!!
 }
@@ -78,51 +78,50 @@ Chance::Chance(Board &board, int position, std::string name)
 PublicTreasury::PublicTreasury(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {
     cards.resize(16);
+    cards[0] = new LeavePrisonForFree(board, "Get out of jail for free!");
 
-    cards[0] = new LeavePrisonForFree(board, "Card #1");
-
-    cards[1] = new PayMoney(board, "Card #2");//50
+    cards[1] = new PayMoney(board, "Expenses for treatment at the doctor. Pay M50");//50
     cards[1]->setAmount(50);
 
-    cards[2] = new GetMoney(board, "Holiday pay! Get 100");//100
+    cards[2] = new GetMoney(board, "Vacation pay. Collect M100");//100
     cards[2]->setAmount(100);
 
-    cards[3] = new GetMoney(board, "Card #4");//100
+    cards[3] = new GetMoney(board, "Payment for insurance. Collect M100");//100
     cards[3]->setAmount(100);
 
-    cards[4] = new PayMoney(board, "Card #5");//50
+    cards[4] = new PayMoney(board, " Educational expenses. Pay M50");//50
     cards[4]->setAmount(50);
 
-    cards[5] = new GetMoney(board, "Card #6");//20
+    cards[5] = new GetMoney(board, "Income tax refund. Collect M20");//20
     cards[5]->setAmount(20);
 
-    cards[6] = new GetMoney(board, "Card #7");//100
+    cards[6] = new GetMoney(board, "Pay hospital. Collect M100");//100
     cards[6]->setAmount(100);
 
-    cards[7] = new TeleportToPrison(board, "Card #8");
+    cards[7] = new TeleportToPrison(board, "You're under arrest! Move directly to jail.\n Don't pass \"Go\". Don't collect M200");
 
-    cards[8] = new GetMoney(board, "Card #9");//25
+    cards[8] = new GetMoney(board, "Get M25 for the consultation");//25
     cards[8]->setAmount(25);
 
-    cards[9] = new GetMoneyFromOtherPlayers(board, "Card #10");//10
+    cards[9] = new GetMoneyFromOtherPlayers(board, "Birthday! Get M10 from each of participants");//10
     cards[9]->setAmount(10);
 
-    cards[10] = new GetMoney(board, "Card #11");//100
+    cards[10] = new GetMoney(board, "You get an inheritance M100");//100
     cards[10]->setAmount(100);
 
-    cards[11] = new GetMoney(board, "Card #12");//50
+    cards[11] = new GetMoney(board, "From sale of stock you earn M50");//50
     cards[11]->setAmount(50);
 
-    cards[12] = new GetMoney(board, "Card #13");//10
+    cards[12] = new GetMoney(board, "You won second place in a beauty contest. Collect M10");//10
     cards[12]->setAmount(10);
 
-    cards[13] = new PayMoney(board, "Card #14");//30*buildings + 115*hotels
+    cards[13] = new PayMoney(board, "You are to make streets repair.\n Pay M40 for each house and M115 for each hotel in your property.");//30*buildings + 115*hotels
     cards[13]->setFlag(true);
 
-    cards[14] = new Teleport(board, "Card #15");//to start
+    cards[14] = new Teleport(board, "Pass \"Go\". Collect M200");//to start
     cards[14]->setPos(START_POS);
 
-    cards[15] = new GetMoney(board, "Card #16");//200
+    cards[15] = new GetMoney(board, "Bank error in your favor. Collect M200");//200
     cards[15]->setAmount(200);
     //TODO: fill vector cards
 }
