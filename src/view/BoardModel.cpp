@@ -17,6 +17,7 @@ void FieldTileModel::update(const FieldTile& tile) {
         cost = ownable->cost;
         costOfParking = ownable->costOfParking;
         owner = ownable->owner;
+        shortName = ownable->shortName;
         if(auto street = dynamic_cast<const Street*>(ownable); street) {
             numberOfHouses = street->numberOfHouses;
             costPerHouse = street->costPerHouse;

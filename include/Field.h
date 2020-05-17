@@ -53,7 +53,7 @@ public:
 
 class OwnableTile : public FieldTile {
 public:
-    OwnableTile(Board& board, int position, std::string name,
+    OwnableTile(Board& board, int position, std::string name, std::string shortName,
             int cost, Color color);
     virtual size_t calculateTax(Token token) = 0;
     virtual void onPurchase(Token token) = 0;
@@ -66,6 +66,7 @@ public:
     int getMortgageCost() const override { return mortgageCost; }
     int getFieldCost() override { return cost; }
     int mortgageCost = 0;
+    std::string shortName;
     int cost;
     Color color;
     Token owner = Token::FREE_FIELD; //TODO: как обозначить отсутствие владельца
@@ -74,7 +75,7 @@ public:
 
 class Railway final : public OwnableTile {
 public:
-    Railway(Board& board, int position, std::string name,
+    Railway(Board& board, int position, std::string name, std::string shortName,
             int cost, Color color);
     size_t calculateTax(Token token) override;
     void onPurchase(Token token) override;
@@ -84,7 +85,7 @@ public:
 
 class Street final : public OwnableTile {
 public:
-    Street(Board& board, int position, std::string name,
+    Street(Board& board, int position, std::string name, std::string shortName,
            int cost, Color color, int costPerHouse, int costPerHotel = 0);
     size_t calculateTax(Token token) override;
     void onPurchase(Token token) override;
@@ -113,7 +114,7 @@ public:
 
 class Utility final : public OwnableTile {
 public:
-    Utility(Board& board, int position, std::string name,
+    Utility(Board& board, int position, std::string name, std::string shortName,
             int cost, Color color);
     std::vector<std::string> writeTileInfo() override;
     size_t calculateTax(Token token) override;

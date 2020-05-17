@@ -132,15 +132,15 @@ IncomeTax::IncomeTax(Board &board, int position, std::string name, int tax)
 FreeParking::FreeParking(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {}
 
-OwnableTile::OwnableTile(Board &board, int position, std::string name, int cost, Color color)
-        : FieldTile(board, position, std::move(name)), cost(cost), color(color) {}
+OwnableTile::OwnableTile(Board &board, int position, std::string name, std::string shortName, int cost, Color color)
+        : FieldTile(board, position, std::move(name)), shortName(std::move(shortName)), cost(cost), color(color) {}
 
-Railway::Railway(Board &board, int position, std::string name, int cost, Color color)
-        : OwnableTile(board, position, std::move(name), cost, color) { mortgageCost = 100; }
+Railway::Railway(Board &board, int position, std::string name, std::string shortName, int cost, Color color)
+        : OwnableTile(board, position, std::move(name), std::move(shortName), cost, color) { mortgageCost = 100; }
 
-Street::Street(Board &board, int position, std::string name, int cost, Color color,
+Street::Street(Board &board, int position, std::string name, std::string shortName, int cost, Color color,
                     int costPerHouse, int costPerHotel)
-        : OwnableTile(board, position, std::move(name), cost, color),
+        : OwnableTile(board, position, std::move(name), std::move(shortName), cost, color),
                 costPerHouse(costPerHouse), costPerHotel(costPerHotel) {}
 
 size_t Street::calculateTax(Token token) {
@@ -172,8 +172,8 @@ void Street::onPurchase(Token token) {
     return;
 }
 
-Utility::Utility(Board &board, int position, std::string name, int cost, Color color)
-        : OwnableTile(board, position, std::move(name), cost, color) { mortgageCost = 75; }
+Utility::Utility(Board &board, int position, std::string name, std::string shortName, int cost, Color color)
+        : OwnableTile(board, position, std::move(name), std::move(shortName), cost, color) { mortgageCost = 75; }
 
 void FieldTile::onPlayerPass(Token) {}
 

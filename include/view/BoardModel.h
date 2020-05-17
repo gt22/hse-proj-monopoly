@@ -22,6 +22,7 @@ struct FieldTileModel {
    // std::optional<int> tax;
     bool isMortgaged;
     std::optional<int> cost;
+    std::optional<std::string_view> shortName;
     std::optional<int> costOfParking;
     std::optional<Color> color;
     std::optional<Token> owner;

@@ -170,11 +170,9 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
         if (isMenu) {
             if (e.button == sf::Mouse::Left) {
                 if (numOfAddedPlayers >= 2 && menuButtons[0].isMouseOver(window)) {
-                   // window.clear();
-                    this->manager.startGame();
                     isMenu = false;
-                    window.clear();
-
+                  //  window.clear();
+                    this->manager.startGame();
                 } else if (numOfAddedPlayers < 6 && menuButtons[1].isMouseOver(window)) {
                     isTokenDraw = true;
                 } else if (menuButtons[2].isMouseOver(window)) {
@@ -188,7 +186,6 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                         if (t.second.getClickability() && t.second.isMouseOver(window)) {
                             std::string name = "Player" + std::to_string(numOfAddedPlayers + 1);
                             this->manager.addPlayer(std::make_unique<LocalPlayer>(t.first, name, *this));
-                            std::cout << "Player added\n";
                             t.second.deactivate();
                             isTokenDraw = false;
                             ++numOfAddedPlayers;
@@ -285,34 +282,44 @@ void SFMLView::drawField(const BoardModel &board) {
                 case 3: ownerLabel.setPosition(viewTile.getPosition() + sf::Vector2f(0, w - size)); break;
             }
             window.draw(ownerLabel);
-
+            auto[ow, oh] = ownerLabel.getSize();
             if (fieldTile.isMortgaged) {
-                sf::Color mortgageColor = sf::Color::Black;
-                const float mortgageSize = w / 12;
+                sf::Color mortgageColor = sf::Color(150, 150, 150);
+                const float mortgageSize = w / 20;
                 sf::CircleShape mortgageLabel(mortgageSize);
+                mortgageLabel.setOrigin(mortgageLabel.getRadius(), mortgageLabel.getRadius());
                 mortgageLabel.setFillColor(mortgageColor);
                 switch(i / 10) {
-                    case 0: mortgageLabel.setPosition(viewTile.getPosition()); break;
-                    case 1: mortgageLabel.setPosition(viewTile.getPosition() + sf::Vector2f(h - size, 0)); break;
-                    case 2: mortgageLabel.setPosition(viewTile.getPosition() + sf::Vector2f(w - size, h - size)); break;
-                    case 3: mortgageLabel.setPosition(viewTile.getPosition() + sf::Vector2f(0, w - size)); break;
+                    case 0: mortgageLabel.setPosition(viewTile.getPosition() + sf::Vector2f(ow / 2, oh / 2)); break;
+                    case 1: mortgageLabel.setPosition(viewTile.getPosition() + sf::Vector2f(h - size, 0) + sf::Vector2f(ow / 2, oh / 2)); break;
+                    case 2: mortgageLabel.setPosition(viewTile.getPosition() + sf::Vector2f(w - size, h - size) + sf::Vector2f(ow / 2, oh / 2)); break;
+                    case 3: mortgageLabel.setPosition(viewTile.getPosition() + sf::Vector2f(0, w - size) + sf::Vector2f(ow / 2, oh / 2)); break;
                 }
                 window.draw(mortgageLabel);
             }
         }
-        std::string s = std::string(fieldTile.name);
+
+        std::string s;
+        if (fieldTile.shortName.has_value())
+            s = std::string(fieldTile.shortName.value());
+        else
+            s = std::string(fieldTile.name);
         sf::Text name(s, mainFont);
-        int fsize = 11;
+        int fsize = 9;
+        if (i % 10 == 0) {
+            fsize = 15;
+        }
         name.setCharacterSize(fsize);
-        while (!doesFit(name, h * 0.8f)) {
+        while (!doesFit(name, h * 0.7f)) {
             auto lastSpace = s.rfind(' ');
             if (lastSpace == std::string::npos) break;
             s.replace(lastSpace, 1, "\n");
             name.setString(s);
         }
-        while (doesFit(name, h * 0.7f)) {
-            name.setCharacterSize(++fsize);
-        }
+         /*   while (doesFit(name, h * 0.8f)) {
+                std::cout << jk++ << " INSIDE FIT2\n";
+                name.setCharacterSize(++fsize);
+            }*/
         auto[nx, ny, nw, nh] = name.getLocalBounds();
         const float align = ((h - nw) / 2);
         if (i % 10 == 0) {
