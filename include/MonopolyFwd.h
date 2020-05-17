@@ -64,8 +64,11 @@ struct PlayerRequest;
 struct PlayerReplyData;
 struct NumReplyData;
 struct PlayerMessage;
+struct PlayerTradeReplyData;
+struct PlayerTradeRequest;
 typedef std::unique_ptr<PlayerReplyData> PlayerReply;
 typedef std::unique_ptr<NumReplyData> NumReply;
+typedef std::unique_ptr<PlayerTradeReplyData> PlayerTradeReply;
 
 class RandomSource;
 

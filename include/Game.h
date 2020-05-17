@@ -15,6 +15,7 @@ public:
     void runGame();
     PlayerReply sendRequest(Token token, PlayerRequest request);
     NumReply sendNumRequest(Token token);
+    PlayerTradeReply sendTradeRequest(Token token, PlayerTradeRequest request);
     void sendMessage(Token token, PlayerMessage mes, MessageType type);
     Board& getBoard();
     void sync();

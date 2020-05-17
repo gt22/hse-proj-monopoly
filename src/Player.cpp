@@ -30,4 +30,8 @@ SFMLView& LocalPlayer::gameView() {
     return view;
 }
 
+PlayerTradeReply LocalPlayer::sendTradeRequest(PlayerTradeRequest request) {
+    return PlayerTradeReply();
+}
+
 
