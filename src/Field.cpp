@@ -736,7 +736,6 @@ void OwnableTile::onPlayerEntry(Token token) {
             participants[curPlayerNum] = false;
             int curCost = cost;
             int curBuyer = -1;
-            PlayerTradeRequest tradeRequest(name);
             while (numOfParticipants > 1) {
                 if (!participants[curPlayerNum]) {
                     continue;
@@ -752,15 +751,13 @@ void OwnableTile::onPlayerEntry(Token token) {
                     curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
                     continue;
                 }
-                //send PlayerTradeRequest
                 //TODO info about curCost and CurBuyer
-                //get PlayerTradeReplyData
-                PlayerTradeReplyData tradeReply(PlayerTradeAction::REFUSE);// = board.sendRequest(token, request);
-                if (tradeReply.action == PlayerTradeAction::REFUSE) {
+                PlayerTradeReply tradeReply = board.sendTradeRequest(curPlayer.token, PlayerTradeRequest(""));
+                if (tradeReply->action == PlayerTradeAction::REFUSE) {
                     participants[curPlayerNum] = false;
                     numOfParticipants--;
                 }
-                if (tradeReply.action == PlayerTradeAction::PARTICIPATE) {
+                if (tradeReply->action == PlayerTradeAction::PARTICIPATE) {
                     SumReply sumReply = board.sendSumRequest(curPlayer.token);
                     if (curPlayer.getMoney() <= sumReply->amount) {
                         board.sendMessage(curPlayer.token, PlayerMessage("You don't have enough money"), MessageType::INFO);
@@ -789,15 +786,13 @@ void OwnableTile::onPlayerEntry(Token token) {
                     costOfParking = calculateTax(curPlayer.token);
                     continue;
                 } else {
-                    request.message = "Not enough money :(";
+                    board.sendMessage(curPlayer.token, PlayerMessage("Not enough money :("), MessageType::INFO);
                     curPlayer.setLoser();
                 }
             } else {
-                //send PlayerTradeRequest
-                //TODO info about curCost
-                //get PlayerTradeReplyData
-                PlayerTradeReplyData tradeReply(PlayerTradeAction::REFUSE);// = board.sendRequest(token, request);
-                if (tradeReply.action == PlayerTradeAction::PARTICIPATE) {
+                //TODO info about curCost and CurBuyer
+                PlayerTradeReply tradeReply = board.sendTradeRequest(curPlayer.token, PlayerTradeRequest(""));
+                if (tradeReply->action == PlayerTradeAction::PARTICIPATE) {
                     if (curPlayer.money >= cost) {
                         curPlayer.money -= cost;
                         onPurchase(curPlayer.token);
@@ -806,8 +801,8 @@ void OwnableTile::onPlayerEntry(Token token) {
                         costOfParking = calculateTax(curPlayer.token);
                         continue;
                     } else {
-                            request.message = "Not enough money :(";
-                            curPlayer.setLoser();
+                        board.sendMessage(curPlayer.token, PlayerMessage("Not enough money :("), MessageType::INFO);
+                        curPlayer.setLoser();
                     }
                 }
             }
