@@ -739,6 +739,7 @@ void OwnableTile::onPlayerEntry(Token token) {
             std::cout << "IN TRADE\n";
             while (numOfParticipants > 1) {
                 if (!participants[curPlayerNum]) {
+                    curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
                     continue;
                 }
                 PlayerData& curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
