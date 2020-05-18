@@ -38,4 +38,8 @@ SumReply LocalPlayer::sendSum() {
     return gameView().processSum(*this);
 }
 
+TokenReply LocalPlayer::sendToken() {
+    return TokenReply();
+}
+
 

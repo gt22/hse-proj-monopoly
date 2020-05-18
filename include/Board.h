@@ -67,6 +67,7 @@ public:
     virtual PlayerReply sendRequest(Token token, PlayerRequest request) const;
     virtual NumReply sendNumRequest(Token token) const;
     virtual SumReply sendSumRequest(Token token) const;
+    virtual TokenReply sendTokenRequest(Token token) const;
     virtual PlayerTradeReply sendTradeRequest(Token token, PlayerTradeRequest request) const;
     void sendMessage(Token token, PlayerMessage mes, MessageType type) const;
     std::size_t getPlayersNumber() const;
@@ -79,6 +80,8 @@ public:
     bool checkAllFieldsOfCurColor(Token token, int ind) const;
     bool checkFieldWithoutBuildings(Token token) const;
     bool checkAllFieldsOfCol(Token token) const;
+
+    std::string numToTokenString(int ind) const;
 
     std::size_t getPlayerIndex() const;
     void setPlayerIndex(std::size_t num);

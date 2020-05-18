@@ -18,6 +18,7 @@ public:
     virtual void sendMessage(PlayerMessage request, MessageType type) = 0;
     virtual NumReply sendNum() = 0;
     virtual SumReply sendSum() = 0;
+    virtual TokenReply sendToken() = 0;
     virtual void sync(const Board& board) = 0;
 
     const Token token;
@@ -30,6 +31,7 @@ public:
     void sendMessage(PlayerMessage request, MessageType type) override;
     NumReply sendNum() override;
     SumReply sendSum() override;
+    TokenReply sendToken() override;
     PlayerTradeReply sendTradeRequest(PlayerTradeRequest request) override;
     void sync(const Board& board) override;
 };
@@ -40,6 +42,7 @@ public:
     void sendMessage(PlayerMessage request, MessageType type) override;
     NumReply sendNum() override;
     SumReply sendSum() override;
+    TokenReply sendToken() override;
     PlayerTradeReply sendTradeRequest(PlayerTradeRequest request) override;
     void sync(const Board& board) override;
 };
@@ -51,6 +54,7 @@ public:
     void sendMessage(PlayerMessage request, MessageType type) override;
     NumReply sendNum() override;
     SumReply sendSum() override;
+    TokenReply sendToken() override;
     PlayerTradeReply sendTradeRequest(PlayerTradeRequest request) override;
     void sync(const Board& board) override;
 

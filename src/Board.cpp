@@ -377,6 +377,10 @@ PlayerTradeReply Board::sendTradeRequest(Token token, PlayerTradeRequest request
     return game.sendTradeRequest(token, request);
 }
 
+TokenReply Board::sendTokenRequest(Token token) const {
+    return game.sendTokenRequest(token);
+}
+
 std::size_t Board::getPlayerNum(Token token) const {
     for (std::size_t i = 0; i < (*this).getPlayersNumber(); i++) {
         if (players[i].token == token) {
@@ -384,6 +388,26 @@ std::size_t Board::getPlayerNum(Token token) const {
         }
     }
     throw std::invalid_argument("no player with this token");
+}
+
+std::string Board::numToTokenString(int ind) const {
+    if (ind == -1) {
+        return "None";
+    }
+    Token buyer = this->getPlayerToken(ind);
+    if (buyer == Token::SHIP)
+        return "SHIP";
+    else if (buyer == Token::BOOT)
+        return "BOOT";
+    else if (buyer == Token::CAR)
+        return "CAR";
+    else if (buyer == Token::CAT)
+        return "CAT";
+    else if (buyer == Token::DOG)
+        return "DOG";
+    else if (buyer == Token::HAT)
+        return "HAT";
+    throw std::invalid_argument("no such token");
 }
 
 int countPrevForColor(int ind, const Board& board) {

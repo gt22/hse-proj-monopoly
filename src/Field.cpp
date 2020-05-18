@@ -751,7 +751,8 @@ void OwnableTile::onPlayerEntry(Token token) {
                     curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
                     continue;
                 }
-                //TODO info about curCost and CurBuyer
+                board.sendMessage(curPlayer.token, PlayerMessage("Auction field: " + this->name + "\nCurrent cost: "
+                    + std::to_string(curCost) + "\nCurrent buyer: " + board.numToTokenString(curBuyer)), MessageType::INFO);
                 PlayerTradeReply tradeReply = board.sendTradeRequest(curPlayer.token, PlayerTradeRequest(""));
                 if (tradeReply->action == PlayerTradeAction::REFUSE) {
                     participants[curPlayerNum] = false;
@@ -790,7 +791,8 @@ void OwnableTile::onPlayerEntry(Token token) {
                     curPlayer.setLoser();
                 }
             } else {
-                //TODO info about curCost and CurBuyer
+                board.sendMessage(curPlayer.token, PlayerMessage("Auction field: " + this->name + "\nCurrent cost: "
+                    + std::to_string(curCost) + "\nCurrent buyer: " + board.numToTokenString(curBuyer)), MessageType::INFO);
                 PlayerTradeReply tradeReply = board.sendTradeRequest(curPlayer.token, PlayerTradeRequest(""));
                 if (tradeReply->action == PlayerTradeAction::PARTICIPATE) {
                     if (curPlayer.money >= cost) {
