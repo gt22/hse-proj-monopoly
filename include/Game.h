@@ -16,6 +16,7 @@ public:
     PlayerReply sendRequest(Token token, PlayerRequest request);
     NumReply sendNumRequest(Token token);
     SumReply sendSumRequest(Token token);
+    TokenReply sendTokenRequest(Token token);
     PlayerTradeReply sendTradeRequest(Token token, PlayerTradeRequest request);
     void sendMessage(Token token, PlayerMessage mes, MessageType type);
     Board& getBoard();

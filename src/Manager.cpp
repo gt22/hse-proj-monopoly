@@ -36,6 +36,16 @@ SumReply Manager::sendSumRequest(Token token) {
     throw 1; //TODO: сделать PlayerNotFoundException или что-нибудь такое
 }
 
+
+TokenReply Manager::sendTokenRequest(Token token) {
+    for(auto& p : players) {
+        if(p->token == token) {
+            return p->sendToken();
+        }
+    }
+    throw 1; //TODO: сделать PlayerNotFoundException или что-нибудь такое
+}
+
 PlayerTradeReply Manager::sendTradeRequest(Token token, PlayerTradeRequest request) {
     for(auto& p : players) {
         if(p->token == token) {

@@ -70,6 +70,7 @@ struct SumReplyData;
 typedef std::unique_ptr<PlayerReplyData> PlayerReply;
 typedef std::unique_ptr<NumReplyData> NumReply;
 typedef std::unique_ptr<SumReplyData> SumReply;
+typedef std::unique_ptr<SumReplyData> TokenReply;
 typedef std::unique_ptr<PlayerTradeReplyData> PlayerTradeReply;
 
 class RandomSource;

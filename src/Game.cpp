@@ -90,3 +90,9 @@ PlayerTradeReply Game::sendTradeRequest(Token token, PlayerTradeRequest request)
     PlayerTradeReply rep = manager.sendTradeRequest(token, request);
     return rep;
 }
+
+TokenReply Game::sendTokenRequest(Token token) {
+    sync();
+    TokenReply rep = manager.sendTokenRequest(token);
+    return rep;
+}

@@ -38,4 +38,8 @@ SumReply LocalPlayer::sendSum() {
     return SumReply();
 }
 
+TokenReply LocalPlayer::sendToken() {
+    return TokenReply();
+}
+
 

@@ -377,6 +377,10 @@ PlayerTradeReply Board::sendTradeRequest(Token token, PlayerTradeRequest request
     return game.sendTradeRequest(token, request);
 }
 
+TokenReply Board::sendTokenRequest(Token token) const {
+    return game.sendTokenRequest(token);
+}
+
 std::size_t Board::getPlayerNum(Token token) const {
     for (std::size_t i = 0; i < (*this).getPlayersNumber(); i++) {
         if (players[i].token == token) {

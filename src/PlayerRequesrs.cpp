@@ -1,3 +1,4 @@
+#include <MonopolyFwd.h>
 #include "PlayerRequests.h"
 
 PlayerRequest::PlayerRequest() : PlayerRequest({}, "") {}
@@ -19,3 +20,5 @@ PlayerTradeRequest::PlayerTradeRequest() : PlayerTradeRequest("") {}
 PlayerTradeReplyData::PlayerTradeReplyData(PlayerTradeAction action) : action(action) {}
 
 SumReplyData::SumReplyData(int amount) : amount(amount) {}
+
+TokenReplyData::TokenReplyData(Token token) : token(token) {}

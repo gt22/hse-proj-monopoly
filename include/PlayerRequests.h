@@ -68,6 +68,12 @@ struct SumReplyData {
     int amount;
 };
 
+struct TokenReplyData {
+    explicit TokenReplyData(Token token);
+    virtual ~TokenReplyData() = default;
+    Token token;
+};
+
 struct PlayerTradeReplyData {
     explicit PlayerTradeReplyData(PlayerTradeAction action);
     virtual ~PlayerTradeReplyData() = default;
