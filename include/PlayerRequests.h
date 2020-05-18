@@ -63,9 +63,9 @@ struct NumReplyData {
 };
 
 struct SumReplyData {
-    explicit SumReplyData(std::size_t amount);
+    explicit SumReplyData(int amount);
     virtual ~SumReplyData() = default;
-    std::size_t amount;
+    int amount;
 };
 
 struct TokenReplyData {
