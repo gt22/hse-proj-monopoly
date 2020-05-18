@@ -736,6 +736,7 @@ void OwnableTile::onPlayerEntry(Token token) {
             participants[curPlayerNum] = false;
             int curCost = cost;
             int curBuyer = -1;
+            std::cout << "IN TRADE\n";
             while (numOfParticipants > 1) {
                 if (!participants[curPlayerNum]) {
                     continue;
@@ -751,14 +752,17 @@ void OwnableTile::onPlayerEntry(Token token) {
                     curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
                     continue;
                 }
+                std::cout << "Before message\n";
                 board.sendMessage(curPlayer.token, PlayerMessage("Auction field: " + this->name + "\nCurrent cost: "
                     + std::to_string(curCost) + "\nCurrent buyer: " + board.numToTokenString(curBuyer)), MessageType::INFO);
                 PlayerTradeReply tradeReply = board.sendTradeRequest(curPlayer.token, PlayerTradeRequest(""));
                 if (tradeReply->action == PlayerTradeAction::REFUSE) {
+                    std::cout << "REFUSE\n";
                     participants[curPlayerNum] = false;
                     numOfParticipants--;
                 }
                 if (tradeReply->action == PlayerTradeAction::PARTICIPATE) {
+                    std::cout << "PARTICIPATE\n";
                     SumReply sumReply = board.sendSumRequest(curPlayer.token);
                     if (curPlayer.getMoney() <= sumReply->amount) {
                         board.sendMessage(curPlayer.token, PlayerMessage("You don't have enough money"), MessageType::INFO);

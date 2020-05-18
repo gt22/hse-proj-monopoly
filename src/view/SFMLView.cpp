@@ -647,6 +647,11 @@ PlayerTradeReply SFMLView::processTradeRequest(Player &p, PlayerTradeRequest req
     isTradeReq = true;
     requestCond.wait(g, [this]() { return bool(this->curTrade); });
     assert(curTrade);
+    if (curTrade->action == PlayerTradeAction::PARTICIPATE) {
+        std::cout << "Part\n";
+    } else if (curTrade->action == PlayerTradeAction::REFUSE) {
+        std::cout << "Refuse\n";
+    }
     return std::move(curTrade);
 }
 

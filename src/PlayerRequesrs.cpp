@@ -19,7 +19,7 @@ PlayerTradeRequest::PlayerTradeRequest() : PlayerTradeRequest("") {}
 
 PlayerTradeReplyData::PlayerTradeReplyData(PlayerTradeAction action) : action(action) {}
 
-SumReplyData::SumReplyData(std::size_t amount) : amount(amount) {}
+SumReplyData::SumReplyData(int amount) : amount(amount) {}
 
 TokenReplyData::TokenReplyData(Token token) : token(token) {}
 
