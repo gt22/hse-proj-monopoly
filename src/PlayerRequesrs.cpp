@@ -18,4 +18,4 @@ PlayerTradeRequest::PlayerTradeRequest() : PlayerTradeRequest("") {}
 
 PlayerTradeReplyData::PlayerTradeReplyData(PlayerTradeAction action) : action(action) {}
 
-SumReplyData::SumReplyData(int amount) : amount(amount) {}
+SumReplyData::SumReplyData(std::size_t amount) : amount(amount) {}

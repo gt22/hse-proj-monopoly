@@ -195,7 +195,8 @@ public:
     void redraw(const Board& board);
     PlayerReply processRequest(Player& p, PlayerRequest req);
     NumReply processNum(Player &p);
-
+    PlayerTradeReply processTradeRequest(Player& p, PlayerTradeRequest req);
+    SumReply processSum(Player& p);
     void processMessage(Player& p, PlayerMessage mes, MessageType type);
 private:
     void onResize(sf::Event::SizeEvent e);
@@ -210,6 +211,8 @@ private:
     void handleRequest();
     void makeReply(PlayerReply rep);
     void makeNumReply(NumReply rep);
+    void makeSumReply(SumReply rep);
+    void makeTradeReply(PlayerTradeReply rep);
     BoardModel getModel();
 
     void addActionButton(PlayerAction action, const std::string& texture,
@@ -240,6 +243,15 @@ private:
     std::optional<PlayerRequest> curRequest;
     PlayerReply curReply;
     NumReply curNum;
+    SumReply curSum;
+    std::string enteredText;
+    sf::Text enteredT;
+    PlayerTradeReply curTrade;
+    bool isNumReq = false;
+    bool isTradeReq = false;
+    bool isSumReq = false;
+    ButtonText participateInTrade[2];
+    void drawTradeButtons();
 
 
     sf::Text box;

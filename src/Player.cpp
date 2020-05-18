@@ -31,11 +31,11 @@ SFMLView& LocalPlayer::gameView() {
 }
 
 PlayerTradeReply LocalPlayer::sendTradeRequest(PlayerTradeRequest request) {
-    return PlayerTradeReply();
+    return gameView().processTradeRequest(*this, request);
 }
 
 SumReply LocalPlayer::sendSum() {
-    return SumReply();
+    return gameView().processSum(*this);
 }
 
 

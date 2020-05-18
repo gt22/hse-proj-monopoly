@@ -59,6 +59,9 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
     window.setFramerateLimit(60);
     mainFont.loadFromFile("Ubuntu-R.ttf");
 
+    enteredT.setFont(mainFont);
+    enteredT.setCharacterSize(15);
+    enteredT.setFillColor(sf::Color::White);
     box.setFont(mainFont);
     box.setCharacterSize(15);
     box.setFillColor(sf::Color::White);
@@ -119,7 +122,7 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     "images/USE_CARD.png",
                     "By pressing this button you will use card",
                     makeReplyGenerator<UseCardReply>());
-    addActionButton(PlayerAction::START_TRADE,
+    addActionButton(PlayerAction::START_TRADE_NEW_FIELD,              //// SSSSSSSSSS
                     "images/START_TRADE.png",
                     "By pressing this button you will start trade",
                     makeReplyGenerator<StartTradeReply>());
@@ -150,6 +153,27 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
             box.setPosition(sf::Vector2f(20, window.getSize().y - box.getLocalBounds().height * 2));
         }
     });
+    events.addHandler<sf::Event::TextEntered>([this](sf::Event::TextEvent e) {
+        if (isSumReq) {
+            if (e.unicode == 8 && !enteredText.empty()){
+                enteredText.pop_back();
+            } else if (e.unicode < 128) {
+                    if (std::isdigit((char)e.unicode)) {
+                        enteredText.push_back((char) e.unicode);
+                    }
+            }
+        }
+    });
+    events.addHandler<sf::Event::KeyPressed>([this](sf::Event::KeyEvent e) {
+        if (isSumReq) {
+            if (e.code == sf::Keyboard::Return) {
+                if (!enteredText.empty()) {
+                    isSumReq = false;
+                    makeSumReply(std::make_unique<SumReplyData>(std::stoi(enteredText)));
+                }
+            }
+        }
+    });
 
 
     onResize({window.getSize().x, window.getSize().y});
@@ -158,10 +182,21 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
         if (!isMenu) {
             buttons.handle(e);
             if (e.button == sf::Mouse::Left) {
-                for (std::size_t i = 0; i < fieldButtons.fieldButtons.size(); i++) {
-                    if (fieldButtons.fieldButtons[i].isValidTarget(e)) {
-                        makeNumReply(std::make_unique<NumReplyData>(i));
-                        break;
+                if (isNumReq) {
+                    for (std::size_t i = 0; i < fieldButtons.fieldButtons.size(); i++) {
+                        if (fieldButtons.fieldButtons[i].isValidTarget(e)) {
+                            isNumReq = false;
+                            makeNumReply(std::make_unique<NumReplyData>(i));
+                            break;
+                        }
+                    }
+                } else if (isTradeReq) {
+                    if (participateInTrade[0].isMouseOver(window)) {
+                        isTradeReq = false;
+                        makeTradeReply(std::make_unique<PlayerTradeReplyData>(PlayerTradeAction::PARTICIPATE));
+                    } else if (participateInTrade[1].isMouseOver(window)) {
+                        isTradeReq = false;
+                        makeTradeReply(std::make_unique<PlayerTradeReplyData>(PlayerTradeAction::REFUSE));
                     }
                 }
             } else if (e.button == sf::Mouse::Right) {
@@ -532,7 +567,18 @@ void SFMLView::monopolyDrawer() {
         drawMoney(m);
         drawMessage();
         drawCardInfo(m, curCardIndex);
+        if (isTradeReq) {
+            drawTradeButtons();
+        }
+        if (isSumReq) {
+            enteredT.setString(enteredText);
+            auto[nx, ny, nw, nh] = enteredT.getLocalBounds();
+            auto[x, y] = shapes.fieldRects[35].getPosition();
 
+            enteredT.setOrigin(nx + nw / 2, 0);
+            enteredT.setPosition(x, y + shapes.fieldRects[35].getSize().y * 2);
+            window.draw(enteredT);
+        }
         buttons.draw(window);
         window.draw(box);
     }
@@ -561,7 +607,6 @@ PlayerReply SFMLView::processRequest(Player &p, PlayerRequest req) {
 void SFMLView::processMessage(Player &p, PlayerMessage mes, MessageType type) {
     std::lock_guard g(requestMutex);
     messageType = type;
-    messageType = type;
     if (type == MessageType::CHANCE) {
         message.setString("CHANCE\n" + mes.message);
     } else if (type == MessageType::PUBLIC_TREASURY) {
@@ -576,9 +621,33 @@ NumReply SFMLView::processNum(Player &p) {
     for (auto& [act, btn] : actionButtons) {
         btn.deactivate();
     }
+    isNumReq = true;
     requestCond.wait(g, [this]() { return bool(this->curNum); });
     assert(curNum);
     return std::move(curNum);
+}
+
+SumReply SFMLView::processSum(Player &p) {
+    std::unique_lock g(requestMutex);
+    for (auto& [act, btn] : actionButtons) {
+        btn.deactivate();
+    }
+    enteredText.clear();
+    isSumReq = true;
+    requestCond.wait(g, [this]() { return bool(this->curSum); });
+    assert(curSum);
+    return std::move(curSum);
+}
+
+PlayerTradeReply SFMLView::processTradeRequest(Player &p, PlayerTradeRequest req) {
+    std::unique_lock g(requestMutex);
+    for (auto& [act, btn] : actionButtons) {
+        btn.deactivate();
+    }
+    isTradeReq = true;
+    requestCond.wait(g, [this]() { return bool(this->curTrade); });
+    assert(curTrade);
+    return std::move(curTrade);
 }
 
 
@@ -882,6 +951,18 @@ void SFMLView::makeNumReply(NumReply rep) {
     requestCond.notify_all();
 }
 
+void SFMLView::makeSumReply(SumReply rep) {
+    std::lock_guard g(requestMutex);
+    curSum = std::move(rep);
+    requestCond.notify_all();
+}
+
+void SFMLView::makeTradeReply(PlayerTradeReply rep) {
+    std::lock_guard g(requestMutex);
+    curTrade = std::move(rep);
+    requestCond.notify_all();
+}
+
 void SFMLView::addActionButton(PlayerAction action,
                                const std::string& texture,
                                std::string tooltip,
@@ -944,3 +1025,23 @@ void SFMLView::drawTokenButtons() {
         t.second.drawTo(window);
     }
 }
+
+void SFMLView::drawTradeButtons() {
+    auto[w, h] = window.getSize();
+    sf::Vector2f buttonSize = sf::Vector2f(float(w) / 10, float(h) / 20);
+    participateInTrade[0] = ButtonText("PARTICIPATE", buttonSize, 15, sf::Color::Green, sf::Color::White);
+    participateInTrade[1] = ButtonText("REFUSE", buttonSize, 15, sf::Color::Red, sf::Color::White);
+
+    for (auto &button : participateInTrade)
+        button.setFont(mainFont);
+
+    float y = shapes.fieldRects[0].getPosition().y + shapes.fieldRects[0].getSize().y * 2;
+    participateInTrade[0].setPosition(sf::Vector2f(shapes.fieldRects[0].getPosition().x + buttonSize.x / 2, y));
+    participateInTrade[1].setPosition(sf::Vector2f(shapes.fieldRects[30].getPosition().x + shapes.fieldRects[30].getSize().x - buttonSize.x / 2, y));
+
+    for (auto &button : participateInTrade)
+        button.drawTo(window);
+}
+
+
+

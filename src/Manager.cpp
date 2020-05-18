@@ -39,7 +39,7 @@ SumReply Manager::sendSumRequest(Token token) {
 PlayerTradeReply Manager::sendTradeRequest(Token token, PlayerTradeRequest request) {
     for(auto& p : players) {
         if(p->token == token) {
-            return p->sendTradeRequest(std::move(request));
+            return p->sendTradeRequest(request);
         }
     }
     throw 1; //TODO: сделать PlayerNotFoundException или что-нибудь такое

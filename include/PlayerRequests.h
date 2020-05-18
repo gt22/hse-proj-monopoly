@@ -63,9 +63,9 @@ struct NumReplyData {
 };
 
 struct SumReplyData {
-    explicit SumReplyData(int amount);
+    explicit SumReplyData(std::size_t amount);
     virtual ~SumReplyData() = default;
-    int amount;
+    std::size_t amount;
 };
 
 struct PlayerTradeReplyData {
@@ -105,7 +105,7 @@ struct TakeCardReply : BasicReply<PlayerAction::TAKE_CARD> {};
 
 struct UseCardReply : BasicReply<PlayerAction::USE_CARD> {};
 
-struct StartTradeReply : BasicReply<PlayerAction::START_TRADE> {};
+struct StartTradeReply : BasicReply<PlayerAction::START_TRADE_NEW_FIELD> {};
 
 struct MortgageHoldingsReply : BasicReply<PlayerAction::MORTGAGE_HOLDINGS> {};
 

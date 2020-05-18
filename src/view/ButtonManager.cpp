@@ -39,7 +39,8 @@ bool SpriteButton::isValidTarget(sf::Event::MouseButtonEvent mouse) const {
     auto[bx_, by_, bw, bh] = buttonSprite.getLocalBounds();
     auto[button, x, y] = mouse;
     return bx <= x && x <= bx + bw &&
-           by <= y  && y <= by + bh;
+           by <= y  && y <= by + bh &&
+           isActive();
 }
 
 sf::Vector2f SpriteButton::getSize() {
