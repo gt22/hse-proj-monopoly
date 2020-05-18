@@ -390,6 +390,26 @@ std::size_t Board::getPlayerNum(Token token) const {
     throw std::invalid_argument("no player with this token");
 }
 
+std::string Board::numToTokenString(int ind) const {
+    if (ind == -1) {
+        return "None";
+    }
+    Token buyer = this->getPlayerToken(ind);
+    if (buyer == Token::SHIP)
+        return "SHIP";
+    else if (buyer == Token::BOOT)
+        return "BOOT";
+    else if (buyer == Token::CAR)
+        return "CAR";
+    else if (buyer == Token::CAT)
+        return "CAT";
+    else if (buyer == Token::DOG)
+        return "DOG";
+    else if (buyer == Token::HAT)
+        return "HAT";
+    throw std::invalid_argument("no such token");
+}
+
 int countPrevForColor(int ind, const Board& board) {
     if (ind < 0 || ind > (int)board.FIELD_SIZE) {
         throw std::out_of_range("no field " + std::to_string(ind));

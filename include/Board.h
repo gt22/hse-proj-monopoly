@@ -81,6 +81,8 @@ public:
     bool checkFieldWithoutBuildings(Token token) const;
     bool checkAllFieldsOfCol(Token token) const;
 
+    std::string numToTokenString(int ind) const;
+
     std::size_t getPlayerIndex() const;
     void setPlayerIndex(std::size_t num);
     std::map<Token, TokenForMortgage> getMortgageToken;
