@@ -147,7 +147,7 @@ Board::Board(const std::vector<std::pair<std::string_view, Token> > & playersLis
     field[24]->setMortgageCost(120);
     field[24]->setTaxes(20, 100, 300, 750, 925, 1100);
 
-    field[25] = new Railway(*this, 25, "Kazan railway", "Kazan RY",
+    field[25] = new Railway(*this, 25, "Kazan railway", "Kazan railway",
             200, Color::COL1);
     field[25]->setMortgageCost(100);
 

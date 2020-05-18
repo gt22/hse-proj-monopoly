@@ -53,7 +53,9 @@ sf::Color getColor(Color color) {
 }
 
 SFMLView::SFMLView(Manager &manager) : manager(manager) {
-    window.create(sf::VideoMode(800, 600), "Monopoly");
+    window.create(sf::VideoMode(sf::VideoMode::getDesktopMode().width * 20 / 21, sf::VideoMode::getDesktopMode().height * 9 / 10),
+            "Monopoly", sf::Style::Titlebar | sf::Style::Close);
+    window.setPosition(sf::Vector2i(0, 0));
     window.setFramerateLimit(60);
     mainFont.loadFromFile("Ubuntu-R.ttf");
 
@@ -309,10 +311,7 @@ void SFMLView::drawField(const BoardModel &board) {
         else
             s = std::string(fieldTile.name);
         sf::Text name(s, mainFont);
-        int fsize = 13;
-        if (i % 10 == 0) {
-            fsize = 15;
-        }
+        int fsize = 10;
         name.setCharacterSize(fsize);
         while (!doesFit(name, h * 0.7f)) {
             auto lastSpace = s.rfind(' ');
@@ -320,9 +319,10 @@ void SFMLView::drawField(const BoardModel &board) {
             s.replace(lastSpace, 1, "\n");
             name.setString(s);
         }
-         /*   while (doesFit(name, h * 0.8f)) {
-                name.setCharacterSize(++fsize);
-            }*/
+        int j = 0;
+        while (doesFit(name, h * 0.7f) && j++ < 10) {
+            name.setCharacterSize(++fsize);
+        }
         auto[nx, ny, nw, nh] = name.getLocalBounds();
         const float align = ((h - nw) / 2);
         if (i % 10 == 0) {
@@ -332,18 +332,35 @@ void SFMLView::drawField(const BoardModel &board) {
         } else {
             switch (i / 10) {
                 case 0:
-                    name.rotate(+90);
-                    name.setPosition(x + w - shift, y + align);
+                    if (i == 2 || i == 4 || i == 5 || i == 7) {
+                        name.rotate(+90);
+                        name.setPosition(x + w, y + align);
+                    } else {
+                        name.rotate(+90);
+                        name.setPosition(x + w - shift, y + align);
+                    }
                     break;
                 case 1:
-                    name.setPosition(x + align, y + h - shift - nh / 2);
+                    if (i == 12 || i == 15 || i == 17) {
+                        name.setPosition(x + align, y + h - nh / 2);
+                    } else {
+                        name.setPosition(x + align, y + h - shift - nh / 2);
+                    }
                     break;
                 case 2:
                     name.rotate(-90);
-                    name.setPosition(x + shift, y + h - align);
+                    if (i == 22 || i == 25 || i == 28) {
+                        name.setPosition(x, y + h - align);
+                    } else {
+                        name.setPosition(x + shift, y + h - align);
+                    }
                     break;
                 case 3:
-                    name.setPosition(x + align, y + shift);
+                    if (i == 33 || i == 35 || i == 36 || i == 38) {
+                        name.setPosition(x + align, y);
+                    } else {
+                        name.setPosition(x + align, y + shift);
+                    }
                     break;
             }
         }
@@ -871,8 +888,8 @@ void SFMLView::addActionButton(PlayerAction action,
                                const std::function<void()>& handler) {
     auto btn = std::make_unique<SpriteButton>();
     size_t i = actionButtons.size();
-    btn->setPosition(static_cast<float>(10 + 60 * (i % 2)), static_cast<float>(10 + 60 * (i / 2)));
-    btn->setScale({0.8f, 0.8f});
+    btn->setPosition(static_cast<float>(10 + 80 * (i % 2)), static_cast<float>(10 + 80 * (i / 2)));
+   // btn->setScale({0.8f, 0.8f});
     btn->setTexture(texture);
     actionButtons.emplace(action, *btn);
     auto[x, y] = btn->getPosition();
@@ -885,10 +902,10 @@ void SFMLView::drawMenuButtons() {
     auto[w, h] = window.getSize();
     float shift = float(h) / NUM_OF_BUTTONS;
     sf::Vector2f buttonSize = sf::Vector2f(float(w) / 3, float(h) / 10);
-    menuButtons[0] = ButtonText("START GAME", buttonSize, 15, sf::Color(130, 130, 130), sf::Color::White);
-    menuButtons[1] = ButtonText("ADD PLAYER", buttonSize, 15, sf::Color(130, 130, 130), sf::Color::White);
-    menuButtons[2] = ButtonText("ABOUT", buttonSize, 15, sf::Color(130, 130, 130), sf::Color::White);
-    menuButtons[3] = ButtonText("EXIT", buttonSize, 15, sf::Color(130, 130, 130), sf::Color::White);
+    menuButtons[0] = ButtonText("START GAME", buttonSize, 18, sf::Color(130, 130, 130), sf::Color::White);
+    menuButtons[1] = ButtonText("ADD PLAYER", buttonSize, 18, sf::Color(130, 130, 130), sf::Color::White);
+    menuButtons[2] = ButtonText("ABOUT", buttonSize, 18, sf::Color(130, 130, 130), sf::Color::White);
+    menuButtons[3] = ButtonText("EXIT", buttonSize, 18, sf::Color(130, 130, 130), sf::Color::White);
 
     for (auto & menuButton : menuButtons)
         menuButton.setFont(mainFont);
@@ -910,18 +927,18 @@ void SFMLView::drawTokenButtons() {
     float x1 = w / 6;
     float x2 = w * 5 / 6;
     tokenButtons[Token::DOG].setPosition(sf::Vector2f(x1, start));
-    tokenButtons[Token::DOG].setScale(sf::Vector2f(0.5,0.5));
+    tokenButtons[Token::DOG].setScale(sf::Vector2f(0.7,0.7));
     tokenButtons[Token::BOOT].setPosition(sf::Vector2f(x1, start + shift));
-    tokenButtons[Token::BOOT].setScale(sf::Vector2f(0.5,0.5));
+    tokenButtons[Token::BOOT].setScale(sf::Vector2f(0.7,0.7));
     tokenButtons[Token::CAR].setPosition(sf::Vector2f(x1, start + shift * 2));
-    tokenButtons[Token::CAR].setScale(sf::Vector2f(0.5,0.5));
+    tokenButtons[Token::CAR].setScale(sf::Vector2f(0.7,0.7));
 
     tokenButtons[Token::CAT].setPosition(sf::Vector2f(x2, start));
-    tokenButtons[Token::CAT].setScale(sf::Vector2f(0.5,0.5));
+    tokenButtons[Token::CAT].setScale(sf::Vector2f(0.7,0.7));
     tokenButtons[Token::HAT].setPosition(sf::Vector2f(x2, start + shift));
-    tokenButtons[Token::HAT].setScale(sf::Vector2f(0.5,0.5));
+    tokenButtons[Token::HAT].setScale(sf::Vector2f(0.7,0.7));
     tokenButtons[Token::SHIP].setPosition(sf::Vector2f(x2, start + shift * 2));
-    tokenButtons[Token::SHIP].setScale(sf::Vector2f(0.5,0.5));
+    tokenButtons[Token::SHIP].setScale(sf::Vector2f(0.7,0.7));
 
     for (auto &t : tokenButtons) {
         t.second.drawTo(window);
