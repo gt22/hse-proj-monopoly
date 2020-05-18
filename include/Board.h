@@ -93,7 +93,7 @@ private:
     int numOfAlivePlayers = 0;
     bool terminated = false;
 
-    std::size_t index;
+    std::size_t index = 0;
 };
 
 bool checkPrevForHotel(int ind, const Board& board);

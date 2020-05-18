@@ -6,7 +6,7 @@
 #include "Board.h"
 
 struct PlayerModel {
-    std::string_view name;
+    std::string name;
     Token token;
     std::size_t position;
     int money;
@@ -18,11 +18,11 @@ struct PlayerModel {
 
 struct FieldTileModel {
     int position;
-    std::string_view name;
+    std::string name;
    // std::optional<int> tax;
     bool isMortgaged;
     std::optional<int> cost;
-    std::optional<std::string_view> shortName;
+    std::optional<std::string> shortName;
     std::optional<int> costOfParking;
     std::optional<Color> color;
     std::optional<Token> owner;
