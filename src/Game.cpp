@@ -32,6 +32,7 @@ void Game::runGame() {
         PlayerRequest startTurnRequest;
         startTurnRequest.availableActions.push_back(PlayerAction::ROLL_DICE);
         PlayerReply reply = board.sendRequest(curPlayer.token, startTurnRequest);
+        if(board.isFinished()) break;
         if (curPlayer.prisoner) {
             board.field[curPlayer.position]->onPlayerEntry(curPlayer.token);
             curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
