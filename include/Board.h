@@ -82,6 +82,7 @@ public:
     bool checkAllFieldsOfCol(Token token) const;
 
     std::string numToTokenString(int ind) const;
+    std::string tokenToString(Token token) const;
 
     std::size_t getPlayerIndex() const;
     void setPlayerIndex(std::size_t num);

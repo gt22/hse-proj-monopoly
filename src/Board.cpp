@@ -395,17 +395,21 @@ std::string Board::numToTokenString(int ind) const {
         return "None";
     }
     Token buyer = this->getPlayerToken(ind);
-    if (buyer == Token::SHIP)
+    return this->tokenToString(buyer);
+}
+
+std::string Board::tokenToString(Token token) const {
+    if (token == Token::SHIP)
         return "SHIP";
-    else if (buyer == Token::BOOT)
+    else if (token == Token::BOOT)
         return "BOOT";
-    else if (buyer == Token::CAR)
+    else if (token == Token::CAR)
         return "CAR";
-    else if (buyer == Token::CAT)
+    else if (token == Token::CAT)
         return "CAT";
-    else if (buyer == Token::DOG)
+    else if (token == Token::DOG)
         return "DOG";
-    else if (buyer == Token::HAT)
+    else if (token == Token::HAT)
         return "HAT";
     throw std::invalid_argument("no such token");
 }

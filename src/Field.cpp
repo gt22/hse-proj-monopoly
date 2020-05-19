@@ -308,8 +308,35 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     }
     if (reply->action == PlayerAction::START_TRADE) {
         //TODO:send request for number/token of player
+        TokenReply tokenReply = tile.board.sendTokenRequest(token);
+        NumReply numReply = tile.board.sendNumRequest(token);
+        auto chosenField = tile.board.getFieldTile(numReply->num);
+        if (!chosenField->canBeSold(tokenReply->token)) {
+            tile.board.sendMessage(token, PlayerMessage("You can't buy this field tile from " +
+            tile.board.tokenToString(tokenReply->token)), MessageType::INFO);
+        }
+        SumReply sumReply =tile.board.sendSumRequest(token);
+        tile.board.sendMessage(tokenReply->token, PlayerMessage("Field for sale: " + tile.name + "\nCurrent cost: "
+        + std::to_string(sumReply->amount) + "\nCurrent buyer: " + tile.board.tokenToString(token)), MessageType::INFO);
 
-        //TODO
+        PlayerTradeReply tradeReply = tile.board.sendTradeRequest(tokenReply->token, PlayerTradeRequest(""));
+        if (tradeReply->action == PlayerTradeAction::PARTICIPATE) {
+            PlayerData& player = tile.board.getPlayer(token);
+            if (player.getMoney() >= sumReply->amount) {
+                PlayerData& fieldOwner = tile.board.getPlayer(tokenReply->token);
+                player.addMoney(-sumReply->amount);
+                fieldOwner.addMoney(sumReply->amount);
+                //tile.onPurchase(player.token);
+                //TODO decrNumOfProp(fieldOwner.token);
+                //TODO
+            } else {
+                tile.board.sendMessage(player.token, PlayerMessage("Not enough money :("), MessageType::INFO);
+                player.setLoser();
+            }
+        } else {
+            tile.board.sendMessage(token, PlayerMessage(tile.board.tokenToString(token) +
+            "doesn't want to sell\n" + tile.name), MessageType::INFO);
+        }
         return true;
     }
     if(reply->action == PlayerAction::EXIT_GAME) {
@@ -875,6 +902,11 @@ bool OwnableTile::MortgageTile(Token token) {
         return true;
     }
     return false;
+}
+
+bool OwnableTile::canBeSold(Token token) const {
+    return (owner == token) && (this->getNumberOfHouses() == 0) &&
+            (this->getNumberOfHotels() == 0) && (!isMortgaged);
 }
 
 std::vector<std::string> Start::writeTileInfo() {

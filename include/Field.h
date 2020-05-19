@@ -49,6 +49,7 @@ public:
     virtual void setOwner(Token token) { }
     virtual int getFieldCost() { return 0; }
     virtual void decrPropertyNum(Token token) { };
+    virtual bool canBeSold(Token token) const { return false; }
 };
 
 class OwnableTile : public FieldTile {
@@ -65,6 +66,7 @@ public:
     void setOwner(Token token) override { owner = token; }
     int getMortgageCost() const override { return mortgageCost; }
     int getFieldCost() override { return cost; }
+    bool canBeSold(Token token) const override;
     int mortgageCost = 0;
     std::string shortName;
     int cost;
