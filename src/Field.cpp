@@ -764,7 +764,7 @@ void OwnableTile::onPlayerEntry(Token token) {
                     SumReply sumReply = board.sendSumRequest(curPlayer.token);
                     if (curPlayer.getMoney() <= sumReply->amount) {
                         board.sendMessage(curPlayer.token, PlayerMessage("You don't have enough money"), MessageType::INFO);
-                    } else {
+                    } else if (curCost < sumReply->amount) {
                         curBuyer = curPlayerNum;
                         curCost = sumReply->amount;
                     }
