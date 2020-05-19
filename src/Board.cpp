@@ -414,6 +414,15 @@ std::string Board::tokenToString(Token token) const {
     throw std::invalid_argument("no such token");
 }
 
+bool Board::atLeastOneBoughtFieldOtherToken(Token token) const {
+    for (std::size_t i = 0; i < FIELD_SIZE; i++) {
+        if ((field[i]->getOwner() != Token::FREE_FIELD) && (field[i]->getOwner() != token)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 int countPrevForColor(int ind, const Board& board) {
     if (ind < 0 || ind > (int)board.FIELD_SIZE) {
         throw std::out_of_range("no field " + std::to_string(ind));

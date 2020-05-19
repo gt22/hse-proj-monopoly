@@ -31,6 +31,7 @@ public:
     bool isMortgaged = false;
     virtual void onPlayerPass(Token token);
     virtual void onPlayerEntry(Token token);
+    virtual void onPurchase(Token token) { };
     virtual std::vector<std::string> writeTileInfo();
     virtual void setMortgageCost(int val = 0) = 0;
     virtual bool MortgageTile(Token token) = 0;
@@ -57,7 +58,7 @@ public:
     OwnableTile(Board& board, int position, std::string name, std::string shortName,
             int cost, Color color);
     virtual size_t calculateTax(Token token) = 0;
-    virtual void onPurchase(Token token) = 0;
+    virtual void onPurchase(Token token) override = 0;
     void onPlayerEntry(Token token) override;
     void setMortgageCost(int val = 0) override { mortgageCost = val; }
     bool MortgageTile(Token token) override;

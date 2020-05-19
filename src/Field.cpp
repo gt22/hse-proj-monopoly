@@ -197,12 +197,14 @@ void makeDefaultRequest(PlayerRequest& r, Token token, Board& board) {
     //TODO: New allocation each time... Maybe rewrite as clear, reserve & many push_backs?
     r.availableActions = {
             PlayerAction::LOSE,
-            PlayerAction::START_TRADE,
             PlayerAction::EXIT_GAME
     };
     const PlayerData& player = board.getPlayer(token);
     if (player.numberOfHotels > 0) {
         r.availableActions.push_back(PlayerAction::SELL_HOTEL);
+    }
+    if (board.atLeastOneBoughtFieldOtherToken(token)) {
+        r.availableActions.push_back(PlayerAction::START_TRADE);
     }
     if (player.numberOfHouses > 0) {
         //TODO: CHECK HOTELS
@@ -307,7 +309,6 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         return true;
     }
     if (reply->action == PlayerAction::START_TRADE) {
-        //TODO:send request for number/token of player
         TokenReply tokenReply = tile.board.sendTokenRequest(token);
         NumReply numReply = tile.board.sendNumRequest(token);
         auto chosenField = tile.board.getFieldTile(numReply->num);
@@ -326,12 +327,13 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
                 PlayerData& fieldOwner = tile.board.getPlayer(tokenReply->token);
                 player.addMoney(-sumReply->amount);
                 fieldOwner.addMoney(sumReply->amount);
-                //tile.onPurchase(player.token);
-                //TODO decrNumOfProp(fieldOwner.token);
+                chosenField->onPurchase(player.token);
+                chosenField->decrPropertyNum(fieldOwner.token);
+                chosenField->setOwner(player.token);
                 //TODO
             } else {
                 tile.board.sendMessage(player.token, PlayerMessage("Not enough money :("), MessageType::INFO);
-                player.setLoser();
+                //player.setLoser();
             }
         } else {
             tile.board.sendMessage(token, PlayerMessage(tile.board.tokenToString(token) +
