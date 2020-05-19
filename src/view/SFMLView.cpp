@@ -198,6 +198,13 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                         isTradeReq = false;
                         makeTradeReply(std::make_unique<PlayerTradeReplyData>(PlayerTradeAction::REFUSE));
                     }
+                } else if (isTokenReq) {
+                    for (auto& t: tokenButtons) {
+                        if (t.second.isMouseOver(window)) {
+                            isTokenReq = false;
+                            makeTokenReply(std::make_unique<TokenReplyData>(t.first));
+                        }
+                    }
                 }
             } else if (e.button == sf::Mouse::Right) {
                 for (std::size_t i = 0; i < fieldButtons.fieldButtons.size(); i++) {
@@ -212,9 +219,6 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
             if (e.button == sf::Mouse::Left) {
                 if (numOfAddedPlayers >= 2 && menuButtons[0].isMouseOver(window)) {
                     isMenu = false;
-                    for (auto &t : tokenButtons) {
-                        t.second.activate();
-                    }
                     this->manager.startGame();
                 } else if (numOfAddedPlayers < 6 && menuButtons[1].isMouseOver(window)) {
                     isTokenDraw = true;
@@ -641,6 +645,17 @@ SumReply SFMLView::processSum(Player &p) {
     return std::move(curSum);
 }
 
+TokenReply SFMLView::processToken(Player &p) {
+    std::unique_lock g(requestMutex);
+    for (auto& [act, btn] : actionButtons) {
+        btn.deactivate();
+    }
+    isTokenReq = true;
+    requestCond.wait(g, [this]() { return bool(this->curToken); });
+    assert(curToken);
+    return std::move(curToken);
+}
+
 PlayerTradeReply SFMLView::processTradeRequest(Player &p, PlayerTradeRequest req) {
     std::unique_lock g(requestMutex);
     for (auto& [act, btn] : actionButtons) {
@@ -777,6 +792,7 @@ void SFMLView::drawMoney(const BoardModel &board) {
         auto[bx, by] = tokenButtons[tok].getSize();
         tokenButtons[tok].setPosition(sf::Vector2f(x - bx - shift / 2, y));
         tokenButtons[tok].drawTo(window);
+        tokenButtons[tok].activate();
         window.draw(mt);
         window.draw(p);
     }
@@ -975,6 +991,12 @@ void SFMLView::makeSumReply(SumReply rep) {
     requestCond.notify_all();
 }
 
+void SFMLView::makeTokenReply(TokenReply rep) {
+    std::lock_guard g(requestMutex);
+    curToken = std::move(rep);
+    requestCond.notify_all();
+}
+
 void SFMLView::makeTradeReply(PlayerTradeReply rep) {
     std::lock_guard g(requestMutex);
     curTrade = std::move(rep);
@@ -1060,6 +1082,8 @@ void SFMLView::drawTradeButtons() {
     for (auto &button : participateInTrade)
         button.drawTo(window);
 }
+
+
 
 
 

@@ -39,7 +39,7 @@ SumReply LocalPlayer::sendSum() {
 }
 
 TokenReply LocalPlayer::sendToken() {
-    return TokenReply();
+    return gameView().processToken(*this);
 }
 
 

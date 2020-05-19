@@ -665,6 +665,7 @@ void OwnableTile::onPlayerEntry(Token token) {
         buyProperty = true;
     }
     while (true) {
+        board.setPlayerIndex(board.getPlayerNum(token));
         makeDefaultRequest(request, token, board);
         if (buyProperty && taxPaid) {
             request.availableActions.push_back(PlayerAction::END_TURN);
@@ -733,24 +734,27 @@ void OwnableTile::onPlayerEntry(Token token) {
             int numOfParticipants = board.getCurNumOfPlayers() - 1;
             std::vector<bool> participants(board.getPlayersNumber(), true);
             int curPlayerNum = board.getPlayerNum(token);
+            board.setPlayerIndex(curPlayerNum);
             participants[curPlayerNum] = false;
             int curCost = cost;
             int curBuyer = -1;
-            std::cout << "IN TRADE\n";
             while (numOfParticipants > 1) {
                 if (!participants[curPlayerNum]) {
                     curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
+                    board.setPlayerIndex(curPlayerNum);
                     continue;
                 }
                 PlayerData& curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
                 if (!curPlayer.alive) {
                     curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
+                    board.setPlayerIndex(curPlayerNum);
                     continue;
                 }
                 if (curCost > curPlayer.getMoney()) {
                     participants[curPlayerNum] = false;
                     numOfParticipants--;
                     curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
+                    board.setPlayerIndex(curPlayerNum);
                     continue;
                 }
                 board.sendMessage(curPlayer.token, PlayerMessage("Auction field: " + this->name + "\nCurrent cost: "
@@ -770,11 +774,13 @@ void OwnableTile::onPlayerEntry(Token token) {
                     }
                 }
                 curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
+                board.setPlayerIndex(curPlayerNum);
             }
             while (true) {
                 PlayerData& curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
                 if (!curPlayer.alive || !participants[curPlayerNum]) {
                     curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
+                    board.setPlayerIndex(curPlayerNum);
                 } else {
                     break;
                 }
@@ -811,6 +817,8 @@ void OwnableTile::onPlayerEntry(Token token) {
                 }
             }
             buyProperty = true;
+            board.setPlayerIndex(board.getPlayerNum(token));
+
         }
         if (!handleGenericActions(token, *this, reply)) {
             return;

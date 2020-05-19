@@ -201,6 +201,7 @@ public:
     NumReply processNum(Player &p);
     PlayerTradeReply processTradeRequest(Player& p, PlayerTradeRequest req);
     SumReply processSum(Player& p);
+    TokenReply processToken(Player& p);
     void processMessage(Player& p, PlayerMessage mes, MessageType type);
 private:
     void onResize(sf::Event::SizeEvent e);
@@ -218,6 +219,7 @@ private:
     void makeNumReply(NumReply rep);
     void makeSumReply(SumReply rep);
     void makeTradeReply(PlayerTradeReply rep);
+    void makeTokenReply(TokenReply rep);
     BoardModel getModel();
 
     void addActionButton(PlayerAction action, const std::string& texture,
@@ -249,12 +251,14 @@ private:
     PlayerReply curReply;
     NumReply curNum;
     SumReply curSum;
+    TokenReply curToken;
     std::string enteredText;
     sf::Text enteredT;
     PlayerTradeReply curTrade;
     bool isNumReq = false;
     bool isTradeReq = false;
     bool isSumReq = false;
+    bool isTokenReq = false;
     ButtonText participateInTrade[2];
     void drawTradeButtons();
 
