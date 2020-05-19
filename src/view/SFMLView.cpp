@@ -212,7 +212,9 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
             if (e.button == sf::Mouse::Left) {
                 if (numOfAddedPlayers >= 2 && menuButtons[0].isMouseOver(window)) {
                     isMenu = false;
-                  //  window.clear();
+                    for (auto &t : tokenButtons) {
+                        t.second.activate();
+                    }
                     this->manager.startGame();
                 } else if (numOfAddedPlayers < 6 && menuButtons[1].isMouseOver(window)) {
                     isTokenDraw = true;
@@ -760,18 +762,29 @@ void SFMLView::drawMoney(const BoardModel &board) {
         maxW = std::max(maxW, moneyTexts.back().first.getLocalBounds().width);
         maxH = std::max(maxH, moneyTexts.back().first.getLocalBounds().height);
     }
+    maxH *= 2;
     const int shift = 30;
     money.setPosition(W - maxW - maxH / 2 - shift, 10);
     for(size_t i = 0; i < moneyTexts.size(); i++) {
         auto& [mt, tok] = moneyTexts[i];
         mt.setPosition(W - maxW - shift, 10 + static_cast<float>(i + 1) * maxH);
         sf::CircleShape p(maxH / 4);
-        p.setPosition(W - maxW - maxH / 2 - shift, 10 + static_cast<float>(i + 1) * maxH + mt.getLocalBounds().top + maxH / 4);
+        float x = W - maxW - maxH / 2 - shift;
+        float y = 10 + static_cast<float>(i + 1) * maxH /*+ maxH / 4 */;
+        p.setPosition(x, y + mt.getLocalBounds().top);
         p.setFillColor(getColor(tok));
+        tokenButtons[tok].setScale(sf::Vector2f(0.3, 0.3));
+        auto[bx, by] = tokenButtons[tok].getSize();
+        tokenButtons[tok].setPosition(sf::Vector2f(x - bx - shift / 2, y));
+        tokenButtons[tok].drawTo(window);
         window.draw(mt);
         window.draw(p);
     }
     window.draw(money);
+}
+
+void SFMLView::drawToken(const BoardModel &board) {
+
 }
 
 void SFMLView::drawCardInfo(const BoardModel &board, std::optional<std::size_t> index) {
@@ -803,11 +816,11 @@ void SFMLView::drawCardInfo(const BoardModel &board, std::optional<std::size_t> 
 
             std::string s = std::string(fieldTile.name);
             sf::Text title(s, mainFont);
-            int fsize = 15;
+            int fsize = 18;
             title.setCharacterSize(fsize);
-            while (!doesFit(title, w)) {
-                title.setCharacterSize(--fsize);
-            }
+          //  while (!doesFit(title, w)) {
+            //    title.setCharacterSize(--fsize);
+          //  }
             auto[nx, ny, nw, nh] = title.getLocalBounds();
             auto[x, y] = baseRect.getPosition();
 
@@ -867,7 +880,7 @@ void SFMLView::drawCardInfo(const BoardModel &board, std::optional<std::size_t> 
         }
 
         sf::Text text(cardText, mainFont);
-        int fsize = 12;
+        int fsize = 16;
         text.setCharacterSize(fsize);
         auto[x, y] = baseRect.getPosition();
         y = wy - h + size;
@@ -1047,6 +1060,8 @@ void SFMLView::drawTradeButtons() {
     for (auto &button : participateInTrade)
         button.drawTo(window);
 }
+
+
 
 
 

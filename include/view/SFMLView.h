@@ -121,6 +121,10 @@ public:
         buttonHeight = buttonSprite.getTexture()->getSize().y * buttonSprite.getScale().y;
     }
 
+    sf::Vector2f getSize() const {
+        return sf::Vector2f(buttonWidth, buttonHeight);
+    }
+
     bool getClickability() const {
         return isClickable;
     }
@@ -204,6 +208,7 @@ private:
     void drawField(const BoardModel& board);
     void drawPlayers(const BoardModel& board);
     void drawMoney(const BoardModel& board);
+    void drawToken(const BoardModel& board);
     void drawCardInfo(const BoardModel &board, std::optional<std::size_t> index);
     void drawMessage();
     void monopolyDrawer();
