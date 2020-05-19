@@ -245,13 +245,6 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
         });
 
     //TODO: temp
-   // curTurnBy = Token::DOG;
-    /*manager.addPlayer(std::make_unique<LocalPlayer>(Token::DOG, "Player 1", *this));
-    manager.addPlayer(std::make_unique<LocalPlayer>(Token::HAT, "Player 2", *this));
-    manager.addPlayer(std::make_unique<LocalPlayer>(Token::BOOT, "Player 3", *this));
-    manager.addPlayer(std::make_unique<LocalPlayer>(Token::CAR, "Player 4", *this));
-    manager.addPlayer(std::make_unique<LocalPlayer>(Token::CAT, "Player 5", *this));
-    manager.addPlayer(std::make_unique<LocalPlayer>(Token::SHIP, "Player 6", *this));*/
 }
 
 void SFMLView::dispose() {
