@@ -204,6 +204,7 @@ public:
     TokenReply processToken(Player& p);
     void processMessage(Player& p, PlayerMessage mes, MessageType type);
 private:
+    static std::string tokenToString(Token token);
     void onResize(sf::Event::SizeEvent e);
 
     void drawField(const BoardModel& board);

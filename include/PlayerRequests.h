@@ -111,7 +111,9 @@ struct TakeCardReply : BasicReply<PlayerAction::TAKE_CARD> {};
 
 struct UseCardReply : BasicReply<PlayerAction::USE_CARD> {};
 
-struct StartTradeReply : BasicReply<PlayerAction::START_TRADE_NEW_FIELD> {};
+struct StartTradeNewFieldReply : BasicReply<PlayerAction::START_TRADE_NEW_FIELD> {};
+
+struct StartTradeReply : BasicReply<PlayerAction::START_TRADE> {};
 
 struct MortgageHoldingsReply : BasicReply<PlayerAction::MORTGAGE_HOLDINGS> {};
 

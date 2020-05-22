@@ -52,6 +52,22 @@ sf::Color getColor(Color color) {
     return sf::Color::Transparent;
 }
 
+std::string SFMLView::tokenToString(Token token) {
+    if (token == Token::SHIP)
+        return "SHIP";
+    else if (token == Token::BOOT)
+        return "BOOT";
+    else if (token == Token::CAR)
+        return "CAR";
+    else if (token == Token::CAT)
+        return "CAT";
+    else if (token == Token::DOG)
+        return "DOG";
+    else if (token == Token::HAT)
+        return "HAT";
+    throw std::invalid_argument("no such token");
+}
+
 SFMLView::SFMLView(Manager &manager) : manager(manager) {
     window.create(sf::VideoMode(sf::VideoMode::getDesktopMode().width * 20 / 21, sf::VideoMode::getDesktopMode().height * 9 / 10),
             "Monopoly", sf::Style::Titlebar | sf::Style::Close);
@@ -110,10 +126,6 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     "images/SELL_HOTEL.png",
                     "By pressing this button you will sell hotel",
                     makeReplyGenerator<SellHotelReply>());
-    addActionButton(PlayerAction::ROLL_DICE,
-                    "images/ROLL_DICE.png",
-                    "By pressing this button you will roll dice",
-                    makeReplyGenerator<RollDiceReply>());
     addActionButton(PlayerAction::TAKE_CARD,
                     "images/TAKE_CARD.png",
                     "By pressing this button you will take card",
@@ -122,9 +134,13 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     "images/USE_CARD.png",
                     "By pressing this button you will use card",
                     makeReplyGenerator<UseCardReply>());
-    addActionButton(PlayerAction::START_TRADE_NEW_FIELD,              //// SSSSSSSSSS
+    addActionButton(PlayerAction::START_TRADE_NEW_FIELD,
+                    "images/START_TRADE_NEW_FIELD.png",
+                    "By pressing this button you won't buy this field and start auction between other players",
+                    makeReplyGenerator<StartTradeNewFieldReply>());
+    addActionButton(PlayerAction::START_TRADE,
                     "images/START_TRADE.png",
-                    "By pressing this button you will start trade",
+                    "By pressing this button you will start trade with another player",
                     makeReplyGenerator<StartTradeReply>());
     addActionButton(PlayerAction::MORTGAGE_HOLDINGS,
                     "images/MORTGAGE_HOLDINGS.png",
@@ -134,6 +150,10 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     "images/BUY_BACK_PROPERTY.png",
                     "By pressing this button you will buy your field back",
                     makeReplyGenerator<BuyBackProperty>());
+    addActionButton(PlayerAction::ROLL_DICE,
+                    "images/ROLL_DICE.png",
+                    "By pressing this button you will roll dice",
+                    makeReplyGenerator<RollDiceReply>());
 
     tokenButtons[Token::DOG].setTexture("images/DOG.png");
     tokenButtons[Token::BOOT].setTexture("images/BOOT.png");
@@ -540,8 +560,8 @@ void SFMLView::drawMessage() {
             {
                 const auto &baseRect = shapes.fieldRects[0];
                 message.setCharacterSize(15);
-                message.setPosition(baseRect.getPosition() + baseRect.getPoint(1) +
-                                sf::Vector2f(5, -message.getLocalBounds().height * 2));
+                message.setPosition(baseRect.getPosition() + /*baseRect.getPoint(1) +*/
+                                sf::Vector2f(message.getLocalBounds().width, -message.getLocalBounds().height));
             }
             break;
         case MessageType::DICE:
@@ -570,7 +590,7 @@ void SFMLView::monopolyDrawer() {
             drawTradeButtons();
         }
         if (isSumReq) {
-            enteredT.setString(enteredText);
+            enteredT.setString("Enter price: " + enteredText);
             auto[nx, ny, nw, nh] = enteredT.getLocalBounds();
             auto[x, y] = shapes.fieldRects[35].getPosition();
 

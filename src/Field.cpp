@@ -311,6 +311,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     if (reply->action == PlayerAction::START_TRADE) {
         TokenReply tokenReply = tile.board.sendTokenRequest(token);
         NumReply numReply = tile.board.sendNumRequest(token);
+        std::cout << "token & num done\n";
         auto chosenField = tile.board.getFieldTile(numReply->num);
         if (!chosenField->canBeSold(tokenReply->token)) {
             tile.board.sendMessage(token, PlayerMessage("You can't buy this field tile from " +
