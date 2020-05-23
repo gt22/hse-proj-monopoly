@@ -151,7 +151,7 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     "By pressing this button you will buy your field back",
                     makeReplyGenerator<BuyBackProperty>());
     addActionButton(PlayerAction::FINISH_GAME,
-                    "images/FINISH_GAME.png",
+                    "images/EXIT_GAME.png",
                     "By pressing this button you will forcely end the game for all players",
                     makeReplyGenerator<FinishGameReply>());
     addActionButton(PlayerAction::EXIT_GAME,
