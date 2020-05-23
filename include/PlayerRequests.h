@@ -108,6 +108,8 @@ struct EndTurnReply : BasicReply<PlayerAction::END_TURN> {};
 
 struct ExitGameReply : BasicReply<PlayerAction::EXIT_GAME> {};
 
+struct FinishGameReply : BasicReply<PlayerAction::FINISH_GAME> {};
+
 struct TakeCardReply : BasicReply<PlayerAction::TAKE_CARD> {};
 
 struct UseCardReply : BasicReply<PlayerAction::USE_CARD> {};

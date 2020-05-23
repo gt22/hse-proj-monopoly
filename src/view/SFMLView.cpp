@@ -90,10 +90,10 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     "images/END_TURN.png",
                     "By pressing this button you will finish your turn",
                     makeReplyGenerator<EndTurnReply>());
-    addActionButton(PlayerAction::EXIT_GAME,
-                    "images/EXIT_GAME.png",
-                    "By pressing this button you will exit the game",
-                    makeReplyGenerator<ExitGameReply>());
+    addActionButton(PlayerAction::ROLL_DICE,
+                    "images/ROLL_DICE.png",
+                    "By pressing this button you will roll dice",
+                    makeReplyGenerator<RollDiceReply>());
     addActionButton(PlayerAction::PAY_TAX,
                     "images/PAY_TAX.png",
                     "By pressing this button you will pay tax to bank",
@@ -150,10 +150,16 @@ SFMLView::SFMLView(Manager &manager) : manager(manager) {
                     "images/BUY_BACK_PROPERTY.png",
                     "By pressing this button you will buy your field back",
                     makeReplyGenerator<BuyBackProperty>());
-    addActionButton(PlayerAction::ROLL_DICE,
-                    "images/ROLL_DICE.png",
-                    "By pressing this button you will roll dice",
-                    makeReplyGenerator<RollDiceReply>());
+    addActionButton(PlayerAction::EXIT_GAME,
+                    "images/EXIT_GAME.png",
+                    "By pressing this button you will forcely end the game for all players",
+                    makeReplyGenerator<ExitGameReply>());
+    addActionButton(PlayerAction::FINISH_GAME,
+                    "images/FINISH_GAME.png",
+                    "By pressing this button you will leave the game",
+                    makeReplyGenerator<FinishGameReply>());
+
+
 
     tokenButtons[Token::DOG].setTexture("images/DOG.png");
     tokenButtons[Token::BOOT].setTexture("images/BOOT.png");
@@ -972,6 +978,8 @@ void SFMLView::handleRequest() {
                 std::cout << "EXIT_GAME"; break;
             case PlayerAction::LOSE:
                 std::cout << "LOSE"; break;
+            case PlayerAction::FINISH_GAME:
+                std::cout << "FINISH_GAME"; break;
         }
         std::cout << std::endl;
         if(actionButtons.count(action)) {
