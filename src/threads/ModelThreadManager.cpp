@@ -9,7 +9,13 @@ namespace Monopoly::Threads {
         dirty = true;
     }
 
-    PlayerReply ModelThreadManager::processRequest(Player& p, PlayerRequest req) {
+    void ModelThreadManager::sync(BoardModel board) {
+        std::lock_guard g(boardMutex);
+        model = std::move(board);
+        dirty = true;
+    }
+
+    PlayerReply ModelThreadManager::processRequest(PlayerRequest req) {
         std::unique_lock g(requestMutex);
         curRequest = std::move(req);
         requestCond.wait(g, [this]() { return bool(this->curReply); });
@@ -17,7 +23,12 @@ namespace Monopoly::Threads {
         return std::move(curReply);
     }
 
-    void ModelThreadManager::processMessage(Player& p, PlayerMessage mes) {
+    void ModelThreadManager::processRequestAsync(PlayerRequest req) {
+        std::unique_lock g(requestMutex);
+        curRequest = std::move(req);
+    }
+
+    void ModelThreadManager::processMessage(PlayerMessage mes) {
         std::lock_guard g(requestMutex);
         curMessage = std::move(mes);
     }
@@ -38,6 +49,12 @@ namespace Monopoly::Threads {
         return ret;
     }
 
+    std::optional<PlayerReply> ModelThreadManager::getReply() {
+        std::lock_guard g(requestMutex);
+        if(curReply) return {std::move(curReply)};
+        else return {};
+    }
+
     void ModelThreadManager::sendReply(PlayerReply reply) {
         std::lock_guard g(requestMutex);
         curReply = std::move(reply);
@@ -46,6 +63,7 @@ namespace Monopoly::Threads {
 
     BoardModel ModelThreadManager::getBoard() {
         std::lock_guard g(boardMutex);
+        dirty = false;
         return model; //copy
     }
 
@@ -54,10 +72,9 @@ namespace Monopoly::Threads {
         return dirty;
     }
 
-    void ModelThreadManager::clearDirty() {
-        std::lock_guard g(boardMutex);
-        dirty = false;
-    }
+    ModelThreadManager::ModelThreadManager(ModelThreadManager&& other) noexcept
+    : model(std::move(other.model)), dirty(other.dirty), curRequest(std::move(other.curRequest)),
+      curMessage(std::move(other.curMessage)), curReply(std::move(other.curReply)) {}
 
 
 }

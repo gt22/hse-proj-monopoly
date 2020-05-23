@@ -27,7 +27,7 @@ file(GLOB_RECURSE sources "src/*")
 file(GLOB_RECURSE includes "include/*")
 
 add_executable(hseproj ${sources} ${includes} ${ProtoSources} ${ProtoHeaders})
-target_link_libraries(hseproj Threads::Threads sfml-graphics ${PROTOBUF_LIBRARIES} ${SOCKPP})
+target_link_libraries(hseproj Threads::Threads sfml-graphics ${PROTOBUF_LIBRARIES} sockpp)
 
 include(cmake/googletest.cmake)
 fetch_googletest(
@@ -36,7 +36,7 @@ fetch_googletest(
 )
 
 add_library(hseproj-lib "")
-target_link_libraries(hseproj-lib sfml-graphics)
+target_link_libraries(hseproj-lib Threads::Threads sfml-graphics ${PROTOBUF_LIBRARIES} sockpp)
 
 
 target_sources(

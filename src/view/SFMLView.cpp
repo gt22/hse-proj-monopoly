@@ -347,11 +347,11 @@ void SFMLView::redraw(const Board &board) {
 }
 
 PlayerReply SFMLView::processRequest(Player &p, PlayerRequest req) {
-    return model.processRequest(p, std::move(req));
+    return model.processRequest(std::move(req));
 }
 
 void SFMLView::processMessage(Player &p, PlayerMessage mes) {
-    model.processMessage(p, std::move(mes));
+    model.processMessage(std::move(mes));
 }
 
 void SFMLView::onResize(sf::Event::SizeEvent e) {
