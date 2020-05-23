@@ -18,7 +18,14 @@ int PlayerData::addMoney(int newMoney) {
 
 void PlayerData::setLoser() {
     alive = false;
-    //TODO:
+    money = 0;
+    numberOfMortgagedProperty = 0;
+    numberOfUtilities = 0;
+    numberOfRailways = 0;
+    numberOfHouses = 0;
+    numberOfHotels = 0;
+    cardToLeavePrison = false;
+    prisoner = false;
 }
 
 void PlayerData::newPosition(int throwSum) {
@@ -421,6 +428,21 @@ bool Board::atLeastOneBoughtFieldOtherToken(Token token) const {
         }
     }
     return false;
+}
+
+void Board::makePlayerLoser(Token token) {
+    for (std::size_t i = 0; i < FIELD_SIZE; i++) {
+        if (field[i]->getOwner() == token) {
+            field[i]->setOwner(Token::FREE_FIELD);
+            while (field[i]->getNumberOfHotels() > 0) {
+                field[i]->decrHotelNum();
+            }
+            while (field[i]->getNumberOfHouses() > 0) {
+                field[i]->decrHouseNum();
+            }
+            field[i]->isMortgaged = false;
+        }
+    }
 }
 
 int countPrevForColor(int ind, const Board& board) {

@@ -226,6 +226,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     if (reply->action == PlayerAction::LOSE) {
         PlayerData& player = tile.board.getPlayer(token);
         player.setLoser();
+        tile.board.makePlayerLoser(player.token);
         tile.board.decrNumOfOlayers();
         tile.board.sendMessage(token, PlayerMessage("lose"), MessageType::INFO);
         //TODO
@@ -347,6 +348,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         tile.board.decrNumOfOlayers();
         PlayerData& player = tile.board.getPlayer(token);
         player.setLoser();
+        tile.board.makePlayerLoser(player.token);
         if (!tile.board.isFinished()) {
             tile.board.sendMessage(token, PlayerMessage("lose"), MessageType::INFO);
         } else {
@@ -828,6 +830,7 @@ void OwnableTile::onPlayerEntry(Token token) {
                 } else {
                     board.sendMessage(curPlayer.token, PlayerMessage("Not enough money :("), MessageType::INFO);
                     curPlayer.setLoser();
+                    board.makePlayerLoser(curPlayer.token);
                 }
             } else {
                 board.sendMessage(curPlayer.token, PlayerMessage("Auction field: " + this->name + "\nCurrent cost: "
@@ -844,12 +847,12 @@ void OwnableTile::onPlayerEntry(Token token) {
                     } else {
                         board.sendMessage(curPlayer.token, PlayerMessage("Not enough money :("), MessageType::INFO);
                         curPlayer.setLoser();
+                        board.makePlayerLoser(curPlayer.token);
                     }
                 }
             }
             buyProperty = true;
             board.setPlayerIndex(board.getPlayerNum(token));
-
         }
         if (!handleGenericActions(token, *this, reply)) {
             return;

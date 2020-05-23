@@ -87,6 +87,7 @@ public:
     bool atLeastOneBoughtFieldOtherToken(Token token) const;
     int countPlayerMoney(Token token) const;
     Token findWinner() const;
+    void makePlayerLoser(Token token);
 
     std::size_t getPlayerIndex() const;
     void setPlayerIndex(std::size_t num);
