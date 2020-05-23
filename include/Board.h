@@ -85,6 +85,8 @@ public:
     std::string tokenToString(Token token) const;
 
     bool atLeastOneBoughtFieldOtherToken(Token token) const;
+    int countPlayerMoney(Token token) const;
+    Token findWinner() const;
 
     std::size_t getPlayerIndex() const;
     void setPlayerIndex(std::size_t num);

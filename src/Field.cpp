@@ -196,8 +196,9 @@ void addAll(std::vector<T>& vec, const C& cont) {
 void makeDefaultRequest(PlayerRequest& r, Token token, Board& board) {
     //TODO: New allocation each time... Maybe rewrite as clear, reserve & many push_backs?
     r.availableActions = {
-            PlayerAction::LOSE,
-            PlayerAction::EXIT_GAME
+            //PlayerAction::LOSE,
+            PlayerAction::EXIT_GAME,
+            PlayerAction::FINISH_GAME
     };
     const PlayerData& player = board.getPlayer(token);
     if (player.numberOfHotels > 0) {

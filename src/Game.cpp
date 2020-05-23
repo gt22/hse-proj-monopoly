@@ -10,7 +10,7 @@ Game::Game(const std::vector<std::pair<std::string_view, Token>> &players, Manag
 PlayerReply Game::sendRequest(Token token, PlayerRequest request) {
     sync();
     PlayerReply rep = manager.sendRequest(token, std::move(request));
-    if(rep->action == PlayerAction::EXIT_GAME) getBoard().terminate();
+    if(rep->action == PlayerAction::FINISH_GAME) getBoard().terminate();
     return rep;
 }
 
@@ -61,7 +61,7 @@ void Game::runGame() {
         }
         sync();
     }
-    board.sendMessage(board.getWinner(), PlayerMessage("Victory!"), MessageType::INFO);
+    board.sendMessage(board.getWinner(), PlayerMessage("The game is finished!"), MessageType::INFO);
     sync();
 }
 

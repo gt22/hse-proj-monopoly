@@ -23,7 +23,8 @@ enum class PlayerAction {
     SELL_HOUSE,
     SELL_FIELD,
     SELL_HOTEL,
-    LOSE
+    LOSE,
+    FINISH_GAME
 };
 
 enum class PlayerTradeAction {
