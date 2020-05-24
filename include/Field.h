@@ -101,6 +101,7 @@ public:
     void addHotel() override { numberOfHotels++; }
     void decrHotelNum() override { numberOfHotels--; }
     void decrHouseNum() override { numberOfHouses--; }
+    Color getColor() const override { return color; }
     void setTaxes(int tax0, int tax1, int tax2, int tax3, int tax4, int tax5) override;
     int numberOfHouses = 0;
     int numberOfHotels = 0;

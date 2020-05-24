@@ -40,7 +40,7 @@ struct PlayerData {
     bool cardToLeavePrison = false;
     std::vector<std::unique_ptr<Card>> cards;
 
-    int getMoney();
+    int getMoney() const ;
     int addMoney(int newMoney);
     void setLoser();
 

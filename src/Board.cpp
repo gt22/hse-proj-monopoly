@@ -7,7 +7,7 @@
 
 PlayerData::PlayerData(std::string_view name, Token token) : name(name), token(token) {}
 
-int PlayerData::getMoney() {
+int PlayerData::getMoney() const {
     return money;
 }
 
@@ -445,6 +445,18 @@ void Board::makePlayerLoser(Token token) {
     }
 }
 
+int Board::countPlayerMoney(Token token) const {
+    int sum = 0;
+    const PlayerData& player = this->getPlayer(token);
+    sum += player.getMoney();
+    for (std::size_t i = 0; i < FIELD_SIZE; i++) {
+        if ((field[i]->getOwner() != Token::FREE_FIELD) && (field[i]->getOwner() != token)) {
+            return true;
+        }
+    }
+    return sum;
+}
+
 int countPrevForColor(int ind, const Board& board) {
     if (ind < 0 || ind > (int)board.FIELD_SIZE) {
         throw std::out_of_range("no field " + std::to_string(ind));
@@ -461,7 +473,7 @@ int countPrevForColor(int ind, const Board& board) {
 bool checkHousesNumForHotel(int ind, const Board& board) {
     for (std::size_t i = ind; i < board.FIELD_SIZE; i++) {
         if (board.field[i]->getColor() == board.field[ind]->getColor() &&
-                (board.field[i]->getNumberOfHouses() != 4 || board.field[i]->getNumberOfHotels() != 0)) {
+                (board.field[i]->getNumberOfHouses() != 4 || board.field[ind]->getNumberOfHotels() != 0)) {
             return false;
         }
     }
@@ -471,31 +483,29 @@ bool checkHousesNumForHotel(int ind, const Board& board) {
 bool checkPrevHotel(int ind, const Board& board) {
     int i = ind - 1;
     while (i >= 0) {
-        if (board.field[i]->getColor() == board.field[ind]->getColor()
-            && board.field[i]->getNumberOfHotels() == 1) {
-            return true;
+        if (board.field[i]->getColor() == board.field[ind]->getColor()) {
+            return (board.field[i]->getNumberOfHotels() == 1);
         }
         i--;
     }
-    return false;
+    return true;
 }
 
 bool checkPrevHouse(int ind, const Board& board) {
     int i = ind - 1;
     while (i >= 0) {
-        if (board.field[i]->getColor() == board.field[ind]->getColor()
-            && board.field[i]->getNumberOfHouses() == board.field[ind]->getNumberOfHouses() + 1) {
-            return true;
+        if (board.field[i]->getColor() == board.field[ind]->getColor()) {
+            return (board.field[i]->getNumberOfHouses() == board.field[ind]->getNumberOfHouses() + 1);
         }
         i--;
     }
-    return false;
+    return true;
 }
 
 bool checkHousesNumForHouse(int ind, const Board& board) {
-    for (std::size_t i = ind; i < board.FIELD_SIZE; i++) {
+    for (std::size_t i = ind + 1; i < board.FIELD_SIZE; i++) {
         if (board.field[i]->getColor() == board.field[ind]->getColor() &&
-            (board.field[i]->getNumberOfHouses() !=  board.field[i]->getNumberOfHotels())) {
+            (board.field[i]->getNumberOfHouses() !=  board.field[ind]->getNumberOfHouses())) {
             return false;
         }
     }
