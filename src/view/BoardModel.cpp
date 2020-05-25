@@ -20,7 +20,9 @@ void FieldTileModel::update(const FieldTile& tile) {
         shortName = ownable->shortName;
         if(auto street = dynamic_cast<const Street*>(ownable); street) {
             numberOfHouses = street->numberOfHouses;
+            numberOfHotels = street->numberOfHotels;
             costPerHouse = street->costPerHouse;
+            costPerHotel = street->costPerHotel;
             color = street->color;
         }
     } else if(auto prison = dynamic_cast<const Prison*>(&tile); prison) {

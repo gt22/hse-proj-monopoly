@@ -27,7 +27,10 @@ struct FieldTileModel {
     std::optional<Color> color;
     std::optional<Token> owner;
     std::optional<int> numberOfHouses;
+    std::optional<int> numberOfHotels;
     std::optional<int> costPerHouse;
+    std::optional<int> costPerHotel;
+
     void update(const FieldTile& tile);
 };
 
