@@ -278,14 +278,17 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         if (token != chosenField->getOwner() || chosenField->getColor() == Color::NO_COL || chosenField->isMortgaged ||
                 chosenField->getNumberOfHouses() < 4 || chosenField->getNumberOfHotels() > 0) {
             tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"), MessageType::INFO);
+            std::cout << "1\n";
             return true;
         }
         if (!tile.board.checkAllFieldsOfCurColor(token, index)) {
             tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"), MessageType::INFO);
+            std::cout << "2\n";
             return true;
         }
         if (!checkPrevForHotel(index, tile.board)) {
             tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"), MessageType::INFO);
+            std::cout << "3\n";
             return true;
         }
         PlayerData& player = tile.board.getPlayer(token);
@@ -387,17 +390,27 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
     if (reply->action == PlayerAction::SELL_FIELD) {
         NumReply numReply = tile.board.sendNumRequest(token);
         std::cout << numReply->num << "\n";
-        int index = numReply->num;
-        if (tile.board.field[index]->getNumberOfHouses() != 0 || tile.board.field[index]->getNumberOfHotels() != 0 ||
-            tile.board.field[index]->getOwner() != token) {
+        auto chosenField = tile.board.getFieldTile(numReply->num);
+        if (chosenField->getNumberOfHouses() != 0 || chosenField->getNumberOfHotels() != 0 ||
+                chosenField->getOwner() != token || chosenField->isMortgaged) {
             tile.board.sendMessage(token, PlayerMessage("You can't sell this field tile"), MessageType::INFO);
+            std::cout << "1\n";
+            std::cout <<  (chosenField->getNumberOfHouses() != 0  ? "ok":"fail");
+            std::cout <<  (chosenField->getNumberOfHotels() != 0 ? "ok":"fail");
+            std::cout <<  (chosenField->getOwner() != token ? "ok":"fail");
+            std::cout <<  (chosenField->getNumberOfHouses() >= 4 ? "ok":"fail");
+            return true;
+        }
+        if (!checkToSellField(numReply->num, tile.board)) {
+            tile.board.sendMessage(token, PlayerMessage("You can't sell this field tile"), MessageType::INFO);
+            std::cout << "2\n";
             return true;
         }
         //TODO checks
         PlayerData& player = tile.board.getPlayer(token);
-        player.addMoney(tile.board.field[index]->getFieldCost());
-        tile.board.field[index]->decrPropertyNum(token);
-        tile.board.field[index]->setOwner(Token::FREE_FIELD);
+        player.addMoney(chosenField->getFieldCost());
+        chosenField->decrPropertyNum(token);
+        chosenField->setOwner(Token::FREE_FIELD);
     }
     if (reply->action == PlayerAction::SELL_HOUSE) {
         NumReply numReply = tile.board.sendNumRequest(token);
@@ -406,10 +419,12 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         if (tile.board.field[index]->getNumberOfHouses() == 0 || tile.board.field[index]->getNumberOfHotels() != 0 ||
             tile.board.field[index]->getOwner() != token) {
             tile.board.sendMessage(token, PlayerMessage("You can't sell building on this field"), MessageType::INFO);
+            std::cout << "1\n";
             return true;
         }
-        if (checkNextForHouse(index, tile.board)) {
+        if (!checkNextForHouse(index, tile.board)) {
             tile.board.sendMessage(token, PlayerMessage("You can't sell this building"), MessageType::INFO);
+            std::cout << "2\n";
             return true;
         }
         //TODO checks

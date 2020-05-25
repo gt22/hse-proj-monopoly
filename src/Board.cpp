@@ -1,6 +1,7 @@
 #include "Board.h"
 
 #include <utility>
+#include <iostream>
 #include "Field.h"
 #include "Game.h"
 
@@ -470,7 +471,12 @@ int countPrevForColor(int ind, const Board& board) {
     return cnt;
 }
 
+
+
 bool checkHousesNumForHotel(int ind, const Board& board) {
+    if (ind < 0 || ind > (int)board.FIELD_SIZE) {
+        throw std::out_of_range("no field " + std::to_string(ind));
+    }
     for (std::size_t i = ind; i < board.FIELD_SIZE; i++) {
         if (board.field[i]->getColor() == board.field[ind]->getColor() &&
                 (board.field[i]->getNumberOfHouses() != 4 || board.field[ind]->getNumberOfHotels() != 0)) {
@@ -541,7 +547,23 @@ bool checkNextForHouse(int ind, const Board& board) {
     while (pos < board.FIELD_SIZE && board.field[pos]->getColor() != board.field[ind]->getColor()) {
         pos++;
     }
+    std::cout << (pos == board.FIELD_SIZE ? "None\n" : board.field[pos]->name + '\n');
     return pos == board.FIELD_SIZE || (board.field[pos]->getNumberOfHotels() == 0 &&
                                        board.field[pos]->getNumberOfHouses() + 1 ==
                                        board.field[ind]->getNumberOfHouses());
+}
+
+bool checkToSellField(int ind, const Board& board) {
+    if (ind < 0 || ind > (int)board.FIELD_SIZE) {
+        throw std::out_of_range("no field " + std::to_string(ind));
+    }
+    for (std::size_t i = 0; i < board.FIELD_SIZE; i++) {
+        if ((int)i != ind && board.field[i]->getColor() == board.field[ind]->getColor() &&
+                board.field[i]->getOwner() == board.field[ind]->getOwner() &&
+                (board.field[i]->getNumberOfHouses() != 0 ||
+                 board.field[i]->getNumberOfHotels() != 0)) {
+            return false;
+        }
+    }
+    return true;
 }
