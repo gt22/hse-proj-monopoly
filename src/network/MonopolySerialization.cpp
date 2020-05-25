@@ -14,27 +14,19 @@ namespace Monopoly::Serialization {
     auto deserialize(const std::string& ser, F conv) {
         S data;
         data.ParseFromString(ser);
-        return conv(data);
+        return conv(std::move(data));
     }
 
     std::string serializeRequest(const PlayerRequest& req) {
-        return serialize(req, Internal::serializeRequest);
+        return serialize(*req, Internal::serializeRequest);
     }
 
     PlayerRequest deserializeRequest(const std::string& ser) {
         return deserialize<Pb::PlayerRequest>(ser, Internal::deserializeRequest);
     }
 
-    std::string serializeMessage(const PlayerMessage& msg) {
-        return serialize(msg, Internal::serializeMessage);
-    }
-
-    PlayerMessage deserializeMessage(const std::string& ser) {
-        return deserialize<Pb::PlayerMessage>(ser, Internal::deserializeMessage);
-    }
-
-    std::string serializeReply(const PlayerReplyData& rep) {
-        return serialize(rep, Internal::serializeReply);
+    std::string serializeReply(const PlayerReply& rep) {
+        return serialize(*rep, Internal::serializeReply);
     }
 
     PlayerReply deserializeReply(const std::string& ser) {

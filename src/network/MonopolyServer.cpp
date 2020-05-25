@@ -27,10 +27,6 @@ namespace Monopoly::Network {
         return model.processRequest(std::move(request));
     }
 
-    void ClientHandler::sendMessage(Player& p, PlayerMessage message) {
-        model.processMessage(std::move(message));
-    }
-
     void ClientHandler::close() {
         std::lock_guard g(socketMutex);
         socket.close();
@@ -47,9 +43,6 @@ namespace Monopoly::Network {
             if (auto req = model.getRequest(); req.has_value())
                 Messages::send(socket, MessageType::REQUEST,
                                Serialization::serializeRequest(req.value()));
-            if (auto msg = model.getMessage(); msg.has_value())
-                Messages::send(socket, MessageType::MESSAGE,
-                               Serialization::serializeMessage(msg.value()));
             if (auto clientMsg = Messages::receive(socket, true); clientMsg.has_value()) {
                 const auto&[type, content] = clientMsg.value();
                 switch (type) {

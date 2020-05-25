@@ -37,6 +37,7 @@ MATCHER_P(PlayerRequestMatcher, other, "") {
 
 
 TEST(TestFields, TestStartEntry) {
+<<<<<<< HEAD
     //TODO: у вас тесты устарели
 //    StrictMock<MockPlayerData> playerData;
 //
@@ -48,8 +49,24 @@ TEST(TestFields, TestStartEntry) {
 //             PlayerAction::MORTGAGE_HOLDINGS, PlayerAction::START_TRADE, PlayerAction::END_TURN},
 //            "");
 //
-//    EXPECT_CALL(board, sendRequest(Token::CAR, PlayerRequestMatcher(expectedRequest))).WillOnce(Return(ByMove(
-//            std::make_unique<PlayerReplyData>(PlayerReplyData(PlayerAction::END_TURN)))));
+//    EXPECT_CALL(board, send(Token::CAR, PlayerRequestMatcher(expectedRequest))).WillOnce(Return(ByMove(
+//            std::make_unique<ActionReplyData>(ActionReplyData(PlayerAction::END_TURN)))));
 //
 //    Start(board, 0, "").onPlayerEntry(Token::CAR);
+=======
+    StrictMock<MockPlayerData> playerData;
+
+    StrictMock<MockBoard> board;
+    EXPECT_CALL(board, getPlayer(Token::CAR)).WillOnce(ReturnRef(playerData));
+
+    PlayerRequest expectedRequest(
+            {PlayerAction::BUY_HOUSE, PlayerAction::BUY_HOTEL, PlayerAction::USE_CARD,
+             PlayerAction::MORTGAGE_HOLDINGS, PlayerAction::START_TRADE, PlayerAction::END_TURN},
+            "");
+
+    EXPECT_CALL(board, sendRequest(Token::CAR, PlayerRequestMatcher(expectedRequest))).WillOnce(Return(ByMove(
+            std::make_unique<ActionReplyData>(ActionReplyData(PlayerAction::END_TURN)))));
+
+    Start(board, 0, "").onPlayerEntry(Token::CAR);
+>>>>>>> view-sfml
 }

@@ -20,8 +20,12 @@ struct PlayerModel {
 struct FieldTileModel {
     int position;
     std::string name;
-    std::optional<int> tax;
+
+   // std::optional<int> tax;
+    bool isMortgaged;
+
     std::optional<int> cost;
+    std::optional<std::string> shortName;
     std::optional<int> costOfParking;
     std::optional<Color> color;
     std::optional<Token> owner;

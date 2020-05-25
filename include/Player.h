@@ -3,7 +3,6 @@
 
 #include "MonopolyFwd.h"
 #include "PlayerRequests.h"
-#include "View.h"
 #include <string>
 #include <vector>
 #include <variant>
@@ -13,8 +12,7 @@ class Player {
 public:
     explicit Player(Token token, std::string name);
     virtual ~Player() = default;
-    virtual PlayerReply sendRequest(PlayerRequest request) = 0;
-    virtual void sendMessage(PlayerMessage request) = 0;
+    virtual PlayerReply send(PlayerRequest request) = 0;
     virtual void sync(const Board& board) = 0;
 
     const Token token;
@@ -23,23 +21,20 @@ public:
 
 class NetworkPlayer final : public Player {
 public:
-    PlayerReply sendRequest(PlayerRequest request) override;
-    void sendMessage(PlayerMessage request) override;
+    PlayerReply send(PlayerRequest request) override;
     void sync(const Board& board) override;
 };
 
 class BotPlayer final : public Player {
 public:
-    PlayerReply sendRequest(PlayerRequest request) override;
-    void sendMessage(PlayerMessage request) override;
+    PlayerReply send(PlayerRequest request) override;
     void sync(const Board& board) override;
 };
 
 class LocalPlayer final : public Player {
 public:
     explicit LocalPlayer(Token token, std::string name, SFMLView& view);
-    PlayerReply sendRequest(PlayerRequest request) override;
-    void sendMessage(PlayerMessage request) override;
+    PlayerReply send(PlayerRequest request) override;
     void sync(const Board& board) override;
 
 private:

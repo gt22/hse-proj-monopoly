@@ -12,20 +12,22 @@ void PlayerModel::update(const PlayerData& player) {
 void FieldTileModel::update(const FieldTile& tile) {
     position = tile.position;
     name = tile.name;
+    isMortgaged = tile.isMortgaged;
     if(auto ownable = dynamic_cast<const OwnableTile*>(&tile); ownable) {
         cost = ownable->cost;
         costOfParking = ownable->costOfParking;
         owner = ownable->owner;
-        if(auto street = dynamic_cast<const Street*>(ownable); street) {
+        shortName = ownable->shortName;
+        if (auto street = dynamic_cast<const Street *>(ownable); street) {
             numberOfHouses = street->numberOfHouses;
             costPerHouse = street->costPerHouse;
             color = street->color;
             taxes = street->taxes;
+        } else if (auto prison = dynamic_cast<const Prison *>(&tile); prison) {
+            costOfParking = Prison::TAX;
+        } else if (auto incomeTax = dynamic_cast<const IncomeTax *>(&tile); incomeTax) {
+            costOfParking = incomeTax->getTax();
         }
-    } else if(auto prison = dynamic_cast<const Prison*>(&tile); prison) {
-        tax = Prison::TAX;
-    } else if(auto incometax = dynamic_cast<const IncomeTax*>(&tile); incometax) {
-        tax = incometax->tax;
     }
 }
 

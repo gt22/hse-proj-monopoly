@@ -23,8 +23,6 @@ namespace Monopoly::Network {
 
         PlayerReply sendRequest(Player& p, PlayerRequest request);
 
-        void sendMessage(Player& p, PlayerMessage message);
-
         void close();
 
         void mainLoop();

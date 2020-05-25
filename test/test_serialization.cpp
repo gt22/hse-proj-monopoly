@@ -75,8 +75,8 @@ MATCHER_P(PlayerReplyMatcher, other, "") {
 SER_SPEC(PlayerReply, dereferenceCall(Ser::serializeReply), Ser::deserializeReply, PlayerReplyMatcher);
 
 TEST(TestSerialization, TestReply) {
-    check(std::make_unique<PlayerReplyData>(PlayerAction::END_TURN));
-    check(std::make_unique<PlayerReplyData>(PlayerAction::PAY_TO_OTHER_PLAYER));
+    check(std::make_unique<ActionReplyData>(PlayerAction::END_TURN));
+    check(std::make_unique<ActionReplyData>(PlayerAction::PAY_TO_OTHER_PLAYER));
 }
 
 

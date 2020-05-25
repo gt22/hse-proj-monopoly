@@ -4,8 +4,6 @@
 #include "MonopolyFwd.h"
 #include "Player.h"
 #include "Game.h"
-#include "View.h"
-//#include "Menu.h"
 #include <vector>
 #include <memory>
 #include <thread>
@@ -19,8 +17,7 @@ public:
     void startGame();
     bool isGameStarted();
     Board& getBoard();
-    PlayerReply sendRequest(Token token, PlayerRequest request);
-    void sendMessage(Token token, PlayerMessage request);
+    PlayerReply sendRequest(PlayerRequest request);
     void sync(const Board& board);
 private:
 

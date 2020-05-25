@@ -11,10 +11,7 @@ namespace Monopoly::Serialization {
     std::string serializeRequest(const PlayerRequest& req);
     PlayerRequest deserializeRequest(const std::string& ser);
 
-    std::string serializeMessage(const PlayerMessage& msg);
-    PlayerMessage deserializeMessage(const std::string& ser);
-
-    std::string serializeReply(const PlayerReplyData& rep);
+    std::string serializeReply(const PlayerReply& rep);
     PlayerReply deserializeReply(const std::string& ser);
 
     std::string serializeBoard(const BoardModel& board);

@@ -14,7 +14,7 @@ namespace Monopoly::Network {
             std::lock_guard g(socketMutex);
             if (!socket.is_open()) break;
             if(auto rep = model.getReply(); rep.has_value())
-                Messages::send(socket, MessageType::REPLY, Serialization::serializeReply(*rep.value()));
+                Messages::send(socket, MessageType::REPLY, Serialization::serializeReply(rep.value()));
             if(auto msg = Messages::receive(socket, true); msg.has_value()) {
                 const auto&[type, content] = msg.value();
                 switch(type) {
@@ -24,10 +24,6 @@ namespace Monopoly::Network {
                     }
                     case MessageType::REQUEST: {
                         model.processRequestAsync(Serialization::deserializeRequest(content));
-                        break;
-                    }
-                    case MessageType::MESSAGE: {
-                        model.processMessage(Serialization::deserializeMessage(content));
                         break;
                     }
                     default: throw Messages::InvalidMessageError("Unexpected message type for s2c message");

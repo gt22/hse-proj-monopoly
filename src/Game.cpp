@@ -3,32 +3,31 @@
 #include <utility>
 #include "Manager.h"
 
-Game::Game(const std::vector<std::pair<std::string_view, Token>> &players, Manager& manager)
-    : board(players, *this), manager(manager) { }
 
-PlayerReply Game::sendRequest(Token token, PlayerRequest request) {
+Game::Game(const std::vector<std::pair<std::string_view, Token>>& players, Manager& manager)
+        : board(players, *this), manager(manager) {}
+
+PlayerReply Game::send(PlayerRequest request) {
     sync();
-    PlayerReply rep = manager.sendRequest(token, std::move(request));
-    if(rep->action == PlayerAction::EXIT_GAME) getBoard().terminate();
+    PlayerReply rep = manager.sendRequest(std::move(request));
+    if (rep && rep->type == RequestType::ACTION && rep->data.action == PlayerAction::FINISH_GAME) getBoard().terminate();
     return rep;
 }
 
-void Game::sendMessage(Token token, PlayerMessage mes) {
-    sync();
-    manager.sendMessage(token, std::move(mes));
-}
 
 void Game::runGame() {
+    using namespace Monopoly::Requests;
     std::size_t curPlayerNum = 0;
     while (!board.isFinished()) {
+        board.setPlayerIndex(curPlayerNum);
         PlayerData& curPlayer = board.getPlayer(board.getPlayerToken(curPlayerNum));
+
         if (!curPlayer.alive) {
             curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
             continue;
         }
-        PlayerRequest startTurnRequest;
-        startTurnRequest.availableActions.push_back(PlayerAction::ROLL_DICE);
-        PlayerReply reply = board.sendRequest(curPlayer.token, startTurnRequest);
+        PlayerReply reply = board.send(action(curPlayer.token, {PlayerAction::ROLL_DICE}));
+        if (board.isFinished()) break;
         if (curPlayer.prisoner) {
             board.getField()[curPlayer.position]->onPlayerEntry(curPlayer.token);
             curPlayerNum = (curPlayerNum + 1) % board.getPlayersNumber();
@@ -36,8 +35,9 @@ void Game::runGame() {
         }
         int firstTrow = rng.nextInt(1, 6), secondTrow = rng.nextInt(1, 6);
         curPlayer.lastTrow = firstTrow + secondTrow;
-        sendMessage(curPlayer.token,
-                PlayerMessage(std::to_string(firstTrow) + " " + std::to_string(secondTrow)));
+
+        send(message(curPlayer.token, MessageType::DICE,
+                     std::to_string(firstTrow) + " " + std::to_string(secondTrow)));
         bool extraTurn = false;
         if (firstTrow == secondTrow) {
             curPlayer.doubleDice++;
@@ -57,7 +57,7 @@ void Game::runGame() {
         }
         sync();
     }
-    board.sendMessage(board.getWinner(), PlayerMessage("Victory!"));
+    board.send(message(board.getWinner(), MessageType::INFO, "The game is finished!"));
     sync();
 }
 

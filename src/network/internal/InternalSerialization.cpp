@@ -8,44 +8,55 @@
 
 namespace Monopoly::Serialization::Internal {
 
-    Pb::PlayerRequest serializeRequest(const PlayerRequest& req) {
+    Pb::PlayerRequest serializeRequest(const PlayerRequestData& req) {
         Pb::PlayerRequest ser;
+        ser.set_type(Pb::RequestType(req.type));
+        ser.set_player(Pb::Token(req.player));
+        ser.set_msg(req.message);
         for (auto action : req.availableActions) {
             ser.add_availableactions(Pb::PlayerAction(action));
         }
-        ser.set_msg(req.message);
+        ser.set_msgtype(Pb::MessageType(ser.msgtype()));
         return ser;
     }
 
-    PlayerRequest deserializeRequest(const Pb::PlayerRequest& ser) {
-        PlayerRequest ret;
-        ret.availableActions.reserve(ser.availableactions_size());
+    PlayerRequest deserializeRequest(Pb::PlayerRequest&& ser) {
+        std::vector<PlayerAction> availableActions;
+        availableActions.reserve(ser.availableactions_size());
         for (auto action : ser.availableactions()) {
-            ret.availableActions.push_back(PlayerAction(action));
+            availableActions.push_back(PlayerAction(action));
         }
-        ret.message = ser.msg();
-        return ret;
-    }
-
-    Pb::PlayerMessage serializeMessage(const PlayerMessage& msg) {
-        Pb::PlayerMessage ser;
-        ser.set_msg(msg.message);
-        return ser;
-    }
-
-    PlayerMessage deserializeMessage(const Pb::PlayerMessage& ser) {
-        return PlayerMessage(ser.msg());
+        return std::make_unique<PlayerRequestData>(RequestType(ser.type()),
+                Token(ser.player()), std::move(*ser.mutable_msg()),
+                std::move(availableActions), MessageType(ser.msgtype()));
     }
 
     Pb::PlayerReply serializeReply(const PlayerReplyData& rep) {
-        Pb::PlayerReply ser; //TODO: Subclasses
-        ser.set_action(Pb::PlayerAction(rep.action));
+        Pb::PlayerReply ser;
+        ser.set_type(Pb::RequestType(rep.type));
+        ser.set_player(Pb::Token(rep.player));
+        switch(rep.type) {
+            case RequestType::ACTION: ser.set_action(Pb::PlayerAction(rep.data.action)); break;
+            case RequestType::TRADE: ser.set_trade(Pb::PlayerTradeAction(rep.data.trade)); break;
+            case RequestType::NUM: ser.set_num(rep.data.num); break;
+            case RequestType::SUM: ser.set_sum(rep.data.sum); break;
+            case RequestType::TOKEN: ser.set_token(Pb::Token(rep.data.token)); break;
+            default: break;
+        }
         return ser;
     }
 
-    PlayerReply deserializeReply(const Pb::PlayerReply& ser) {
-        //TODO: Subclasses
-        return std::make_unique<PlayerReplyData>(PlayerAction(ser.action()));
+    PlayerReply deserializeReply(Pb::PlayerReply&& ser) {
+        auto type = RequestType(ser.type());
+        auto player = Token(ser.player());
+        switch(type) {
+            case RequestType::ACTION: return std::make_unique<PlayerReplyData>(player, PlayerAction(ser.action()));
+            case RequestType::TRADE: return std::make_unique<PlayerReplyData>(player, PlayerTradeAction(ser.trade()));
+            case RequestType::NUM: return std::make_unique<PlayerReplyData>(player, std::size_t(ser.num()));
+            case RequestType::SUM: return std::make_unique<PlayerReplyData>(player, ser.sum());
+            case RequestType::TOKEN: return std::make_unique<PlayerReplyData>(player, Token(ser.token()));
+            default: return nullptr;
+        }
     }
 
     template<typename T, typename U>
@@ -65,7 +76,7 @@ namespace Monopoly::Serialization::Internal {
         return ser;
     }
 
-    Taxes deserializeTaxes(const Pb::Taxes& ser) {
+    Taxes deserializeTaxes(Pb::Taxes&& ser) {
         Taxes ret;
         ret.startTax = ser.starttax();
         ret.taxOneHouse = ser.taxonehouse();
@@ -85,7 +96,6 @@ namespace Monopoly::Serialization::Internal {
         Pb::FieldTileModel ser;
         ser.set_position(data.position);
         ser.set_name(data.name);
-        ser.set_tax(data.tax.value_or(-1));
         ser.set_cost(data.cost.value_or(-1));
         ser.set_costofparking(data.costOfParking.value_or(-1));
         ser.set_color(apply(
@@ -108,11 +118,10 @@ namespace Monopoly::Serialization::Internal {
         else return value;
     }
 
-    FieldTileModel deserializeFieldTile(const Pb::FieldTileModel& ser) {
+    FieldTileModel deserializeFieldTile(Pb::FieldTileModel&& ser) {
         FieldTileModel ret;
         ret.position = ser.position();
         ret.name = ser.name();
-        ret.tax = loadIfPresent(ser.tax(), -1);
         ret.cost = loadIfPresent(ser.cost(), -1);
         ret.costOfParking = loadIfPresent(ser.costofparking(), -1);
         ret.color = apply(loadIfPresent(ser.color(), Pb::Color::UNSPECIFIED_col),
@@ -121,7 +130,7 @@ namespace Monopoly::Serialization::Internal {
                           converter<Pb::Token, Token>());
         ret.numberOfHouses = loadIfPresent(ser.numberofhouses(), -1);
         ret.costPerHouse = loadIfPresent(ser.costperhouse(), -1);
-        if(ser.has_taxes()) ret.taxes = deserializeTaxes(ser.taxes());
+        if(ser.has_taxes()) ret.taxes = deserializeTaxes(std::move(*ser.mutable_taxes()));
         return ret;
     }
 
@@ -131,7 +140,7 @@ namespace Monopoly::Serialization::Internal {
         return ser;
     }
 
-    Card *deserializeCard(const Pb::Card& data, Board&) {
+    Card *deserializeCard(Pb::Card&& data, Board&) {
         //TODO: Subclasses
         throw 1;
     }
@@ -147,7 +156,7 @@ namespace Monopoly::Serialization::Internal {
         return ser;
     }
 
-    PlayerModel deserializePlayerModel(const Pb::PlayerData& ser) {
+    PlayerModel deserializePlayerModel(Pb::PlayerData&& ser) {
         PlayerModel ret;
         ret.name = ser.name();
         ret.token = Token(ser.token());
@@ -176,15 +185,15 @@ namespace Monopoly::Serialization::Internal {
         return ser;
     }
 
-    BoardModel deserializeBoardModel(const Pb::BoardModel& ser) {
+    BoardModel deserializeBoardModel(Pb::BoardModel&& ser) {
         BoardModel ret;
-        for(const auto& tileSer : ser.tiles()) {
-            auto tile = deserializeFieldTile(tileSer);
+        for(auto&& tileSer : *ser.mutable_tiles()) {
+            auto tile = deserializeFieldTile(std::move(tileSer));
             ret.field[tile.position] = std::move(tile);
         }
         ret.players.reserve(ser.players_size());
-        for (const auto& dataSer : ser.players()) {
-            ret.players.push_back(deserializePlayerModel(dataSer));
+        for (auto&& dataSer : *ser.mutable_players()) {
+            ret.players.push_back(deserializePlayerModel(std::move(dataSer)));
         }
         ret.curPlayer = Token(ser.curplayer());
         return ret;

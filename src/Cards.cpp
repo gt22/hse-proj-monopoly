@@ -6,29 +6,29 @@
 #include <Board.h>
 #include <iostream>
 
-Card::Card(Board &board, std::string text) : board(board), text(std::move(text)) {}
+Card::Card(Board& board, std::string text) : board(board), text(std::move(text)) {}
 
-LeavePrisonForFree::LeavePrisonForFree(Board &board, std::string text)
-                 : Card(board, std::move(text)) {}
-
-GetMoney::GetMoney(Board &board, std::string text)
+LeavePrisonForFree::LeavePrisonForFree(Board& board, std::string text)
         : Card(board, std::move(text)) {}
 
-PayMoney::PayMoney(Board &board, std::string text)
+GetMoney::GetMoney(Board& board, std::string text)
         : Card(board, std::move(text)) {}
 
-GetMoneyFromOtherPlayers::GetMoneyFromOtherPlayers(Board &board, std::string text)
-                        : Card(board, std::move(text)) {}
-
-PayMoneyToOtherPlayers::PayMoneyToOtherPlayers(Board &board, std::string text)
-                        : Card(board, std::move(text)) {}
-
-
-Teleport::Teleport(Board &board, std::string text)
+PayMoney::PayMoney(Board& board, std::string text)
         : Card(board, std::move(text)) {}
 
-TeleportToPrison::TeleportToPrison(Board &board, std::string text)
-                : Card(board, std::move(text)) {}
+GetMoneyFromOtherPlayers::GetMoneyFromOtherPlayers(Board& board, std::string text)
+        : Card(board, std::move(text)) {}
+
+PayMoneyToOtherPlayers::PayMoneyToOtherPlayers(Board& board, std::string text)
+        : Card(board, std::move(text)) {}
+
+
+Teleport::Teleport(Board& board, std::string text)
+        : Card(board, std::move(text)) {}
+
+TeleportToPrison::TeleportToPrison(Board& board, std::string text)
+        : Card(board, std::move(text)) {}
 
 void LeavePrisonForFree::apply(Token token) {
     PlayerData& player = board.getPlayer(token);
@@ -42,46 +42,55 @@ void GetMoney::apply(Token token) {
 
 void PayMoney::apply(Token token) {
     PlayerData& player = board.getPlayer(token);
-    PlayerRequest request;
-    FieldTile* cur_field = board.getTile(player.position);
+    FieldTile *curField = board.getTile(player.position);
     bool payTax = false;
-    request.availableActions.push_back(PlayerAction::PAY_TAX);
     int tmp = amount;
     if (countTax) {
         amount = countPlayerTax(player);
     }
+    PlayerRequest request = makeDefaultRequest(token, board);
     while (true) {
-        makeDefaultRequest(request);
-        PlayerReply reply = board.sendRequest(player.token, request);
-        board.sync();
-        request.message = "";
-        if (reply->action == PlayerAction::END_TURN && !payTax) {
-            request.message = "You can't finish turn now";
-            continue;
+        if (!payTax) {
+            request->availableActions.push_back(PlayerAction::PAY_TAX);
         }
-        if (reply->action == PlayerAction::PAY_TAX) {
+        PlayerAction action = board.send(std::move(request))->data.action;
+        request = makeDefaultRequest(token, board);
+        board.sync();
+        if (action == PlayerAction::END_TURN) {
+            std::cout << "card PayMoney END_TURN\n";
+            if (!payTax) {
+                request->message = "You can't finish turn now";
+                continue;
+            }
+            std::cout << "      return\n";
+            return;
+        }
+        if (action == PlayerAction::PAY_TAX) {
             if (player.getMoney() >= amount) {
                 player.addMoney(-amount);
                 amount = tmp;
+                payTax = true;
+                std::cout << "cards PayMoney PAY_TAX return\n";
                 return;
+                continue;
             } else {
-                request.message = "You don't have enough money";
+                request->message = "You don't have enough money";
                 continue;
             }
         }
-        if (!handleGenericActions(token, (*cur_field), reply)) {
+        if (!handleGenericActions(token, *curField, action)) {
             amount = tmp;
             return;
         }
     }
 }
 
-int PayMoney::countPlayerTax(const PlayerData &player) const {
+int PayMoney::countPlayerTax(const PlayerData& player) const {
     return player.numberOfHotels * HOTEL_REPAIR_COST + player.numberOfHouses * HOUSE_REPAIR_COST;
 }
 
 void GetMoneyFromOtherPlayers::apply(Token token) {
-    PayMoney * payMoney = new PayMoney(board);
+    PayMoney payMoney(board);
     PlayerData& player = board.getPlayer(token);
     for (std::size_t i = 0; i < board.getPlayers().size(); i++) {
         if (!board.getPlayers()[i].alive) {
@@ -90,32 +99,33 @@ void GetMoneyFromOtherPlayers::apply(Token token) {
         if (board.getPlayers()[i].token == token) {
             continue;
         }
-        board.sendMessage(board.getPlayers()[i].token, PlayerMessage("You must pay " + std::to_string(amount)
-                                                              + " to " + std::string(board.getPlayers()[i].name)));
+        board.send(Monopoly::Requests::message(board.getPlayers()[i].token, MessageType::INFO,
+                                               "You must pay " + std::to_string(amount)
+                                               + " to " + std::string(board.getPlayers()[i].name)));
         board.sync();
-        payMoney->apply(board.getPlayers()[i].token);
+        payMoney.apply(board.getPlayers()[i].token);
         player.addMoney(amount);
     }
 }
 
 void PayMoneyToOtherPlayers::apply(Token token) {
     PlayerData& player = board.getPlayer(token);
-    PlayerRequest request;
-    FieldTile* cur_field = board.getTile(player.position);
+    FieldTile *curField = board.getTile(player.position);
     bool payTax = false;
-    request.availableActions.push_back(PlayerAction::PAY_TAX);
     int tmp = amount;
     amount = board.getCurNumOfPlayers() * tmp;
+    PlayerRequest request = makeDefaultRequest(token, board);
+    request->availableActions.push_back(PlayerAction::PAY_TAX);
     while (true) {
-        makeDefaultRequest(request);
-        PlayerReply reply = board.sendRequest(player.token, request);
+        PlayerAction action = board.send(std::move(request))->data.action;
+        request = makeDefaultRequest(token, board);
+        request->availableActions.push_back(PlayerAction::PAY_TAX);
         board.sync();
-        request.message = "";
-        if (reply->action == PlayerAction::END_TURN && !payTax) {
-            request.message = "You can't finish turn now";
+        if (action == PlayerAction::END_TURN && !payTax) {
+            request->message = "You can't finish turn now";
             continue;
         }
-        if (reply->action == PlayerAction::PAY_TAX) {
+        if (action == PlayerAction::PAY_TAX) {
             if (player.getMoney() >= amount) {
                 player.addMoney(-amount);
                 amount = tmp;
@@ -131,11 +141,11 @@ void PayMoneyToOtherPlayers::apply(Token token) {
                 }
                 return;
             } else {
-                request.message = "You don't have enough money";
+                request->message = "You don't have enough money";
                 continue;
             }
         }
-        if (!handleGenericActions(token, (*cur_field), reply)) {
+        if (!handleGenericActions(token, (*curField), action)) {
             amount = tmp;
             return;
         }
@@ -147,7 +157,7 @@ void Teleport::apply(Token token) {
     if (fl) {
         player.newPosition(deltaPos);
     } else {
-        player.newPosition(newPosition - (int)player.position);
+        player.newPosition(newPosition - (int) player.position);
     }
     player.addMoney(amount);
 }
@@ -201,7 +211,7 @@ void CardPool::shuffle() {
     std::shuffle(pool.begin(), pool.end(), g_gen);
 }
 
-std::vector<std::unique_ptr<Card>> &CardPool::getCards() {
+std::vector<std::unique_ptr<Card>>& CardPool::getCards() {
     return pool;
 }
 

@@ -40,8 +40,8 @@ struct PlayerData {
     bool cardToLeavePrison = false;
     std::vector<std::unique_ptr<Card>> cards;
 
-    uint32_t getMoney();
-    uint32_t addMoney(uint32_t newMoney);
+    int getMoney() const ;
+    int addMoney(int newMoney);
     void setLoser();
 
     void newPosition(int throwSum);
@@ -61,8 +61,10 @@ public:
     const PlayerData& getPlayer(Token token) const;
     FieldTile *getFieldTile(int ind);
     Token getPlayerToken(std::size_t index) const;
-    virtual PlayerReply sendRequest(Token token, PlayerRequest request) const;
-    void sendMessage(Token token, PlayerMessage mes) const;
+    std::size_t getPlayerNum(Token token) const;
+
+    virtual PlayerReply send(PlayerRequest request) const;
+
     std::size_t getPlayersNumber() const;
     void decrNumOfOlayers();
     bool isFinished() const;
@@ -71,6 +73,16 @@ public:
     Token getWinner() const;
     FieldTile* getTile(std::size_t pos) const;
     bool checkAllFieldsOfCurColor(Token token, int ind) const;
+    bool checkFieldWithoutBuildings(Token token) const;
+    bool checkAllFieldsOfCol(Token token) const;
+
+    std::string numToTokenString(int ind) const;
+    std::string tokenToString(Token token) const;
+
+    bool atLeastOneBoughtFieldOtherToken(Token token) const;
+    int countPlayerMoney(Token token) const;
+    Token findWinner() const;
+    void makePlayerLoser(Token token);
 
     std::size_t getPlayerIndex() const;
     void setPlayerIndex(std::size_t num);
@@ -92,11 +104,15 @@ private:
     CardPool deck;
     int numOfAlivePlayers = 0;
     bool terminated = false;
-    std::size_t index;
+    std::size_t index = 0;
 };
 
 bool checkPrevForHotel(int ind, const Board& board);
 bool checkPrevForHouse(int ind, const Board& board);
+
+bool checkNextForHotel(int ind, const Board& board);
+bool checkNextForHouse(int ind, const Board& board);
+
 int countPrevForColor(int ind, const Board& board);
 bool checkHousesNumForHotel(int ind, const Board& board);
 bool checkHousesNumForHouse(int ind, const Board& board);

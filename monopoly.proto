@@ -15,6 +15,15 @@ enum Token {
     UNSPECIFIED_tok = 16;
 }
 
+enum RequestType {
+    ACTION = 0;
+    TRADE = 1;
+    MESSAGE = 2;
+    NUM = 3;
+    SUM = 4;
+    TOKEN = 5;
+}
+
 enum PlayerAction {
     END_TURN = 0;
     PAY_TAX = 1;
@@ -30,6 +39,18 @@ enum PlayerAction {
     ROLL_DICE = 11;
 }
 
+enum MessageType {
+    INFO = 0;
+    CHANCE = 1;
+    PUBLIC_TREASURY = 2;
+    DICE = 3;
+}
+
+enum PlayerTradeAction {
+    REFUSE = 0;
+    PARTICIPATE = 1;
+}
+
 enum Color {
     COL1 = 0;
     COL2 = 1;
@@ -43,17 +64,21 @@ enum Color {
 }
 
 message PlayerRequest {
-    repeated PlayerAction availableActions = 1;
-    string msg = 2;
-}
-
-message PlayerMessage {
-    string msg = 1;
+    RequestType type = 1;
+    Token player = 2;
+    string msg = 3;
+    repeated PlayerAction availableActions = 4;
+    MessageType msgtype = 5;
 }
 
 message PlayerReply {
-    PlayerAction action = 1;
-    //TODO: subclasses
+    RequestType type = 1;
+    Token player = 2;
+    PlayerAction action = 3;
+    uint32 num = 4;
+    int32 sum = 5;
+    Token token = 6;
+    PlayerTradeAction trade = 7;
 }
 
 

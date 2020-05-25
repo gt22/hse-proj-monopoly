@@ -4,30 +4,20 @@
 #include <string_view>
 #include <cassert>
 
-#include <iostream>
-
 void Manager::addPlayer(std::unique_ptr<Player> player) {
     players.push_back(std::move(player));
 }
 
-PlayerReply Manager::sendRequest(Token token, PlayerRequest request) {
+PlayerReply Manager::sendRequest(PlayerRequest request) {
+    Token token = request->player;
     for(auto& p : players) {
         if(p->token == token) {
-            return p->sendRequest(std::move(request));
+            return p->send(std::move(request));
         }
     }
     throw 1; //TODO: сделать PlayerNotFoundException или что-нибудь такое
 }
 
-void Manager::sendMessage(Token token, PlayerMessage mes) {
-    for(auto& p : players) {
-        if(p->token == token) {
-            p->sendMessage(std::move(mes));
-            return;
-        }
-    }
-    throw 1; //TODO: сделать PlayerNotFoundException или что-нибудь такое
-}
 
 void Manager::createGame() {
     assert(!game);
@@ -77,6 +67,3 @@ Manager::~Manager() {
         gameThread.join();
     }
 }
-
-
-

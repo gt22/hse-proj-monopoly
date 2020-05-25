@@ -1,10 +1,9 @@
 #include "MonopolyFwd.h"
 #include "Manager.h"
 #include "Board.h"
-#include "include/network/internal/InternalSerialization.h"
+//#include "include/network/internal/InternalSerialization.h"
 #include <clocale>
 #include <iostream>
-#include "View.h"
 
 int main() {
     setlocale(LC_ALL, "");

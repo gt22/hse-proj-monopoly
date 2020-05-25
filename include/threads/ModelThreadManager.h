@@ -16,15 +16,13 @@ namespace Monopoly::Threads {
 
         bool isDirty(); // set by sync, reset by getBoard
 
+        bool hasRequest(RequestType type);
+
         PlayerReply processRequest(PlayerRequest req);
 
         void processRequestAsync(PlayerRequest req);
 
-        void processMessage(PlayerMessage mes);
-
         std::optional<PlayerRequest> getRequest();
-
-        std::optional<PlayerMessage> getMessage();
 
         std::optional<PlayerReply> getReply();
 
@@ -40,7 +38,6 @@ namespace Monopoly::Threads {
         bool dirty = false;
 
         std::optional<PlayerRequest> curRequest;
-        std::optional<PlayerMessage> curMessage;
         PlayerReply curReply;
     };
 }
