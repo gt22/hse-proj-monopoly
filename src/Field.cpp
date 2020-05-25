@@ -495,10 +495,7 @@ void Prison::onPlayerEntry(Token token) {
         request.availableActions.push_back(PlayerAction::END_TURN);
         if (player.numberOfMortgagedProperty != 0) {
             request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
-        }
-        if (player.numberOfMortgagedProperty != 0) {
-            request.availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
-        }
+        }\
         if (board.getPlayer(token).prisoner) {
             request.availableActions.push_back(PlayerAction::PAY_TAX);
             if(!diceUsed) {

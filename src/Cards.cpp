@@ -63,8 +63,6 @@ void PayMoney::apply(Token token) {
                 request.message = "You can't finish turn now";
                 continue;
             }
-            std::cout << "      return\n";
-            return;
         }
         if (reply->action == PlayerAction::PAY_TAX) {
             if (player.getMoney() >= amount) {
@@ -73,7 +71,6 @@ void PayMoney::apply(Token token) {
                 payTax = true;
                 std::cout << "cards PayMoney PAY_TAX return\n";
                 return;
-                continue;
             } else {
                 request.message = "You don't have enough money";
                 continue;
@@ -91,7 +88,7 @@ int PayMoney::countPlayerTax(const PlayerData &player) const {
 }
 
 void GetMoneyFromOtherPlayers::apply(Token token) {
-    PayMoney * payMoney = new PayMoney(board);
+    PayMoney payMoney = PayMoney(board);
     PlayerData& player = board.getPlayer(token);
     for (std::size_t i = 0; i < board.getPlayers().size(); i++) {
         if (!board.getPlayers()[i].alive) {
@@ -104,7 +101,7 @@ void GetMoneyFromOtherPlayers::apply(Token token) {
                                                               + " to " + std::string(board.getPlayers()[i].name)),
                                                        MessageType::INFO);
         board.sync();
-        payMoney->apply(board.getPlayers()[i].token);
+        payMoney.apply(board.getPlayers()[i].token);
         player.addMoney(amount);
     }
 }
