@@ -3,6 +3,7 @@
 
 #include "MonopolyFwd.h"
 #include "PlayerRequests.h"
+#include "network/MonopolyServer.h"
 #include <string>
 #include <vector>
 #include <variant>
@@ -21,8 +22,11 @@ public:
 
 class NetworkPlayer final : public Player {
 public:
+    explicit NetworkPlayer(Token token, std::string name, Monopoly::Network::ClientHandler& handler);
     PlayerReply send(PlayerRequest request) override;
     void sync(const Board& board) override;
+private:
+    Monopoly::Network::ClientHandler& handler;
 };
 
 class BotPlayer final : public Player {

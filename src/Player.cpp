@@ -22,3 +22,16 @@ void LocalPlayer::sync(const Board &board) {
 SFMLView& LocalPlayer::gameView() {
     return view;
 }
+
+PlayerReply NetworkPlayer::send(PlayerRequest request) {
+    return handler.sendRequest(*this, std::move(request));
+}
+
+void NetworkPlayer::sync(const Board& board) {
+    handler.sync(board);
+}
+
+NetworkPlayer::NetworkPlayer(Token token, std::string name, Monopoly::Network::ClientHandler& handler)
+: Player(token, std::move(name)), handler(handler) {}
+
+
