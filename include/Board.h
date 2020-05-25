@@ -116,4 +116,7 @@ bool checkPrevHouse(int ind, const Board& board);
 
 bool checkToSellField(int ind, const Board& board);
 
+bool checkNextForBuyHouse(int ind, const Board& board);
+bool checkNextForBuyHotel(int ind, const Board& board);
+
 #endif //BOARD_H

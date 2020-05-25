@@ -553,6 +553,25 @@ bool checkNextForHouse(int ind, const Board& board) {
                                        board.field[ind]->getNumberOfHouses());
 }
 
+bool checkNextForBuyHouse(int ind, const Board& board) {
+    std::size_t pos = ind + 1;
+    while (pos < board.FIELD_SIZE && board.field[pos]->getColor() != board.field[ind]->getColor()) {
+        pos++;
+    }
+    std::cout << (pos == board.FIELD_SIZE ? "None\n" : board.field[pos]->name + '\n');
+    return pos == board.FIELD_SIZE || (board.field[pos]->getNumberOfHotels() == 0 &&
+                                       board.field[pos]->getNumberOfHouses() ==
+                                       board.field[ind]->getNumberOfHouses());
+}
+
+bool checkNextForBuyHotel(int ind, const Board& board) {
+    std::size_t pos = ind + 1;
+    while (pos < board.FIELD_SIZE && board.field[pos]->getColor() != board.field[ind]->getColor()) {
+        pos++;
+    }
+    return (pos == board.FIELD_SIZE || board.field[pos]->getNumberOfHotels() == 0);
+}
+
 bool checkToSellField(int ind, const Board& board) {
     if (ind < 0 || ind > (int)board.FIELD_SIZE) {
         throw std::out_of_range("no field " + std::to_string(ind));

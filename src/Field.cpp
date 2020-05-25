@@ -254,8 +254,11 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
             std::cout << 2 << '\n';
             return true;
         }
-        if (!checkPrevForHouse(index, tile.board)) {
+        if (!checkPrevForHouse(index, tile.board) || !checkNextForBuyHouse(index, tile.board)) {
             tile.board.sendMessage(token, PlayerMessage("You can't build house on this field tile"), MessageType::INFO);
+            std::cout <<  (!checkPrevForHouse(index, tile.board) ? "ok":"fail");
+            std::cout <<  (!checkNextForBuyHouse(index, tile.board) ? "ok":"fail");
+            std::cout << '\n';
             std::cout << 3 << '\n';
             return true;
         }
@@ -264,6 +267,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
             player.addMoney(-chosenField->getHouseCost());
             player.numberOfHouses++;
             chosenField->addHouse();
+            tile.board.sendMessage(token, PlayerMessage(""), MessageType::INFO);
         } else {
             tile.board.sendMessage(token, PlayerMessage("You don't have enough money :("), MessageType::INFO);
             std::cout << 4 << '\n';
@@ -286,7 +290,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
             std::cout << "2\n";
             return true;
         }
-        if (!checkPrevForHotel(index, tile.board)) {
+        if (!checkPrevForHotel(index, tile.board) || !checkNextForBuyHotel(index, tile.board)) {
             tile.board.sendMessage(token, PlayerMessage("You can't build hotel on this field tile"), MessageType::INFO);
             std::cout << "3\n";
             return true;
@@ -296,6 +300,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
             player.addMoney(-chosenField->getHotelCost());
             player.numberOfHotels++;
             chosenField->addHotel();
+            tile.board.sendMessage(token, PlayerMessage(""), MessageType::INFO);
         } else {
             tile.board.sendMessage(token, PlayerMessage("You don't have enough money :("), MessageType::INFO);
         }
@@ -317,6 +322,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
             player.addMoney(chosenField->getMortgageCost());
             player.numberOfMortgagedProperty++;
             chosenField->isMortgaged = true;
+            tile.board.sendMessage(token, PlayerMessage(""), MessageType::INFO);
         } else {
             tile.board.sendMessage(token, PlayerMessage("You can't mortgage this field tile"), MessageType::INFO);
             std::cout << "MORTGAGE_HOLDINGS 3\n";
@@ -347,6 +353,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
                 chosenField->decrPropertyNum(fieldOwner.token);
                 chosenField->setOwner(player.token);
                 //TODO
+                tile.board.sendMessage(token, PlayerMessage(""), MessageType::INFO);
             } else {
                 tile.board.sendMessage(player.token, PlayerMessage("Not enough money :("), MessageType::INFO);
                 //player.setLoser();
@@ -379,6 +386,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
                 player.addMoney(-1.1 * (double)tile.getMortgageCost());
                 player.numberOfMortgagedProperty--;
                 tile.board.field[index]->isMortgaged = false;
+                tile.board.sendMessage(token, PlayerMessage(""), MessageType::INFO);
             } else {
                 tile.board.sendMessage(token, PlayerMessage("You don't have enough money :("), MessageType::INFO);
             }
@@ -411,6 +419,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         player.addMoney(chosenField->getFieldCost());
         chosenField->decrPropertyNum(token);
         chosenField->setOwner(Token::FREE_FIELD);
+        tile.board.sendMessage(token, PlayerMessage(""), MessageType::INFO);
     }
     if (reply->action == PlayerAction::SELL_HOUSE) {
         NumReply numReply = tile.board.sendNumRequest(token);
@@ -432,6 +441,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         player.numberOfHouses--;
         player.addMoney(tile.board.field[index]->getHouseCost());
         tile.board.field[index]->decrHouseNum();
+        tile.board.sendMessage(token, PlayerMessage(""), MessageType::INFO);
     }
     if (reply->action == PlayerAction::SELL_HOTEL) {
         NumReply numReply = tile.board.sendNumRequest(token);
@@ -450,6 +460,7 @@ bool handleGenericActions(Token token, const FieldTile& tile, const PlayerReply&
         player.numberOfHotels--;
         player.addMoney(tile.board.field[index]->getHotelCost());
         tile.board.field[index]->decrHotelNum();
+        tile.board.sendMessage(token, PlayerMessage(""), MessageType::INFO);
     }
     return true;
 }
