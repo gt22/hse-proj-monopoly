@@ -141,7 +141,7 @@ Railway::Railway(Board &board, int position, std::string name, std::string short
 Street::Street(Board &board, int position, std::string name, std::string shortName, int cost, Color color,
                     int costPerHouse, int costPerHotel)
         : OwnableTile(board, position, std::move(name), std::move(shortName), cost, color),
-                costPerHouse(costPerHouse), costPerHotel(costPerHotel) {}
+                costPerHouse(costPerHouse), costPerHotel(costPerHouse) {}
 
 size_t Street::calculateTax(Token token) {
     switch (numberOfHouses + numberOfHotels) {
