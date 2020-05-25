@@ -595,8 +595,14 @@ void SFMLView::monopolyDrawer() {
         if (isTradeReq) {
             drawTradeButtons();
         }
-        if (isSumReq) {
-            enteredT.setString("Enter price: " + enteredText);
+        if (isSumReq || isTokenReq || isNumReq) {
+            if (isSumReq) {
+                enteredT.setString("Enter price: " + enteredText);
+            } else if (isNumReq) {
+                enteredT.setString("Choose field tile by clicking on it");
+            } else if (isTokenReq) {
+                enteredT.setString("Choose player you want to trade with");
+            }
             auto[nx, ny, nw, nh] = enteredT.getLocalBounds();
             auto[x, y] = shapes.fieldRects[35].getPosition();
 
@@ -606,6 +612,7 @@ void SFMLView::monopolyDrawer() {
         }
         buttons.draw(window);
         window.draw(box);
+
     }
 }
 
