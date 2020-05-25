@@ -24,37 +24,37 @@ GoToPrison::GoToPrison(Board &board, int position, std::string name)
 Chance::Chance(Board &board, int position, std::string name)
         : FieldTile(board, position, std::move(name)) {
     cards.resize(16);
-    cards[0] = new Teleport(board, "Card #1");
+    cards[0] = new Teleport(board, "Visit Arbat street");
     cards[0]->setPos(ARBAT_POS);
 
-    cards[1] = new Teleport(board, "Card #2");
+    cards[1] = new Teleport(board, "Take a ride on Riga railway.\n Get M200 when passing field \"Start\"");
     cards[1]->setPos(RIGA_RAILWAY_POS);
 
-    cards[2] = new GetMoney(board, "Card #3");
+    cards[2] = new GetMoney(board, "Loan for building. Get M150");
     cards[2]->setAmount(150);
 
-    cards[3] = new Teleport(board, "Card #4");
+    cards[3] = new Teleport(board, "Visit Mayakovsky square.\n Get M200 when passing field \"Start\"");
     cards[3]->setPos(MAYAKOVSKY_SQUARE);
 
     //TODO: cards[4]
-    cards[4] = new Teleport(board, "Card #5");
+    cards[4] = new Teleport(board, "Visit Mayakovsky square.\n Get M200 when passing field \"Start\"");
     cards[4]->setPos(MAYAKOVSKY_SQUARE);
     //TODO: cards[4]
 
-    cards[5] = new TeleportToPrison(board, "Card #6");
+    cards[5] = new TeleportToPrison(board, "You've been arrested. Go straight to the prison.\n You won't get M200 when passing field \"Start\"");
 
-    cards[6] = new Teleport(board, "Card #7");
+    cards[6] = new Teleport(board, "Go to the field \"Start\" and get M200");
     cards[6]->setPos(START_POS);
 
-    cards[7] = new GetMoney(board, "Card #8");
+    cards[7] = new GetMoney(board, "Bank pays you dividends in amount of M50");
     cards[7]->setAmount(50);
 
-    cards[8] = new PayMoney(board, "Card #9");
+    cards[8] = new PayMoney(board, "It's the capital repair time.\n Pay M25 for each house/building, M100 for each hotel you have.");
     cards[8]->setFlag(true);
 
-    cards[9] = new LeavePrisonForFree(board, "Card #10");
+    cards[9] = new LeavePrisonForFree(board, "Get out of jail for free");
 
-    cards[10] = new Teleport(board, "Card #11");
+    cards[10] = new Teleport(board, "Visit Polyanka street.\n Get M200 when passing field \"Start\"");
     cards[10]->setPos(POLYANKA_POS);
 
     //TODO: fill vector cards!!!
