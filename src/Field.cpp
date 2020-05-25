@@ -69,7 +69,8 @@ Chance::Chance(Board& board, int position, std::string name)
     cards[4]->setPos(MAYAKOVSKY_SQUARE);
     //TODO: cards[4]
 
-    cards[5] = new TeleportToPrison(board, "You've been arrested. Go straight to the prison.\n You won't get M200 when passing field \"Start\"");
+    cards[5] = new TeleportToPrison(board,
+                                    "You've been arrested. Go straight to the prison.\n You won't get M200 when passing field \"Start\"");
 
     cards[6] = new Teleport(board, "Go to the field \"Start\" and get M200");
     cards[6]->setPos(START_POS);
@@ -77,7 +78,8 @@ Chance::Chance(Board& board, int position, std::string name)
     cards[7] = new GetMoney(board, "Bank pays you dividends in amount of M50");
     cards[7]->setAmount(50);
 
-    cards[8] = new PayMoney(board, "It's the capital repair time.\n Pay M25 for each house/building, M100 for each hotel you have.");
+    cards[8] = new PayMoney(board,
+                            "It's the capital repair time.\n Pay M25 for each house/building, M100 for each hotel you have.");
     cards[8]->setFlag(true);
 
     cards[9] = new LeavePrisonForFree(board, "Get out of jail for free");
@@ -286,8 +288,9 @@ bool handleGenericActions(Token tok, const FieldTile& tile, PlayerAction action)
             std::cout << 2 << '\n';
             return true;
         }
-        if (!checkPrevForHouse(index, tile.board)) {
+        if (!checkPrevForHouse(index, tile.board) || !checkNextForBuyHouse(index, tile.board)) {
             tile.board.send(message(tok, MessageType::INFO, "You can't build house on this field tile"));
+
             std::cout << 3 << '\n';
             return true;
         }
@@ -316,7 +319,7 @@ bool handleGenericActions(Token tok, const FieldTile& tile, PlayerAction action)
             tile.board.send(message(tok, MessageType::INFO, "You can't build hotel on this field tile"));
             return true;
         }
-        if (!checkPrevForHotel(index, tile.board)) {
+        if (!checkPrevForHotel(index, tile.board) || !checkNextForBuyHotel(index, tile.board)) {
             tile.board.send(message(tok, MessageType::INFO, "You can't build hotel on this field tile"));
             return true;
         }
@@ -379,7 +382,6 @@ bool handleGenericActions(Token tok, const FieldTile& tile, PlayerAction action)
                 chosenField->onPurchase(player.token);
                 chosenField->decrPropertyNum(fieldOwner.token);
                 chosenField->setOwner(player.token);
-                //TODO
             } else {
                 tile.board.send(message(player.token, MessageType::INFO, "Not enough money :("));
                 //player.setLoser();
@@ -514,9 +516,6 @@ void Prison::onPlayerEntry(Token token) {
         if (player.numberOfMortgagedProperty != 0) {
             request->availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
         }
-        if (player.numberOfMortgagedProperty != 0) {
-            request->availableActions.push_back(PlayerAction::BUY_BACK_PROPERTY);
-        }
         if (board.getPlayer(token).prisoner) {
             request->availableActions.push_back(PlayerAction::PAY_TAX);
             if (!diceUsed) {
@@ -569,6 +568,7 @@ void Prison::onPlayerEntry(Token token) {
             return;
         }
     }
+
 }
 
 

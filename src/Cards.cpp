@@ -62,8 +62,6 @@ void PayMoney::apply(Token token) {
                 request->message = "You can't finish turn now";
                 continue;
             }
-            std::cout << "      return\n";
-            return;
         }
         if (action == PlayerAction::PAY_TAX) {
             if (player.getMoney() >= amount) {
@@ -72,7 +70,6 @@ void PayMoney::apply(Token token) {
                 payTax = true;
                 std::cout << "cards PayMoney PAY_TAX return\n";
                 return;
-                continue;
             } else {
                 request->message = "You don't have enough money";
                 continue;
