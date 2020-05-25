@@ -868,6 +868,18 @@ void SFMLView::drawCardInfo(const BoardModel& board, std::optional<std::size_t> 
             cardText += "\n";
         }
 
+        if (fieldTile.numberOfHotels.has_value()) {
+            cardText += "Num of hotels: ";
+            cardText += std::to_string(fieldTile.numberOfHotels.value());
+            cardText += "\n";
+        }
+
+        if (fieldTile.costPerHotel.has_value()) {
+            cardText += "Cost per hotel: ";
+            cardText += std::to_string(fieldTile.costPerHotel.value());
+            cardText += "\n";
+        }
+
         sf::Text text(cardText, mainFont);
         int fsize = 16;
         text.setCharacterSize(fsize);

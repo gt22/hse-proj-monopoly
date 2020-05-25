@@ -106,6 +106,7 @@ namespace Monopoly::Serialization::Internal {
         ).value_or(Pb::Token::UNSPECIFIED_tok));
         ser.set_numberofhouses(data.numberOfHouses.value_or(-1));
         ser.set_costperhouse(data.costPerHouse.value_or(-1));
+        ser.set_costperhotel(data.costPerHotel.value_or(-1));
         if (data.taxes.has_value()) {
             *ser.mutable_taxes() = serializeTaxes(data.taxes.value());
         }
@@ -130,6 +131,7 @@ namespace Monopoly::Serialization::Internal {
                           converter<Pb::Token, Token>());
         ret.numberOfHouses = loadIfPresent(ser.numberofhouses(), -1);
         ret.costPerHouse = loadIfPresent(ser.costperhouse(), -1);
+        ret.costPerHotel = loadIfPresent(ser.costperhotel(), -1);
         if(ser.has_taxes()) ret.taxes = deserializeTaxes(std::move(*ser.mutable_taxes()));
         return ret;
     }

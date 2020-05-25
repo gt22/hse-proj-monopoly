@@ -105,7 +105,8 @@ message FieldTileModel {
     Token owner = 7;
     int32 numberOfHouses = 8;
     int32 costPerHouse = 9;
-    Taxes taxes = 10;
+    int32 costPerHotel = 10;
+    Taxes taxes = 11;
 }
 
 message Card {
