@@ -13,9 +13,15 @@ namespace Monopoly::Network {
             th(std::move(other.th)), addr(other.addr), socket(std::move(other.socket)),
             model(std::move(other.model)), onDeath(std::move(other.onDeath)) {}
 
-    void Client::mainLoop() {
+    void Client::mainLoop(Token token, std::string name) {
         using Messages::MessageType;
         auto& sock = *socket;
+        {
+            std::lock_guard g(socketMutex);
+            if (!sock.is_open()) return;
+            Messages::send(sock, MessageType::INITIALIZE,
+                    Serialization::serializeInitialization({token, std::move(name)}));
+        }
         while (true) {
             std::lock_guard g(socketMutex);
             if (!sock.is_open()) break;

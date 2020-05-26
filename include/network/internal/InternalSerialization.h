@@ -27,6 +27,9 @@ namespace Monopoly::Serialization::Internal {
     Pb::BoardModel serializeBoardModel(const BoardModel& board);
     BoardModel deserializeBoardModel(Pb::BoardModel&& ser);
 
+    Pb::InitializationMessage serializeInitializationMessage(const InitializationMessage& msg);
+    InitializationMessage deserializeInitializationMessage(Pb::InitializationMessage&& ser);
+
 }
 
 #endif //HSEPROJ_INTERNALSERIALIZATION_H

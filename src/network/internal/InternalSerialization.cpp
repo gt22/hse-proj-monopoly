@@ -5,7 +5,7 @@
 #include "Board.h"
 #include "include/threads/BoardModel.h"
 #include <google/protobuf/port_def.inc>
-
+#include "network/MonopolySerialization.h"
 namespace Monopoly::Serialization::Internal {
 
     Pb::PlayerRequest serializeRequest(const PlayerRequestData& req) {
@@ -199,5 +199,19 @@ namespace Monopoly::Serialization::Internal {
         }
         ret.curPlayer = Token(ser.curplayer());
         return ret;
+    }
+
+    Pb::InitializationMessage serializeInitializationMessage(const InitializationMessage& msg) {
+        Pb::InitializationMessage ser;
+        ser.set_token(Pb::Token(msg.token));
+        ser.set_name(msg.name);
+        return ser;
+    }
+
+    InitializationMessage deserializeInitializationMessage(Pb::InitializationMessage&& ser) {
+        InitializationMessage msg;
+        msg.token = Token(ser.token());
+        msg.name = std::move(*ser.mutable_name());
+        return msg;
     }
 }

@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Game.h"
 #include "network/MonopolyClient.h"
+#include "network/MonopolyServer.h"
 #include <vector>
 #include <memory>
 #include <thread>
@@ -24,12 +25,15 @@ private:
 
     void createView();
     void createGame();
+    void createServer();
 private:
 
-    std::thread gameThread;
+    std::thread gameThread, serverThread;
+    std::mutex serverMutex, playerMutex;
 
     std::shared_ptr<SFMLView> view;
     std::shared_ptr<GameBase> game;
+    std::shared_ptr<Monopoly::Network::MonopolyServer> server;
     std::vector<std::unique_ptr<Player>> players;
 };
 

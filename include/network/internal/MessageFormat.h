@@ -19,7 +19,8 @@ namespace Monopoly::Network::Messages {
         REQUEST,
         MESSAGE,
         //c2s:
-        REPLY
+        REPLY,
+        INITIALIZE
     };
 
     struct MessageHeader {
@@ -59,7 +60,7 @@ namespace Monopoly::Network::Messages {
             auto x = read(sock, buf, SIZE, timeout);
             if(x < 0) return x;
             for(size_t i = SIZE; i > 0; i--) {
-                val |= std::to_integer<T>(buf[i]);
+                val |= std::to_integer<T>(buf[i - 1]);
                 val <<= 8u;
             }
             return x;

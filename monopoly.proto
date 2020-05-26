@@ -81,6 +81,10 @@ message PlayerReply {
     PlayerTradeAction trade = 7;
 }
 
+message InitializationMessage {
+    Token token = 1;
+    string name = 2;
+}
 
 //==================
 // Board

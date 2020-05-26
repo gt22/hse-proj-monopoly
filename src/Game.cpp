@@ -75,10 +75,11 @@ void LocalGame::terminate() {
     board.terminate();
 }
 
-NetworkGame::NetworkGame(NetworkGame::Client client) : client(std::move(client)) {}
+NetworkGame::NetworkGame(NetworkGame::Client client, Player& player)
+: client(std::move(client)), player(player) {}
 
 void NetworkGame::run() {
-    client.mainLoop();
+    client.mainLoop(player.token, player.name);
 }
 
 const BoardModel& NetworkGame::getBoard() {

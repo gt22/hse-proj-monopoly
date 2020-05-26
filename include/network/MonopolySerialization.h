@@ -6,6 +6,7 @@
 #define HSEPROJ_MONOPOLYSERIALIZATION_H
 
 #include "MonopolyFwd.h"
+#include <string>
 namespace Monopoly::Serialization {
 
     std::string serializeRequest(const PlayerRequest& req);
@@ -17,6 +18,13 @@ namespace Monopoly::Serialization {
     std::string serializeBoard(const BoardModel& board);
     BoardModel deserializeBoard(const std::string& ser);
 
+    struct InitializationMessage {
+        Token token;
+        std::string name;
+    };
+
+    std::string serializeInitialization(const InitializationMessage& msg);
+    InitializationMessage deserializeInitialization(const std::string& ser);
 }
 
 #endif //HSEPROJ_MONOPOLYSERIALIZATION_H

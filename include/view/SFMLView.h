@@ -73,9 +73,9 @@ public:
     }
 
     // Check if the mouse is within the bounds of the button:
-    bool isMouseOver(sf::RenderWindow &window) const {
-        int mouseX = sf::Mouse::getPosition(window).x;
-        int mouseY = sf::Mouse::getPosition(window).y;
+    bool isMouseOver(sf::Event::MouseButtonEvent e) const {
+        int mouseX = e.x;
+        int mouseY = e.y;
 
         int buttonPosX = button.getPosition().x;
         int buttonPosY = button.getPosition().y;
@@ -168,9 +168,9 @@ public:
         window.draw(buttonSprite);
     }
 
-    bool isMouseOver(sf::RenderWindow &window) const {
-        int mouseX = sf::Mouse::getPosition(window).x;
-        int mouseY = sf::Mouse::getPosition(window).y;
+    bool isMouseOver(sf::Event::MouseButtonEvent e) const {
+        int mouseX = e.x;
+        int mouseY = e.y;
 
         int buttonPosX = buttonSprite.getPosition().x;
         int buttonPosY = buttonSprite.getPosition().y;
@@ -252,12 +252,14 @@ private:
     bool shouldClose = false;
 
     //
-    static constexpr int NUM_OF_BUTTONS = 4;
+    static constexpr int NUM_OF_BUTTONS = 5;
     ButtonText menuButtons[NUM_OF_BUTTONS];
     bool isTokenDraw = false;
     int numOfAddedPlayers = 0;
     bool isMenu = true;
+    bool isEnteringIP = false;
     std::map<Token, ButtonImage> tokenButtons;
+    void createMenuButtons();
     void drawMenuButtons();
     void drawTokenButtons();
 };

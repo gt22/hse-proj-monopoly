@@ -12,8 +12,10 @@ namespace Monopoly::Network {
 
     class ClientHandler {
     public:
-        ClientHandler(ClientId id, const sockpp::inet_address& addr,
-                      sockpp::tcp_socket socket, std::function<void(ClientId)> onDeath);
+        ClientHandler(ClientId id,
+                      const sockpp::inet_address& addr,sockpp::tcp_socket socket,
+                      std::function<void(ClientId)> onDeath,
+                      std::function<void(Token, std::string, ClientHandler&)> initialize);
 
         ClientHandler(ClientHandler&& other) noexcept;
 
@@ -40,19 +42,21 @@ namespace Monopoly::Network {
         sockpp::tcp_socket socket;
         Threads::ModelThreadManager model;
         std::function<void(ClientId)> onDeath;
+        std::function<void(Token, std::string, ClientHandler&)> initialize;
     };
 
-    class ConnectionAcceptor {
+    class MonopolyServer {
     public:
-        ~ConnectionAcceptor();
+        MonopolyServer(Manager& manager);
+        ~MonopolyServer();
 
         void close();
 
         void mainLoop();
 
     private:
+        Manager& manager;
         ClientId curId = 0;
-        std::thread th;
         std::mutex acceptorMutex;
         sockpp::tcp_acceptor acceptor;
         std::unordered_map<ClientId, ClientHandler> clients;

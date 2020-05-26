@@ -14,7 +14,7 @@ namespace Monopoly::Network {
                std::function<void()> onDeath);
         Client(Client&& other) noexcept;
 
-        void mainLoop();
+        void mainLoop(Token token, std::string name);
         const BoardModel& getBoard();
         void close();
     private:

@@ -41,4 +41,11 @@ namespace Monopoly::Serialization {
         return deserialize<Pb::BoardModel>(ser, Internal::deserializeBoardModel);
     }
 
+    std::string serializeInitialization(const InitializationMessage& msg) {
+        return serialize(msg, Internal::serializeInitializationMessage);
+    }
+    InitializationMessage deserializeInitialization(const std::string& ser) {
+        return deserialize<Pb::InitializationMessage>(ser, Internal::deserializeInitializationMessage);
+    }
+
 }

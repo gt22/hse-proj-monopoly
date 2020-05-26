@@ -162,11 +162,11 @@ SFMLView::SFMLView(Manager& manager) : manager(manager) {
         }
     });
     events.addHandler<sf::Event::TextEntered>([this](sf::Event::TextEvent e) {
-        if (model.hasRequest(RequestType::SUM)) {
+        if (model.hasRequest(RequestType::SUM) || isEnteringIP) {
             if (e.unicode == 0x08 && !enteredText.empty()) {
                 enteredText.pop_back();
             } else if (e.unicode < 0x80) {
-                if (std::isdigit((char) e.unicode)) {
+                if (std::isdigit((char) e.unicode) || (isEnteringIP && e.unicode == '.')) {
                     enteredText.push_back((char) e.unicode);
                 }
             }
@@ -195,14 +195,14 @@ SFMLView::SFMLView(Manager& manager) : manager(manager) {
                         }
                     }
                 } else if (model.hasRequest(RequestType::TRADE)) {
-                    if (participateInTrade[0].isMouseOver(window)) {
+                    if (participateInTrade[0].isMouseOver(e)) {
                         if (auto request = model.getRequest(); request.has_value()) {
                             assert(request.value()->type == RequestType::TRADE);
                             takeMessage(request.value());
                             model.sendReply(std::make_unique<PlayerReplyData>(request.value()->player,
                                                                               PlayerTradeAction::PARTICIPATE));
                         }
-                    } else if (participateInTrade[1].isMouseOver(window)) {
+                    } else if (participateInTrade[1].isMouseOver(e)) {
                         if (auto request = model.getRequest(); request.has_value()) {
                             assert(request.value()->type == RequestType::TRADE);
                             takeMessage(request.value());
@@ -212,7 +212,7 @@ SFMLView::SFMLView(Manager& manager) : manager(manager) {
                     }
                 } else if (model.hasRequest(RequestType::TOKEN)) {
                     for (auto& t: tokenButtons) {
-                        if (t.second.isMouseOver(window)) {
+                        if (t.second.isMouseOver(e)) {
                             if (auto request = model.getRequest(); request.has_value()) {
                                 assert(request.value()->type == RequestType::TOKEN);
                                 takeMessage(request.value());
@@ -233,20 +233,22 @@ SFMLView::SFMLView(Manager& manager) : manager(manager) {
         }
         if (isMenu) {
             if (e.button == sf::Mouse::Left) {
-                if (numOfAddedPlayers >= 2 && menuButtons[0].isMouseOver(window)) {
+                if (numOfAddedPlayers >= 2 && menuButtons[0].isMouseOver(e)) {
                     isMenu = false;
                     this->manager.startGame();
-                } else if (numOfAddedPlayers < 6 && menuButtons[1].isMouseOver(window)) {
+                } else if (numOfAddedPlayers < 6 && menuButtons[1].isMouseOver(e)) {
                     isTokenDraw = true;
-                } else if (menuButtons[2].isMouseOver(window)) {
+                } else if (menuButtons[2].isMouseOver(e)) {
 
-                } else if (menuButtons[3].isMouseOver(window)) {
+                } else if (menuButtons[3].isMouseOver(e)) {
                     dispose();
+                } else if (menuButtons[4].isMouseOver(e) && numOfAddedPlayers == 1) {
+                    isEnteringIP = true;
                 }
 
                 if (isTokenDraw) {
                     for (auto& t : tokenButtons) {
-                        if (t.second.getClickability() && t.second.isMouseOver(window)) {
+                        if (t.second.getClickability() && t.second.isMouseOver(e)) {
                             std::string name = "Player" + std::to_string(numOfAddedPlayers + 1);
                             this->manager.addPlayer(std::make_unique<LocalPlayer>(t.first, name, *this));
                             t.second.deactivate();
@@ -600,6 +602,7 @@ void SFMLView::drawMessage() {
 void SFMLView::monopolyDrawer() {
     if (!isMenu) {
         BoardModel m = model.getBoard();
+        if(!m.isInitialized) return;
         drawField(m);
         drawPlayers(m);
         drawMoney(m);
@@ -619,6 +622,15 @@ void SFMLView::menuDrawer() {
     if (isTokenDraw) {
         drawTokenButtons();
     }
+    drawEnteredT();
+    if(isEnteringIP && lastKeyIsReturn) {
+        std::string ip = std::move(enteredText);
+        enteredText.clear();
+        manager.startRemoteGame(sockpp::inet_address(ip, NETWORK_PORT));
+        isMenu = false;
+        isEnteringIP = false;
+        lastKeyIsReturn = false;
+    }
 }
 
 void SFMLView::redraw(const BoardModel& board) {
@@ -636,6 +648,8 @@ void SFMLView::drawEnteredT() {
         enteredT.setString("Choose field tile by clicking on it");
     } else if (model.hasRequest(RequestType::TOKEN)) {
         enteredT.setString("Choose player you want to trade with");
+    } else if(isEnteringIP) {
+        enteredT.setString("Enter IP to connect to: " + enteredText);
     } else {
         enteredT.setString("");
     }
@@ -738,6 +752,7 @@ void SFMLView::onResize(sf::Event::SizeEvent e) {
         }
             break;
     }
+    createMenuButtons();
 }
 
 void SFMLView::drawMoney(const BoardModel& board) {
@@ -929,23 +944,27 @@ void SFMLView::addActionButton(PlayerAction action,
     });
 }
 
+void SFMLView::createMenuButtons() {
+    auto[w, h] = window.getSize();
+    sf::Vector2f buttonSize = sf::Vector2f(float(w) / 3, float(h) / 10);
+    auto grey = sf::Color(130, 130, 130);
+    menuButtons[0] = ButtonText("START GAME", buttonSize, 18, grey, sf::Color::White);
+    menuButtons[1] = ButtonText("ADD PLAYER", buttonSize, 18, grey, sf::Color::White);
+    menuButtons[2] = ButtonText("ABOUT", buttonSize, 18, grey, sf::Color::White);
+    menuButtons[3] = ButtonText("EXIT", buttonSize, 18, grey, sf::Color::White);
+    menuButtons[4] = ButtonText("CONNECT", buttonSize, 18, grey, sf::Color::White);
+}
+
 void SFMLView::drawMenuButtons() {
     auto[w, h] = window.getSize();
     float shift = float(h) / NUM_OF_BUTTONS;
-    sf::Vector2f buttonSize = sf::Vector2f(float(w) / 3, float(h) / 10);
-    menuButtons[0] = ButtonText("START GAME", buttonSize, 18, sf::Color(130, 130, 130), sf::Color::White);
-    menuButtons[1] = ButtonText("ADD PLAYER", buttonSize, 18, sf::Color(130, 130, 130), sf::Color::White);
-    menuButtons[2] = ButtonText("ABOUT", buttonSize, 18, sf::Color(130, 130, 130), sf::Color::White);
-    menuButtons[3] = ButtonText("EXIT", buttonSize, 18, sf::Color(130, 130, 130), sf::Color::White);
-
     for (auto& menuButton : menuButtons)
         menuButton.setFont(mainFont);
     float start = shift / 2;
 
-    menuButtons[0].setPosition(sf::Vector2f(w / 2, start));
-    menuButtons[1].setPosition(sf::Vector2f(w / 2, start + shift));
-    menuButtons[2].setPosition(sf::Vector2f(w / 2, start + shift * 2));
-    menuButtons[3].setPosition(sf::Vector2f(w / 2, start + shift * 3));
+    for(size_t i = 0; i < NUM_OF_BUTTONS; i++) {
+        menuButtons[i].setPosition(sf::Vector2f(float(w / 2), start + shift * i));
+    }
 
     for (auto& menuButton : menuButtons)
         menuButton.drawTo(window);

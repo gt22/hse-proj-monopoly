@@ -45,6 +45,7 @@ struct BoardModel {
     Token curPlayer = Token::FREE_FIELD;
 
     void update(const Board& board);
+    bool isInitialized = false;
 };
 
 #endif //BOARDMODEL_H

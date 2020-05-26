@@ -42,4 +42,5 @@ void BoardModel::update(const Board& board) {
         players[i].update(board.getPlayers()[i]);
     }
     curPlayer = board.getPlayerToken(board.getPlayerIndex());
+    isInitialized = true;
 }

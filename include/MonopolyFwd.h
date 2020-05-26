@@ -101,4 +101,12 @@ class SFMLView;
 
 class MonopolyThreadManager;
 
+namespace Monopoly::Serialization {
+
+    struct InitializationMessage;
+
+}
+
+constexpr size_t NETWORK_PORT = 6741;
+
 #endif //MONOPOLYFWD_H
