@@ -19,7 +19,7 @@ namespace Monopoly::Network {
 
         ~ClientHandler();
 
-        void sync(const Board& board);
+        void sync(const BoardModel& board);
 
         PlayerReply sendRequest(Player& p, PlayerRequest request);
 

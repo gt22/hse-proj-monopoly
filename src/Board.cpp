@@ -48,10 +48,10 @@ void PlayerData::outOfPrison() {
     daysLeftInPrison = 0;
 }
 
-Board::Board(Game& game) : game(game), field(), deck() {}
+Board::Board(LocalGame& game) : game(game), field(), deck() {}
 
-Board::Board(const std::vector<std::pair<std::string_view, Token> >& playersList, Game& game) : game(game), field(),
-                                                                                                deck(*this) {
+Board::Board(const std::vector<std::pair<std::string_view, Token> >& playersList, LocalGame& game) : game(game), field(),
+                                                                                                     deck(*this) {
     players.reserve(playersList.size());
     for (auto[name, token] : playersList) {
         players.emplace_back(std::string(name), token);

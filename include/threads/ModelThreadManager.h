@@ -11,7 +11,6 @@ namespace Monopoly::Threads {
         ModelThreadManager() = default;
         ModelThreadManager(ModelThreadManager&& other) noexcept;
 
-        void sync(const Board& board);
         void sync(BoardModel board);
 
         bool isDirty(); // set by sync, reset by getBoard

@@ -15,7 +15,7 @@ PlayerReply LocalPlayer::send(PlayerRequest request) {
     return gameView().processRequest(*this, std::move(request));
 }
 
-void LocalPlayer::sync(const Board &board) {
+void LocalPlayer::sync(const BoardModel& board) {
     gameView().redraw(board);
 }
 
@@ -27,7 +27,7 @@ PlayerReply NetworkPlayer::send(PlayerRequest request) {
     return handler.sendRequest(*this, std::move(request));
 }
 
-void NetworkPlayer::sync(const Board& board) {
+void NetworkPlayer::sync(const BoardModel& board) {
     handler.sync(board);
 }
 

@@ -14,7 +14,7 @@ public:
     explicit Player(Token token, std::string name);
     virtual ~Player() = default;
     virtual PlayerReply send(PlayerRequest request) = 0;
-    virtual void sync(const Board& board) = 0;
+    virtual void sync(const BoardModel& board) = 0;
 
     const Token token;
     const std::string name;
@@ -24,7 +24,7 @@ class NetworkPlayer final : public Player {
 public:
     explicit NetworkPlayer(Token token, std::string name, Monopoly::Network::ClientHandler& handler);
     PlayerReply send(PlayerRequest request) override;
-    void sync(const Board& board) override;
+    void sync(const BoardModel& board) override;
 private:
     Monopoly::Network::ClientHandler& handler;
 };
@@ -32,14 +32,14 @@ private:
 class BotPlayer final : public Player {
 public:
     PlayerReply send(PlayerRequest request) override;
-    void sync(const Board& board) override;
+    void sync(const BoardModel& board) override;
 };
 
 class LocalPlayer final : public Player {
 public:
     explicit LocalPlayer(Token token, std::string name, SFMLView& view);
     PlayerReply send(PlayerRequest request) override;
-    void sync(const Board& board) override;
+    void sync(const BoardModel& board) override;
 
 private:
     SFMLView& view;

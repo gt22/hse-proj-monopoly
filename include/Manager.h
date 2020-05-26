@@ -4,6 +4,7 @@
 #include "MonopolyFwd.h"
 #include "Player.h"
 #include "Game.h"
+#include "network/MonopolyClient.h"
 #include <vector>
 #include <memory>
 #include <thread>
@@ -15,10 +16,10 @@ public:
     void addPlayer(std::unique_ptr<Player> player);
     void run();
     void startGame();
+    void startRemoteGame(const sockpp::inet_address& addr);
     bool isGameStarted();
-    Board& getBoard();
     PlayerReply sendRequest(PlayerRequest request);
-    void sync(const Board& board);
+    void sync(const BoardModel& board);
 private:
 
     void createView();
@@ -28,7 +29,7 @@ private:
     std::thread gameThread;
 
     std::shared_ptr<SFMLView> view;
-    std::shared_ptr<Game> game;
+    std::shared_ptr<GameBase> game;
     std::vector<std::unique_ptr<Player>> players;
 };
 

@@ -2,13 +2,6 @@
 
 namespace Monopoly::Threads {
 
-
-    void ModelThreadManager::sync(const Board& board) {
-        std::lock_guard g(boardMutex);
-        model.update(board);
-        dirty = true;
-    }
-
     void ModelThreadManager::sync(BoardModel board) {
         std::lock_guard g(boardMutex);
         model = std::move(board);

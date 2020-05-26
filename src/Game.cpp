@@ -4,18 +4,18 @@
 #include "Manager.h"
 
 
-Game::Game(const std::vector<std::pair<std::string_view, Token>>& players, Manager& manager)
+LocalGame::LocalGame(const std::vector<std::pair<std::string_view, Token>>& players, Manager& manager)
         : board(players, *this), manager(manager) {}
 
-PlayerReply Game::send(PlayerRequest request) {
+PlayerReply LocalGame::send(PlayerRequest request) {
     sync();
     PlayerReply rep = manager.sendRequest(std::move(request));
-    if (rep && rep->type == RequestType::ACTION && rep->data.action == PlayerAction::FINISH_GAME) getBoard().terminate();
+    if (rep && rep->type == RequestType::ACTION && rep->data.action == PlayerAction::FINISH_GAME) board.terminate();
     return rep;
 }
 
 
-void Game::runGame() {
+void LocalGame::run() {
     using namespace Monopoly::Requests;
     std::size_t curPlayerNum = 0;
     while (!board.isFinished()) {
@@ -62,10 +62,31 @@ void Game::runGame() {
 }
 
 //TODO should be const, non-const only for debug
-Board& Game::getBoard() {
-    return board;
+const BoardModel& LocalGame::getBoard() {
+    model.update(board);
+    return model;
 }
 
-void Game::sync() {
-    manager.sync(board);
+void LocalGame::sync() {
+    manager.sync(getBoard());
 }
+
+void LocalGame::terminate() {
+    board.terminate();
+}
+
+NetworkGame::NetworkGame(NetworkGame::Client client) : client(std::move(client)) {}
+
+void NetworkGame::run() {
+    client.mainLoop();
+}
+
+const BoardModel& NetworkGame::getBoard() {
+    return client.getBoard();
+}
+
+void NetworkGame::terminate() {
+    client.close();
+}
+
+

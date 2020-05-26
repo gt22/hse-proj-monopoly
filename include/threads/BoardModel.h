@@ -40,13 +40,11 @@ struct FieldTileModel {
 
 struct BoardModel {
     constexpr static size_t FIELD_SIZE = Board::FIELD_SIZE;
-
     std::array<FieldTileModel, FIELD_SIZE> field;
     std::vector<PlayerModel> players;
-    Token curPlayer;
+    Token curPlayer = Token::FREE_FIELD;
 
     void update(const Board& board);
-
 };
 
 #endif //BOARDMODEL_H

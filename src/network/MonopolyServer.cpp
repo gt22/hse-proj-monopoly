@@ -19,7 +19,7 @@ namespace Monopoly::Network {
         th.join();
     }
 
-    void ClientHandler::sync(const Board& board) {
+    void ClientHandler::sync(const BoardModel& board) {
         model.sync(board);
     }
 

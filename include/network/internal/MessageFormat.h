@@ -5,7 +5,7 @@
 #include <sockpp/tcp_socket.h>
 
 namespace Monopoly::Network::Messages {
-    using sockpp::tcp_socket;
+    using sockpp::stream_socket;
 
     class InvalidMessageError : std::runtime_error {
         using std::runtime_error::runtime_error;
@@ -33,7 +33,7 @@ namespace Monopoly::Network::Messages {
 
     namespace Internal {
 
-        inline ssize_t read(tcp_socket& sock, std::byte* buf, size_t n, bool timeout) {
+        inline ssize_t read(stream_socket& sock, std::byte* buf, size_t n, bool timeout) {
             if(!timeout) return sock.read_n(buf, n);
             ssize_t x = sock.read(buf, n);
             if(x < 0) return x;
@@ -42,7 +42,7 @@ namespace Monopoly::Network::Messages {
         }
 
         template<typename T>
-        std::enable_if_t<std::is_integral_v<T>, size_t> send(tcp_socket& sock, T val) {
+        std::enable_if_t<std::is_integral_v<T>, size_t> send(stream_socket& sock, T val) {
             constexpr size_t SIZE = sizeof(T);
             std::byte buf[SIZE];
             for(size_t i = 0; i < SIZE; i++) {
@@ -53,7 +53,7 @@ namespace Monopoly::Network::Messages {
         }
 
         template<typename T>
-        std::enable_if_t<std::is_integral_v<T>, ssize_t> receive(tcp_socket& sock, T& val, bool timeout) {
+        std::enable_if_t<std::is_integral_v<T>, ssize_t> receive(stream_socket& sock, T& val, bool timeout) {
             constexpr size_t SIZE = sizeof(T);
             std::byte buf[SIZE];
             auto x = read(sock, buf, SIZE, timeout);
@@ -66,12 +66,12 @@ namespace Monopoly::Network::Messages {
         }
 
         template<typename T>
-        std::enable_if_t<std::is_enum_v<T>, size_t> send(tcp_socket& sock, const T& val) {
+        std::enable_if_t<std::is_enum_v<T>, size_t> send(stream_socket& sock, const T& val) {
             return send(sock, std::underlying_type_t<T>(val));
         }
 
         template<typename T>
-        std::enable_if_t<std::is_enum_v<T>, ssize_t> receive(tcp_socket& sock, T& val, bool timeout) {
+        std::enable_if_t<std::is_enum_v<T>, ssize_t> receive(stream_socket& sock, T& val, bool timeout) {
             std::underlying_type_t<T> tmp;
             auto x = receive(sock, tmp, timeout);
             if(x < 0) return x;
@@ -79,7 +79,7 @@ namespace Monopoly::Network::Messages {
             return x;
         }
 
-        inline size_t send(tcp_socket& sock, const MessageHeader& header) {
+        inline size_t send(stream_socket& sock, const MessageHeader& header) {
             size_t s = 0;
             s += send(sock, header.messageSize);
             s += send(sock, header.messageType);
@@ -87,7 +87,7 @@ namespace Monopoly::Network::Messages {
             return s;
         }
 
-        inline ssize_t receive(tcp_socket& sock, MessageHeader& header, bool timeout) {
+        inline ssize_t receive(stream_socket& sock, MessageHeader& header, bool timeout) {
             ssize_t s = 0;
             auto x = receive(sock, header.messageSize, timeout);
             if(x < 0) return x;
@@ -101,7 +101,7 @@ namespace Monopoly::Network::Messages {
             return s;
         }
     }
-    void send(tcp_socket& sock, MessageType type, const std::string& msg);
-    std::optional<std::pair<MessageType, std::string>> receive(tcp_socket& sock, bool timeout);
+    void send(stream_socket& sock, MessageType type, const std::string& msg);
+    std::optional<std::pair<MessageType, std::string>> receive(stream_socket& sock, bool timeout);
 
 }

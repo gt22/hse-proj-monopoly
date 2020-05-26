@@ -7,13 +7,13 @@ namespace Monopoly::Network::Messages {
             messageSize(s.size()),
             dataHash(std::hash<std::string_view>()(s)) {}
 
-    void send(tcp_socket& sock, MessageType type, const std::string& msg) {
+    void send(stream_socket& sock, MessageType type, const std::string& msg) {
         MessageHeader header(type, msg);
         Internal::send(sock, header);
         sock.write_n(msg.data(), msg.size());
     }
 
-    std::optional<std::pair<MessageType, std::string>> receive(tcp_socket& sock, bool timeout) {
+    std::optional<std::pair<MessageType, std::string>> receive(stream_socket& sock, bool timeout) {
         MessageHeader header;
         auto x = Internal::receive(sock, header, timeout);
         if(x < 0) return {};

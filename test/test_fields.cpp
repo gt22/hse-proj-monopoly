@@ -19,7 +19,7 @@ public:
 
 class MockBoard : public Board {
     Manager manager;
-    Game game = Game({}, manager);
+    LocalGame game = LocalGame({}, manager);
 
 public:
     MockBoard() : Board({}, game) {}

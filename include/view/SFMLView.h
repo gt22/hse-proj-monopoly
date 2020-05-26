@@ -197,7 +197,7 @@ public:
     void dispose();
     void mainLoop();
 
-    void redraw(const Board& board);
+    void redraw(const BoardModel& board);
     PlayerReply processRequest(Player& p, PlayerRequest req);
 private:
     static std::string tokenToString(Token token);

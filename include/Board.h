@@ -51,8 +51,8 @@ struct PlayerData {
 
 class Board {
 public:
-    explicit Board(Game& game); // Creates uninitialized board, for deserialization only
-    Board(const std::vector<std::pair<std::string_view, Token>>& players, Game& game);
+    explicit Board(LocalGame& game); // Creates uninitialized board, for deserialization only
+    Board(const std::vector<std::pair<std::string_view, Token>>& players, LocalGame& game);
     static constexpr size_t FIELD_SIZE = 40;
 
     void sync();
@@ -98,7 +98,7 @@ public:
     const CardPool& getDeck() const;
 
 private:
-    Game& game;
+    LocalGame& game;
     std::array<FieldTile*, FIELD_SIZE> field; //TODO: raw pointer?
     std::vector<PlayerData> players;
     CardPool deck;

@@ -38,7 +38,7 @@ class FreeParking;
 
 enum class Color : std::size_t;
 
-class Game;
+class LocalGame;
 
 class Manager;
 

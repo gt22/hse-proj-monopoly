@@ -621,7 +621,7 @@ void SFMLView::menuDrawer() {
     }
 }
 
-void SFMLView::redraw(const Board& board) {
+void SFMLView::redraw(const BoardModel& board) {
     model.sync(board);
 }
 
