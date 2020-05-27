@@ -268,30 +268,20 @@ bool handleGenericActions(Token tok, const FieldTile& tile, PlayerAction action)
     }
     if (action == PlayerAction::BUY_HOUSE) {
         PlayerReply numReply = tile.board.send(num(tok));
-        std::cout << numReply->data.num << "\n";
         size_t index = numReply->data.num;
         auto chosenField = tile.board.getFieldTile(index);
-        std::cout << chosenField->name << '\n';
         if (tok != chosenField->getOwner() || chosenField->getColor() == Color::NO_COL || chosenField->isMortgaged ||
             chosenField->getNumberOfHouses() >= 4 || chosenField->getNumberOfHotels() > 0) {
             tile.board.send(message(tok, MessageType::INFO, "You can't build house on this field tile"));
-            std::cout << 1 << '\n';
-            std::cout << (tok != chosenField->getOwner() ? "ok" : "fail");
-            std::cout << (chosenField->getColor() == Color::NO_COL ? "ok" : "fail");
-            std::cout << (chosenField->isMortgaged ? "ok" : "fail");
-            std::cout << (chosenField->getNumberOfHouses() >= 4 ? "ok" : "fail");
-            std::cout << (chosenField->getNumberOfHotels() > 0 ? "ok" : "fail");
             return true;
         }
         if (!tile.board.checkAllFieldsOfCurColor(tok, index)) {
             tile.board.send(message(tok, MessageType::INFO, "You can't build house on this field tile"));
-            std::cout << 2 << '\n';
             return true;
         }
         if (!checkPrevForHouse(index, tile.board) || !checkNextForBuyHouse(index, tile.board)) {
             tile.board.send(message(tok, MessageType::INFO, "You can't build house on this field tile"));
 
-            std::cout << 3 << '\n';
             return true;
         }
         PlayerData& player = chosenField->board.getPlayer(tok);
@@ -301,13 +291,11 @@ bool handleGenericActions(Token tok, const FieldTile& tile, PlayerAction action)
             chosenField->addHouse();
         } else {
             tile.board.send(message(tok, MessageType::INFO, "You don't have enough money :("));
-            std::cout << 4 << '\n';
         }
         return true;
     }
     if (action == PlayerAction::BUY_HOTEL) {
         PlayerReply numReply = tile.board.send(num(tok));
-        std::cout << numReply->data.num << "\n";
         size_t index = numReply->data.num;
         auto chosenField = tile.board.getFieldTile(index);
         if (tok != chosenField->getOwner() || chosenField->getColor() == Color::NO_COL || chosenField->isMortgaged ||
@@ -335,30 +323,25 @@ bool handleGenericActions(Token tok, const FieldTile& tile, PlayerAction action)
     }
     if (action == PlayerAction::MORTGAGE_HOLDINGS) {
         PlayerReply numReply = tile.board.send(num(tok));
-        std::cout << numReply->data.num << "\n";
         int index = numReply->data.num;
         auto chosenField = tile.board.getFieldTile(index);
         if (chosenField->getNumberOfHouses() != 0 && chosenField->getNumberOfHotels() != 0) {
             tile.board.send(message(tok, MessageType::INFO, "You can't mortgage this field tile"));
-            std::cout << "MORTGAGE_HOLDINGS 1\n";
             return true;
         }
         if (!chosenField->isMortgaged && chosenField->getOwner() == tok) {
-            std::cout << "MORTGAGE_HOLDINGS 2\n";
             PlayerData& player = tile.board.getPlayer(tok);
             player.addMoney(chosenField->getMortgageCost());
             player.numberOfMortgagedProperty++;
             chosenField->isMortgaged = true;
         } else {
             tile.board.send(message(tok, MessageType::INFO, "You can't mortgage this field tile"));
-            std::cout << "MORTGAGE_HOLDINGS 3\n";
         }
         return true;
     }
     if (action == PlayerAction::START_TRADE) {
         PlayerReply tokenReply = tile.board.send(token(tok));
         PlayerReply numReply = tile.board.send(num(tok));
-        std::cout << "token & num done\n";
         auto chosenField = tile.board.getFieldTile(numReply->data.num);
         if (!chosenField->canBeSold(tokenReply->data.token)) {
             tile.board.send(message(tok, MessageType::INFO, "You can't buy this field tile from " +
@@ -403,7 +386,6 @@ bool handleGenericActions(Token tok, const FieldTile& tile, PlayerAction action)
     }
     if (action == PlayerAction::BUY_BACK_PROPERTY) {
         PlayerReply numReply = tile.board.send(num(tok));
-        std::cout << numReply->data.num << "\n";
         int index = numReply->data.num;
         auto& selectedTile = *tile.board.getFieldTile(index);
         if (selectedTile.isMortgaged && selectedTile.getOwner() == tok) {
@@ -422,7 +404,6 @@ bool handleGenericActions(Token tok, const FieldTile& tile, PlayerAction action)
     }
     if (action == PlayerAction::SELL_FIELD) {
         PlayerReply numReply = tile.board.send(num(tok));
-        std::cout << numReply->data.num << "\n";
         auto& selectedTile = *tile.board.getFieldTile(numReply->data.num);
         if (selectedTile.getNumberOfHouses() != 0 ||
             selectedTile.getNumberOfHotels() != 0 ||
@@ -444,7 +425,6 @@ bool handleGenericActions(Token tok, const FieldTile& tile, PlayerAction action)
 
     if (action == PlayerAction::SELL_HOUSE) {
         PlayerReply numReply = tile.board.send(num(tok));
-        std::cout << numReply->data.num << "\n";
         int index = numReply->data.num;
         auto& selectedTile = *tile.board.getFieldTile(index);
         if (selectedTile.getNumberOfHouses() == 0 ||
@@ -465,7 +445,6 @@ bool handleGenericActions(Token tok, const FieldTile& tile, PlayerAction action)
     }
     if (action == PlayerAction::SELL_HOTEL) {
         PlayerReply numReply = tile.board.send(num(tok));
-        std::cout << numReply->data.num << "\n";
         int index = numReply->data.num;
         auto& selectedTile = *tile.board.getFieldTile(index);
         if (selectedTile.getNumberOfHotels() == 0 || selectedTile.getOwner() != tok) {
@@ -757,7 +736,6 @@ void OwnableTile::onPlayerEntry(Token token) {
         PlayerAction action = board.send(std::move(request))->data.action;
         request = makeDefaultRequest(token, board);
         if (action == PlayerAction::END_TURN) {
-            std::cout << "PlayerAction::END_TURN\n";
             if (buyProperty && taxPaid) {
                 break;
             }
@@ -766,14 +744,12 @@ void OwnableTile::onPlayerEntry(Token token) {
         }
         costOfParking = calculateTax(owner);
         if (action == PlayerAction::PAY_TO_OTHER_PLAYER) {
-            std::cout << "PlayerAction::PAY_TO_OTHER_PLAYER\n";
             if (taxPaid) {
                 request->message = "You don't have to pay tax";
                 continue;
             }
             uint32_t tax = calculateTax(token);
             if (player.getMoney() >= tax) {
-                std::cout << "paying tax \n";
                 player.addMoney(-tax);
                 fieldOwner->addMoney(tax);
                 taxPaid = true;
