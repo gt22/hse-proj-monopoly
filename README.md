@@ -24,6 +24,7 @@
  ```
 * [protobuf 3.11.4](https://github.com/protocolbuffers/protobuf)
  ```
+    $ cd protobuf
     $ ./configure
     $ make
     $ sudo make install
