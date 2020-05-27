@@ -214,7 +214,7 @@ private:
     void menuDrawer();
     void handleActionRequest();
     void handleSumRequest();
-    void takeMessage(const PlayerRequest& req);
+    void takeMessage(const RequestMessage& req);
 
     void addActionButton(PlayerAction action, const std::string& texture,
                          std::string tooltip);

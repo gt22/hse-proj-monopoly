@@ -4,8 +4,8 @@
 PlayerRequestData::PlayerRequestData(RequestType type, Token player, std::string message,
                                      std::vector<PlayerAction> availableActions,
                                      MessageType msgtype)
-        : type(type), player(player), message(std::move(message)), availableActions(std::move(availableActions)),
-          msgtype(msgtype) {}
+        : type(type), player(player), availableActions(std::move(availableActions)),
+          message({std::move(message), msgtype}) {}
 
 PlayerReplyData::PlayerReplyData(Token player, PlayerAction action)
         : type(RequestType::ACTION), player(player), data() { data.action = action; }

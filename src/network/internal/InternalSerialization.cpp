@@ -12,11 +12,11 @@ namespace Monopoly::Serialization::Internal {
         Pb::PlayerRequest ser;
         ser.set_type(Pb::RequestType(req.type));
         ser.set_player(Pb::Token(req.player));
-        ser.set_msg(req.message);
+        ser.set_msg(req.message.message);
         for (auto action : req.availableActions) {
             ser.add_availableactions(Pb::PlayerAction(action));
         }
-        ser.set_msgtype(Pb::MessageType(ser.msgtype()));
+        ser.set_msgtype(Pb::MessageType(req.message.type));
         return ser;
     }
 

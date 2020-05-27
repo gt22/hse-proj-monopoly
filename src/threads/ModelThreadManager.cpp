@@ -10,9 +10,9 @@ namespace Monopoly::Threads {
 
     PlayerReply ModelThreadManager::processRequest(PlayerRequest req) {
         std::unique_lock g(requestMutex);
-        if(req->message.empty() && curRequest) {
+        if(req->message.message.empty() && curRequest) {
             req->message = std::move(curRequest.value()->message);
-            req->msgtype = curRequest.value()->msgtype;
+            curRequest.value()->message.message.clear();
         }
         curRequest = std::move(req);
         if(curRequest.value()->type != RequestType::MESSAGE) {
@@ -68,6 +68,17 @@ namespace Monopoly::Threads {
     ModelThreadManager::ModelThreadManager(ModelThreadManager&& other) noexcept
             : model(std::move(other.model)), dirty(other.dirty), curRequest(std::move(other.curRequest)),
               curReply(std::move(other.curReply)) {}
+
+    RequestMessage ModelThreadManager::getMessage() {
+        std::lock_guard g(requestMutex);
+        RequestMessage msg;
+        if(curRequest) {
+            msg = std::move(curRequest.value()->message);
+            curRequest.value()->message.message.clear();
+        }
+        return msg;
+    }
+
 
 
 }

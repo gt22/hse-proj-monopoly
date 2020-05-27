@@ -188,7 +188,7 @@ SFMLView::SFMLView(Manager& manager) : manager(manager) {
                         if (fieldButtons.fieldButtons[i].isValidTarget(e)) {
                             if (auto request = model.getRequest(); request.has_value()) {
                                 assert(request.value()->type == RequestType::NUM);
-                                takeMessage(request.value());
+                                takeMessage(request.value()->message);
                                 model.sendReply(std::make_unique<PlayerReplyData>(request.value()->player, i));
                             }
                             break;
@@ -198,16 +198,16 @@ SFMLView::SFMLView(Manager& manager) : manager(manager) {
                     if (participateInTrade[0].isMouseOver(e)) {
                         if (auto request = model.getRequest(); request.has_value()) {
                             assert(request.value()->type == RequestType::TRADE);
-                            takeMessage(request.value());
+                            takeMessage(request.value()->message);
                             model.sendReply(std::make_unique<PlayerReplyData>(request.value()->player,
                                                                               PlayerTradeAction::PARTICIPATE));
                         }
                     } else if (participateInTrade[1].isMouseOver(e)) {
                         if (auto request = model.getRequest(); request.has_value()) {
                             assert(request.value()->type == RequestType::TRADE);
-                            takeMessage(request.value());
+                            takeMessage(request.value()->message);
                             model.sendReply(std::make_unique<PlayerReplyData>(request.value()->player,
-                                                                              PlayerTradeAction::PARTICIPATE));
+                                                                              PlayerTradeAction::REFUSE));
                         }
                     }
                 } else if (model.hasRequest(RequestType::TOKEN)) {
@@ -215,7 +215,7 @@ SFMLView::SFMLView(Manager& manager) : manager(manager) {
                         if (t.second.isMouseOver(e)) {
                             if (auto request = model.getRequest(); request.has_value()) {
                                 assert(request.value()->type == RequestType::TOKEN);
-                                takeMessage(request.value());
+                                takeMessage(request.value()->message);
                                 model.sendReply(std::make_unique<PlayerReplyData>(request.value()->player,
                                                                                   t.first));
                             }
@@ -559,12 +559,7 @@ void SFMLView::drawPlayers(const BoardModel& board) {
 }
 
 void SFMLView::drawMessage() {
-    if (model.hasRequest(RequestType::MESSAGE)) {
-        if (auto request = model.getRequest(); request.has_value()) {
-            assert(request.value()->type == RequestType::MESSAGE);
-            takeMessage(request.value());
-        }
-    }
+    takeMessage(model.getMessage());
     auto[W, H] = window.getSize();
     switch (curMessageType) {
         case MessageType::CHANCE: {
@@ -912,7 +907,7 @@ void SFMLView::drawCardInfo(const BoardModel& board, std::optional<std::size_t> 
 void SFMLView::handleActionRequest() {
     if (model.hasRequest(RequestType::ACTION)) {
         if (auto req = model.getRequest(); req.has_value()) {
-            takeMessage(req.value());
+            takeMessage(req.value()->message);
             assert(req.value()->type == RequestType::ACTION);
             for (auto&[act, btn] : actionButtons) {
                 btn.deactivate();
@@ -1018,17 +1013,17 @@ void SFMLView::handleSumRequest() {
         lastKeyIsReturn = false;
         if (auto request = model.getRequest(); request) {
             assert(request.value()->type == RequestType::SUM);
-            takeMessage(request.value());
+            takeMessage(request.value()->message);
             model.sendReply(std::make_unique<PlayerReplyData>(request.value()->player, std::stoi(enteredText)));
             enteredText.clear();
         }
     }
 }
 
-void SFMLView::takeMessage(const PlayerRequest& request) {
-    if(!request->message.empty()) {
-        message.setString(request->message);
-        curMessageType = request->msgtype;
+void SFMLView::takeMessage(const RequestMessage& request) {
+    if(!request.message.empty()) {
+        message.setString(request.message);
+        curMessageType = request.type;
     }
 }
 

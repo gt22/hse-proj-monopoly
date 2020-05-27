@@ -42,15 +42,19 @@ enum class PlayerTradeAction {
     PARTICIPATE = 1
 };
 
+struct RequestMessage {
+    std::string message = "";
+    MessageType type = MessageType::INFO;
+};
+
 struct PlayerRequestData final {
     PlayerRequestData(RequestType type, Token player, std::string message,
                       std::vector<PlayerAction> availableActions, MessageType msgtype);
 
     RequestType type;
     Token player;
-    std::string message;
     std::vector<PlayerAction> availableActions;
-    MessageType msgtype;
+    RequestMessage message;
 };
 
 struct PlayerReplyData final {

@@ -539,11 +539,11 @@ void Prison::onPlayerEntry(Token token) {
         if (action == PlayerAction::ROLL_DICE) {
             int firstThrow = rng.nextInt(1, 6), secondThrow = rng.nextInt(1, 6);
             if (firstThrow == secondThrow) {
-                request->message = std::to_string(firstThrow) + " " + std::to_string(secondThrow) +
+                request->message.message = std::to_string(firstThrow) + " " + std::to_string(secondThrow) +
                                    "\nYou are leaving the prison!";
                 player.outOfPrison();
             } else {
-                request->message =
+                request->message.message =
                         std::to_string(firstThrow) + " != " + std::to_string(secondThrow) +
                         "\nYou don't leave prison :(";
             }
@@ -555,7 +555,7 @@ void Prison::onPlayerEntry(Token token) {
                 player.money -= TAX;
                 player.outOfPrison();
             } else {
-                request->message = "Not enough money :(";
+                request->message.message = "Not enough money :(";
             }
             continue;
         }
@@ -589,11 +589,11 @@ void GoToPrison::onPlayerEntry(Token token) {
         if (action == PlayerAction::ROLL_DICE) {
             int firstThrow = rng.nextInt(1, 6), secondThrow = rng.nextInt(1, 6);
             if (firstThrow == secondThrow) {
-                request->message = std::to_string(firstThrow) + " " + std::to_string(secondThrow) +
+                request->message.message = std::to_string(firstThrow) + " " + std::to_string(secondThrow) +
                                    "\nYou are leaving the prison!";
                 player.outOfPrison();
             } else {
-                request->message =
+                request->message.message =
                         std::to_string(firstThrow) + " != " + std::to_string(secondThrow) +
                         "\nYou don't leave prison :(";
             }
@@ -620,7 +620,7 @@ void Chance::onPlayerEntry(Token token) {
             if (tookCard) {
                 break;
             }
-            request->message = "You can't finish turn";
+            request->message.message = "You can't finish turn";
             continue;
         }
         if (action == PlayerAction::TAKE_CARD) {
@@ -660,7 +660,7 @@ void PublicTreasury::onPlayerEntry(Token token) {
             if (mustHave.empty()) {
                 break;
             }
-            request->message = "You can't finish turn";
+            request->message.message = "You can't finish turn";
             continue;
         }
         if (action == PlayerAction::TAKE_CARD) {
@@ -697,7 +697,7 @@ void IncomeTax::onPlayerEntry(Token token) {
             if (mustHave.empty()) {
                 break;
             }
-            request->message = "You can't finish turn";
+            request->message.message = "You can't finish turn";
             continue;
         }
         if (action == PlayerAction::PAY_TAX) {
@@ -706,7 +706,7 @@ void IncomeTax::onPlayerEntry(Token token) {
                 mustHave.erase(PlayerAction::PAY_TAX);
                 continue;
             }
-            request->message = "Not enough money :(";
+            request->message.message = "Not enough money :(";
             continue;
         }
         if (!handleGenericActions(token, *this, action)) {
@@ -761,14 +761,14 @@ void OwnableTile::onPlayerEntry(Token token) {
             if (buyProperty && taxPaid) {
                 break;
             }
-            request->message = "You can't finish turn";
+            request->message.message = "You can't finish turn";
             continue;
         }
         costOfParking = calculateTax(owner);
         if (action == PlayerAction::PAY_TO_OTHER_PLAYER) {
             std::cout << "PlayerAction::PAY_TO_OTHER_PLAYER\n";
             if (taxPaid) {
-                request->message = "You don't have to pay tax";
+                request->message.message = "You don't have to pay tax";
                 continue;
             }
             uint32_t tax = calculateTax(token);
@@ -779,16 +779,16 @@ void OwnableTile::onPlayerEntry(Token token) {
                 taxPaid = true;
                 continue;
             }
-            request->message = "Not enough money :(";
+            request->message.message = "Not enough money :(";
             continue;
         }
         if (action == PlayerAction::BUY_FIELD) {
             if (owner == token) {
-                request->message = "You've already bought this field :)";
+                request->message.message = "You've already bought this field :)";
                 continue;
             }
             if (owner != Token::FREE_FIELD) {
-                request->message = "This field is not free";
+                request->message.message = "This field is not free";
                 continue;
             }
             if (player.money >= cost) {
@@ -799,7 +799,7 @@ void OwnableTile::onPlayerEntry(Token token) {
                 costOfParking = calculateTax(token);
                 continue;
             }
-            request->message = "Not enough money :(";
+            request->message.message = "Not enough money :(";
             continue;
         }
         if (action == PlayerAction::START_TRADE_NEW_FIELD) {

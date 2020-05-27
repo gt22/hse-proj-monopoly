@@ -59,7 +59,7 @@ void PayMoney::apply(Token token) {
         if (action == PlayerAction::END_TURN) {
             std::cout << "card PayMoney END_TURN\n";
             if (!payTax) {
-                request->message = "You can't finish turn now";
+                request->message.message = "You can't finish turn now";
                 continue;
             }
         }
@@ -71,7 +71,7 @@ void PayMoney::apply(Token token) {
                 std::cout << "cards PayMoney PAY_TAX return\n";
                 return;
             } else {
-                request->message = "You don't have enough money";
+                request->message.message = "You don't have enough money";
                 continue;
             }
         }
@@ -119,7 +119,7 @@ void PayMoneyToOtherPlayers::apply(Token token) {
         request->availableActions.push_back(PlayerAction::PAY_TAX);
         board.sync();
         if (action == PlayerAction::END_TURN && !payTax) {
-            request->message = "You can't finish turn now";
+            request->message.message = "You can't finish turn now";
             continue;
         }
         if (action == PlayerAction::PAY_TAX) {
@@ -138,7 +138,7 @@ void PayMoneyToOtherPlayers::apply(Token token) {
                 }
                 return;
             } else {
-                request->message = "You don't have enough money";
+                request->message.message = "You don't have enough money";
                 continue;
             }
         }

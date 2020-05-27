@@ -29,6 +29,8 @@ namespace Monopoly::Threads {
 
         BoardModel getBoard();
 
+        RequestMessage getMessage();
+
     private:
         std::mutex boardMutex, requestMutex;
         std::condition_variable requestCond;
