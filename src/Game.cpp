@@ -11,7 +11,7 @@ PlayerReply LocalGame::send(PlayerRequest request) {
     sync();
     PlayerReply rep = manager.sendRequest(std::move(request));
     if (rep && rep->type == RequestType::ACTION && rep->data.action == PlayerAction::FINISH_GAME) board.terminate();
-    return rep;
+        return rep;
 }
 
 
