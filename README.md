@@ -23,6 +23,12 @@
     $ git submodule update --init --recursive
  ```
 * [protobuf 3.11.4](https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/protobuf-cpp-3.11.4.tar.gz)
+ ```
+    $ ./configure
+    $ make
+    $ sudo make install
+    $ sudo ldconfig
+ ```
 
 ### Сборка и использование
 ```shell script
