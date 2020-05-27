@@ -1,5 +1,5 @@
 #include "threads/ModelThreadManager.h"
-#include <assert.h>
+#include <cassert>
 
 namespace Monopoly::Threads {
 
