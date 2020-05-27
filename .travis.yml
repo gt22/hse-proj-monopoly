@@ -34,11 +34,22 @@ install:
 
   - travis_retry wget --no-check-certificate https://cmake.org/files/v3.16/${CMAKE_ARCHIVE_NAME}.tar.gz -O cmake.tar.gz > /dev/null
 
-  - tar -xvf cmake.tar.gz > /dev/null
+  - tar -xf cmake.tar.gz > /dev/null
   - mv ${CMAKE_ARCHIVE_NAME} cmake-install
 
   - PATH=${DEPS_DIR}/cmake-install:${DEPS_DIR}/cmake-install/bin:$PATH
+
+  - travis_retry wget --no-check-certificate https://www.sfml-dev.org/files/SFML-2.5.1-sources.zip -O sfml.tar.gz > /dev/null
+  - ls
+  - tar -xvf sfml.tar.gz
+  - cd SFML-2.5.1
+  - pwd
+  - ls
+  - mkdir build && cd build
+  - cmake .. && make && make install
+
   - cd ${TRAVIS_BUILD_DIR}
+
 
 script:
   - mkdir build && cd build

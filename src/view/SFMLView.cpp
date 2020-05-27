@@ -74,7 +74,7 @@ SFMLView::SFMLView(Manager& manager) : manager(manager) {
                   "Monopoly", sf::Style::Titlebar | sf::Style::Close);
     window.setPosition(sf::Vector2i(0, 0));
     window.setFramerateLimit(60);
-    mainFont.loadFromFile("Ubuntu-R.ttf");
+    mainFont.loadFromFile("resources/Ubuntu-R.ttf");
 
     enteredT.setFont(mainFont);
     enteredT.setCharacterSize(15);
@@ -88,67 +88,67 @@ SFMLView::SFMLView(Manager& manager) : manager(manager) {
 
 
     addActionButton(PlayerAction::END_TURN,
-                    "images/END_TURN.png",
+                    "resources/END_TURN.png",
                     "By pressing this button you will finish your turn");
     addActionButton(PlayerAction::ROLL_DICE,
-                    "images/ROLL_DICE.png",
+                    "resources/ROLL_DICE.png",
                     "By pressing this button you will roll dice");
     addActionButton(PlayerAction::PAY_TAX,
-                    "images/PAY_TAX.png",
+                    "resources/PAY_TAX.png",
                     "By pressing this button you will pay tax to bank");
     addActionButton(PlayerAction::PAY_TO_OTHER_PLAYER,
-                    "images/PAY_TO_OTHER_PLAYER.png",
+                    "resources/PAY_TO_OTHER_PLAYER.png",
                     "By pressing this button you will pay money to other player");
     addActionButton(PlayerAction::BUY_FIELD,
-                    "images/BUY_FIELD.png",
+                    "resources/BUY_FIELD.png",
                     "By pressing this button you will buy this field");
     addActionButton(PlayerAction::SELL_FIELD,
-                    "images/SELL_FIELD.png",
+                    "resources/SELL_FIELD.png",
                     "By pressing this button you will sell this field");
     addActionButton(PlayerAction::BUY_HOUSE,
-                    "images/BUY_HOUSE.png",
+                    "resources/BUY_HOUSE.png",
                     "By pressing this button you will buy house");
     addActionButton(PlayerAction::SELL_HOUSE,
-                    "images/SELL_HOUSE.png",
+                    "resources/SELL_HOUSE.png",
                     "By pressing this button you will sell house");
     addActionButton(PlayerAction::BUY_HOTEL,
-                    "images/BUY_HOTEL.png",
+                    "resources/BUY_HOTEL.png",
                     "By pressing this button you will buy hotel");
     addActionButton(PlayerAction::SELL_HOTEL,
-                    "images/SELL_HOTEL.png",
+                    "resources/SELL_HOTEL.png",
                     "By pressing this button you will sell hotel");
     addActionButton(PlayerAction::TAKE_CARD,
-                    "images/TAKE_CARD.png",
+                    "resources/TAKE_CARD.png",
                     "By pressing this button you will take card");
     addActionButton(PlayerAction::USE_CARD,
-                    "images/USE_CARD.png",
+                    "resources/USE_CARD.png",
                     "By pressing this button you will use card");
     addActionButton(PlayerAction::START_TRADE_NEW_FIELD,
-                    "images/START_TRADE_NEW_FIELD.png",
+                    "resources/START_TRADE_NEW_FIELD.png",
                     "By pressing this button you won't buy this field and start auction between other players");
     addActionButton(PlayerAction::START_TRADE,
-                    "images/START_TRADE.png",
+                    "resources/START_TRADE.png",
                     "By pressing this button you will start trade with another player");
     addActionButton(PlayerAction::MORTGAGE_HOLDINGS,
-                    "images/MORTGAGE_HOLDINGS.png",
+                    "resources/MORTGAGE_HOLDINGS.png",
                     "By pressing this button you will get mortgage");
     addActionButton(PlayerAction::BUY_BACK_PROPERTY,
-                    "images/BUY_BACK_PROPERTY.png",
+                    "resources/BUY_BACK_PROPERTY.png",
                     "By pressing this button you will buy your field back");
     addActionButton(PlayerAction::FINISH_GAME,
-                    "images/EXIT_GAME.png",
+                    "resources/EXIT_GAME.png",
                     "By pressing this button you will force the end the game for all players");
     addActionButton(PlayerAction::EXIT_GAME,
-                    "images/FINISH_GAME.png",
+                    "resources/FINISH_GAME.png",
                     "By pressing this button you will leave the game");
 
 
-    tokenButtons[Token::DOG].setTexture("images/DOG.png");
-    tokenButtons[Token::BOOT].setTexture("images/BOOT.png");
-    tokenButtons[Token::CAR].setTexture("images/CAR.png");
-    tokenButtons[Token::CAT].setTexture("images/CAT.png");
-    tokenButtons[Token::HAT].setTexture("images/HAT.png");
-    tokenButtons[Token::SHIP].setTexture("images/SHIP.png");
+    tokenButtons[Token::DOG].setTexture("resources/DOG.png");
+    tokenButtons[Token::BOOT].setTexture("resources/BOOT.png");
+    tokenButtons[Token::CAR].setTexture("resources/CAR.png");
+    tokenButtons[Token::CAT].setTexture("resources/CAT.png");
+    tokenButtons[Token::HAT].setTexture("resources/HAT.png");
+    tokenButtons[Token::SHIP].setTexture("resources/SHIP.png");
 
     events.addHandler<sf::Event::Closed>([this]() { window.close(); });
     events.addHandler<sf::Event::Resized>([this](sf::Event::SizeEvent e) {
