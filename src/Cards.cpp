@@ -57,7 +57,6 @@ void PayMoney::apply(Token token) {
         request = makeDefaultRequest(token, board);
         board.sync();
         if (action == PlayerAction::END_TURN) {
-            std::cout << "card PayMoney END_TURN\n";
             if (!payTax) {
                 request->message.message = "You can't finish turn now";
                 continue;
@@ -68,7 +67,6 @@ void PayMoney::apply(Token token) {
                 player.addMoney(-amount);
                 amount = tmp;
                 payTax = true;
-                std::cout << "cards PayMoney PAY_TAX return\n";
                 return;
             } else {
                 request->message.message = "You don't have enough money";
