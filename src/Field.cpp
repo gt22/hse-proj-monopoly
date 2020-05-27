@@ -7,6 +7,7 @@
 #include <set>
 #include <cassert>
 #include <iostream>
+#include <PlayerRequests.h>
 
 uint32_t Taxes::get(int id) const {
     switch (id) {
@@ -341,6 +342,9 @@ bool handleGenericActions(Token tok, const FieldTile& tile, PlayerAction action)
     }
     if (action == PlayerAction::START_TRADE) {
         PlayerReply tokenReply = tile.board.send(token(tok));
+        while (tokenReply->data.token == tok) {
+            tokenReply = tile.board.send(token(tok));
+        }
         PlayerReply numReply = tile.board.send(num(tok));
         auto chosenField = tile.board.getFieldTile(numReply->data.num);
         if (!chosenField->canBeSold(tokenReply->data.token)) {
