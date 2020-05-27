@@ -42,6 +42,8 @@ install:
   - travis_retry wget --no-check-certificate https://www.sfml-dev.org/files/${SFML_ARCHIVE_NAME}.tar.gz -O sfml.tar.gz > /dev/null
   - tar -xf sfml.tar.gz > /dev/null
   - cd SFML-2.5.1
+  - pwd
+  - ls
   - mkdir build && cd build
   - cmake . && make && make install
 
