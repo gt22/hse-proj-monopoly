@@ -15,6 +15,9 @@
 Операционная система: **OS Linux** или **MacOS**
 ### Необходимые библеотеки
 * SFML 2.5.1
+ ```
+    $ sudo apt-get install libsfml-dev
+ ```
 * sockpp commit 93855d5 (добавлена как submodule)
 * protobuf 3.11.4
 
