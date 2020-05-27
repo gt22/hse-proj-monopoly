@@ -21,21 +21,26 @@
 Операционная система: **OS Linux** или **MacOS**
 ### Необходимые библеотеки
 * SFML 2.5.1
- ```
-    $ sudo apt-get install libsfml-dev
- ```
+  * Linux
+  ```shell script
+  $ sudo apt-get install libsfml-dev
+  ```
+  * MacOS
+  ```shell script
+  brew install sfml
+  ```
 * sockpp commit 93855d5 (добавлена как submodule)
- ```
-    $ git submodule update --init --recursive
- ```
+  ```shell script
+  $ git submodule update --init --recursive
+  ```
 * [protobuf 3.11.4](https://github.com/protocolbuffers/protobuf)
- ```
-    $ cd protobuf
-    $ ./configure
-    $ make
-    $ sudo make install
-    $ sudo ldconfig
- ```
+  ```shell script
+  $ cd protobuf
+  $ ./configure
+  $ make
+  $ sudo make install
+  $ sudo ldconfig
+  ```
 
 ### Сборка
 ```shell script
