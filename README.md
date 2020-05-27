@@ -33,6 +33,6 @@ make
 
 
 ## Авторы
-https://github.com/gt22
-https://github.com/xbreathoflife
-https://github.com/AlinaUsh
+* https://github.com/gt22
+* https://github.com/xbreathoflife
+* https://github.com/AlinaUsh
