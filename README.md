@@ -37,7 +37,7 @@
     $ sudo ldconfig
  ```
 
-### Сборка и использование
+### Сборка
 ```shell script
 $ git clone https://github.com/gt22/hse-proj-monopoly
 $ cd hse-proj-monopoly
@@ -48,6 +48,8 @@ $ make
 ```
 
 После этого, можно (находясь в директории `build`) запустить проект используя `./monopoly`
+
+### Использование
 
 
 ## Авторы
