@@ -10,17 +10,17 @@ using Vec::transpose;
 sf::Color getColor(Token tok) {
     switch (tok) {
         case Token::DOG:
-            return sf::Color::White;// ORANGE
+            return sf::Color::White;
         case Token::HAT:
-            return sf::Color::Red; // PINK
+            return sf::Color::Red;
         case Token::BOOT:
-            return sf::Color::Blue; // BLUE
+            return sf::Color::Blue;
         case Token::CAT:
-            return sf::Color::Cyan; // CYAN
+            return sf::Color::Cyan;
         case Token::CAR:
-            return sf::Color::Magenta; // PURPLE
+            return sf::Color::Magenta;
         case Token::SHIP:
-            return sf::Color::Green; // GREEN
+            return sf::Color::Green;
         case Token::FREE_FIELD:
             return sf::Color::Transparent;
     }
@@ -261,8 +261,6 @@ SFMLView::SFMLView(Manager& manager) : manager(manager) {
             }
         }
     });
-
-    //TODO: temp
 }
 
 void SFMLView::dispose() {
@@ -584,7 +582,7 @@ void SFMLView::drawMessage() {
         case MessageType::INFO: {
             const auto& baseRect = shapes.fieldRects[0];
             message.setCharacterSize(15);
-            message.setPosition(baseRect.getPosition() + /*baseRect.getPoint(1) +*/
+            message.setPosition(baseRect.getPosition() +
                                 sf::Vector2f(message.getLocalBounds().width, -message.getLocalBounds().height));
             break;
         }
@@ -773,7 +771,7 @@ void SFMLView::drawMoney(const BoardModel& board) {
         mt.setPosition(W - maxW - shift, 10 + static_cast<float>(i + 1) * maxH);
         sf::CircleShape p(maxH / 4);
         float x = W - maxW - maxH / 2 - shift;
-        float y = 10 + static_cast<float>(i + 1) * maxH /*+ maxH / 4 */;
+        float y = 10 + static_cast<float>(i + 1) * maxH;
         p.setPosition(x, y + mt.getLocalBounds().top);
         p.setFillColor(getColor(tok));
         tokenButtons[tok].setScale(sf::Vector2f(0.3, 0.3));
@@ -822,9 +820,6 @@ void SFMLView::drawCardInfo(const BoardModel& board, std::optional<std::size_t> 
             sf::Text title(s, mainFont);
             int fsize = 18;
             title.setCharacterSize(fsize);
-            //  while (!doesFit(title, w)) {
-            //    title.setCharacterSize(--fsize);
-            //  }
             auto[nx, ny, nw, nh] = title.getLocalBounds();
             auto[x, y] = baseRect.getPosition();
 
@@ -900,7 +895,6 @@ void SFMLView::drawCardInfo(const BoardModel& board, std::optional<std::size_t> 
         text.setCharacterSize(fsize);
         auto[x, y] = baseRect.getPosition();
         y = wy - h + size;
-        //  text.setOrigin(nx + nw / 2, 0);
         text.setPosition(x, y);
         window.draw(text);
 
@@ -932,7 +926,6 @@ void SFMLView::addActionButton(PlayerAction action,
     auto btn = std::make_unique<SpriteButton>();
     size_t i = actionButtons.size();
     btn->setPosition(static_cast<float>(10 + 80 * (i % 2)), static_cast<float>(10 + 80 * (i / 2)));
-    // btn->setScale({0.8f, 0.8f});
     btn->setTexture(texture);
     actionButtons.emplace(action, *btn);
     auto[x, y] = btn->getPosition();
