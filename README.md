@@ -19,8 +19,10 @@
     $ sudo apt-get install libsfml-dev
  ```
 * sockpp commit 93855d5 (добавлена как submodule)
-* protobuf 3.11.4
-
+ ```
+    $ git submodule update --init --recursive
+ ```
+* [protobuf 3.11.4](https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/protobuf-cpp-3.11.4.tar.gz)
 
 ### Сборка и использование
 ```shell script
