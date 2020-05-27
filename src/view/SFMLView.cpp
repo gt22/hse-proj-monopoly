@@ -207,7 +207,7 @@ SFMLView::SFMLView(Manager& manager) : manager(manager) {
                             assert(request.value()->type == RequestType::TRADE);
                             takeMessage(request.value());
                             model.sendReply(std::make_unique<PlayerReplyData>(request.value()->player,
-                                                                              PlayerTradeAction::PARTICIPATE));
+                                                                              PlayerTradeAction::REFUSE));
                         }
                     }
                 } else if (model.hasRequest(RequestType::TOKEN)) {
