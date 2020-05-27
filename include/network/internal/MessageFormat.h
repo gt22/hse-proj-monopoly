@@ -3,6 +3,7 @@
 #include <optional>
 #include <type_traits>
 #include <sockpp/tcp_socket.h>
+#include <cstddef>
 
 namespace Monopoly::Network::Messages {
     using sockpp::stream_socket;
