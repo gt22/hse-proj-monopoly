@@ -33,12 +33,12 @@
 
 ### Сборка и использование
 ```shell script
-git clone https://github.com/gt22/hse-proj-monopoly
-cd hse-proj-monopoly
-mkdir build
-cd build
-cmake ..
-make
+$ git clone https://github.com/gt22/hse-proj-monopoly
+$ cd hse-proj-monopoly
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make
 ```
 
 После этого, можно (находясь в директории `build`) запустить проект используя `./monopoly`
